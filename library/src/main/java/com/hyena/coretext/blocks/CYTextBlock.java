@@ -18,7 +18,7 @@ public class CYTextBlock extends CYBlock {
     private List<CYBlock> mSubBlocks = new ArrayList<CYBlock>();
 
     {
-        mPaint.setTextSize(20);
+        mPaint.setTextSize(60);
     }
 
     public CYTextBlock(String content){
