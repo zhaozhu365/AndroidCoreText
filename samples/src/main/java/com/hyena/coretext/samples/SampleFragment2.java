@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.himamis.retex.renderer.share.TeXIcon;
 import com.hyena.coretext.AttributedString;
 import com.hyena.coretext.CYView;
 import com.hyena.coretext.blocks.CYBreakLineBlock;
@@ -43,26 +44,25 @@ public class SampleFragment2 extends Fragment {
         String result = trimString(replaceFillIn(question));
         Log.v("yangzc", result);
         AttributedString attString = new AttributedString(result);
-
-        char ch[] = result.toCharArray();
-        int startIndex = 0, endIndex = 0;
-        boolean isInCommand = false;
-        for (int i = 0; i < ch.length; i++) {
-            if (ch[i] == '\\') {//command
-                startIndex = i;
-                isInCommand = true;
-            }
-            if (ch[i] >= 'a' && ch[i] <= 'z') {
-                endIndex = i;
-                if (isInCommand) {
-                    attString.replaceBlock(startIndex, endIndex, CYEditBlock.class)
-                            .setWidth(200).setHeight(100);
-                }
-                isInCommand = false;
-            }
-        }
+//
+//        char ch[] = result.toCharArray();
+//        int startIndex = 0, endIndex = 0;
+//        boolean isInCommand = false;
+//        for (int i = 0; i < ch.length; i++) {
+//            if (ch[i] == '\\') {//command
+//                startIndex = i;
+//                isInCommand = true;
+//            }
+//            if (ch[i] >= 'a' && ch[i] <= 'z') {
+//                endIndex = i;
+//                if (isInCommand) {
+//                    attString.replaceBlock(startIndex, endIndex, CYEditBlock.class)
+//                            .setWidth(200).setHeight(100);
+//                }
+//                isInCommand = false;
+//            }
+//        }
         //replace latex
-        
 
         //replace fillInBlock
         Pattern patternFillIn = Pattern.compile("\\\\fillin\\{\\}");
