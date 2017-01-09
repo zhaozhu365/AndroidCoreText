@@ -19,11 +19,6 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':library')
-    compile 'com.github.yangzc.AndroidLatex:fillin-android:v1.0.3'
-    compile 'com.github.yangzc.AndroidLatex:renderer-android:v1.0.3'
-    compile 'com.github.yangzc.AndroidLatex:editor-share:v1.0.3'
-    compile 'com.github.yangzc.AndroidLatex:renderer-share:v1.0.3'
-    compile 'com.github.yangzc.AndroidLatex:editor-android:v1.0.3'
 }
