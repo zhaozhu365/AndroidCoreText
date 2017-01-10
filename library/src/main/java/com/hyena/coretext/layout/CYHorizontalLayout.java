@@ -67,6 +67,7 @@ public class CYHorizontalLayout implements CYLayout {
                     leftWidth = pageWidth - itemBlock.getWidth();
                     line = new CYLineBlock();
                     lines.add(line);
+                    //create new placeHolder when break-line
                     linePlaceHolderBlocks = getLinePlaceHolderBlocks(placeHolderBlocks, y);
                     itemBlock.lineY = y;
                 }
@@ -77,7 +78,7 @@ public class CYHorizontalLayout implements CYLayout {
                 line = new CYLineBlock();
                 lines.add(line);
                 linePlaceHolderBlocks = getLinePlaceHolderBlocks(placeHolderBlocks, y);
-            } else {
+            } else {//must be textBlock
                 List<CYBlock> subBlocks = itemBlock.getSubBlocks();
                 if (subBlocks != null) {
                     for (int j = 0; j < subBlocks.size(); j++) {
