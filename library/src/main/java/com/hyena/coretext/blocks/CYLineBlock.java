@@ -28,6 +28,9 @@ public class CYLineBlock {
         if (mLineHeight <= 0) {
             measure();
         }
+        if (mLineHeight <= 0) {
+            mLineHeight = 100;
+        }
         return mLineHeight;
     }
 
