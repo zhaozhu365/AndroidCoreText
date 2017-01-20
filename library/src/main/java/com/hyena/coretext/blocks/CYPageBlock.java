@@ -18,12 +18,12 @@ public class CYPageBlock extends CYBlock<CYLineBlock> {
     }
 
     @Override
-    public int getWidth() {
+    public int getContentWidth() {
         return 0;
     }
 
     @Override
-    public int getHeight() {
+    public int getContentHeight() {
         return 0;
     }
 

@@ -10,11 +10,12 @@ import com.hyena.coretext.TextEnv;
 public class CYPlaceHolderBlock extends CYBlock {
 
     public enum AlignStyle {
-        Style_Round,
-        Style_Single_Line
+        Style_Normal, //顺序平铺
+        Style_Round, //环绕效果
+        Style_MONOPOLY //独享一行
     }
 
-    private AlignStyle mAlignStyle;
+    private AlignStyle mAlignStyle = AlignStyle.Style_Normal;
     private int mWidth, mHeight;
 
     public CYPlaceHolderBlock(TextEnv textEnv, String content){
@@ -40,12 +41,12 @@ public class CYPlaceHolderBlock extends CYBlock {
     }
 
     @Override
-    public int getWidth() {
+    public int getContentWidth() {
         return mWidth;
     }
 
     @Override
-    public int getHeight() {
+    public int getContentHeight() {
         return mHeight;
     }
 

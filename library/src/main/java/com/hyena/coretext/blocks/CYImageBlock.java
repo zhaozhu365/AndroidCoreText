@@ -37,14 +37,14 @@ public class CYImageBlock extends CYPlaceHolderBlock {
     }
 
     @Override
-    public int getWidth() {
+    public int getContentWidth() {
         if (mBitmap != null)
             return mBitmap.getWidth();
         return 100;
     }
 
     @Override
-    public int getHeight() {
+    public int getContentHeight() {
         if (mBitmap != null)
             return mBitmap.getHeight();
         return 100;

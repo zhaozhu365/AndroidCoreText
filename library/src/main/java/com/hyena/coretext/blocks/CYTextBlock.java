@@ -2,6 +2,7 @@ package com.hyena.coretext.blocks;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.text.TextUtils;
 
@@ -93,18 +94,19 @@ public class CYTextBlock extends CYBlock {
     }
 
     @Override
-    public int getWidth() {
+    public int getContentWidth() {
         return (int) getPaint().measureText(text);
     }
 
     @Override
-    public int getHeight() {
+    public int getContentHeight() {
         Paint.FontMetrics fm = getPaint().getFontMetrics();
-        return (int) Math.ceil(fm.descent - fm.top);
+        return (int) (Math.ceil(fm.bottom - fm.top) + 0.5f);
     }
 
     @Override
     public void draw(Canvas canvas) {
-        canvas.drawText(text, getX(), getLineY() + (getLineHeight() + getHeight())/2, getPaint());
+        Rect rect = getContentRect();
+        canvas.drawText(text, rect.left , rect.top + (getLineHeight() + getContentHeight())/2, getPaint());
     }
 }

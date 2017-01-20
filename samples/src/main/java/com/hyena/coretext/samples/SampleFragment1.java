@@ -32,11 +32,11 @@ public class SampleFragment1 extends Fragment {
         CYView view = new CYView(getActivity());
         TextEnv textEnv = new TextEnv.Builder().setTextColor(Color.BLACK).setFontSize(60).build();
         List<CYBlock> blocks = new ArrayList<CYBlock>();
-        blocks.add(new CYImageBlock(textEnv, "").setResId(getContext(), R.drawable.car).setAlignStyle(CYPlaceHolderBlock.AlignStyle.Style_Single_Line));
         blocks.add(new CYTextBlock(textEnv, "这").setTextSize(50).setTextColor(Color.RED));
-        blocks.add(new CYImageBlock(textEnv, "").setResId(getContext(), R.drawable.car).setAlignStyle(CYPlaceHolderBlock.AlignStyle.Style_Single_Line));
+        blocks.add(new CYImageBlock(textEnv, "").setResId(getContext(), R.drawable.car).setAlignStyle(CYPlaceHolderBlock.AlignStyle.Style_Round));
         blocks.add(new CYTextBlock(textEnv, "是一个最好的时代，这是一个最坏的时代；这是一个智慧的年代，这是一个愚蠢的年代；" +
                 "这是一个光明的季节，这是一个黑暗的季节；这是希望之春，这是失望之冬；人们面前应有尽有，人们面前一无所有；人们正踏向天堂之路，人们正走向地狱之门。").setTextSize(30));
+        blocks.add(new CYImageBlock(textEnv, "").setResId(getContext(), R.drawable.car).setAlignStyle(CYPlaceHolderBlock.AlignStyle.Style_MONOPOLY));
         blocks.add(new CYTextBlock(textEnv, "这是一个最好的时代，这是一个最坏的时代；这是一个智慧的年代，这是一个愚蠢的年代；" +
                 "这是一个光明的季节，这是一个黑暗的季节；这是希望之春，这是失望之冬；人们面前应有尽有，人们面前一无所有；人们正踏向天堂之路，人们正走向地狱之门。").setTextSize(30));
         blocks.add(new CYBreakLineBlock(textEnv, ""));

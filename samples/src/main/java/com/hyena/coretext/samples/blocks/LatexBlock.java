@@ -68,12 +68,12 @@
 //    }
 //
 //    @Override
-//    public int getWidth() {
+//    public int getContentWidth() {
 //        return mTexIcon.getIconWidth();
 //    }
 //
 //    @Override
-//    public int getHeight() {
+//    public int getContentHeight() {
 //        return mTexIcon.getIconHeight();
 //    }
 //
@@ -83,7 +83,7 @@
 //            return;
 //        }
 //        canvas.save();
-//        canvas.translate(x, lineY + (lineHeight - getHeight())/2);
+//        canvas.translate(x, lineY + (lineHeight - getContentHeight())/2);
 //
 //        if (mGraphics == null) {
 //            mGraphics = new Graphics2DA();

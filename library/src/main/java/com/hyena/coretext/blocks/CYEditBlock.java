@@ -29,7 +29,6 @@ public class CYEditBlock extends CYPlaceHolderBlock {
     }
 
     private void init(){
-
         mBgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mBgPaint.setColor(Color.GRAY);
         mBgPaint.setStrokeWidth(1);

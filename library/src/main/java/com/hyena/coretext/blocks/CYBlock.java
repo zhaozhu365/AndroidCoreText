@@ -1,7 +1,6 @@
 package com.hyena.coretext.blocks;
 
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.Log;
 
@@ -16,6 +15,7 @@ import java.util.List;
  */
 public abstract class CYBlock<T> {
 
+    private static final boolean DEBUG = false;
     private static final String TAG = "CYBlock";
     //当前块横坐标
     private int x;
@@ -23,10 +23,12 @@ public abstract class CYBlock<T> {
     private int lineY;
     //当前行高度
     private int lineHeight;
+    private int paddingLeft = 10, paddingTop = 10, paddingRight = 10, paddingBottom = 10;
     //是否存在焦点
     private boolean mFocus = false;
     //内容范围
-    private Rect mRect = new Rect();
+    private Rect mContentRect = new Rect();
+    private Rect mBlockRect = new Rect();
     //所有子节点
     private List<T> mChildren = new ArrayList<T>();
     private TextEnv mTextEnv;
@@ -82,15 +84,61 @@ public abstract class CYBlock<T> {
         return lineHeight;
     }
 
-    /**
-     * @return width of block
+    /*
+     * set padding
      */
-    public abstract int getWidth();
+    public void setPadding(int left, int top, int right, int bottom) {
+        this.paddingLeft = left;
+        this.paddingTop = top;
+        this.paddingRight = right;
+        this.paddingBottom = bottom;
+    }
 
     /**
-     * @return height of block
+     * @return padding left
      */
-    public abstract int getHeight();
+    public int getPaddingLeft() {
+        return paddingLeft;
+    }
+
+    /**
+     * @return padding top
+     */
+    public int getPaddingTop() {
+        return paddingTop;
+    }
+
+    /**
+     * @return padding right
+     */
+    public int getPaddingRight() {
+        return paddingRight;
+    }
+
+    /**
+     * @return padding bottom
+     */
+    public int getPaddingBottom() {
+        return paddingBottom;
+    }
+
+    /**
+     * @return width of content
+     */
+    public abstract int getContentWidth();
+
+    /**
+     * @return height of content
+     */
+    public abstract int getContentHeight();
+
+    public int getHeight() {
+        return getBlockRect().height();
+    }
+
+    public int getWidth() {
+        return getBlockRect().width();
+    }
 
     /**
      * draw block
@@ -116,15 +164,29 @@ public abstract class CYBlock<T> {
     }
 
     /**
-     * @return rect of block
+     * @return rect of content
      */
     public Rect getContentRect() {
-        mRect.set(x, lineY, x + getWidth(), lineY + getHeight());
-        return mRect;
+        mContentRect.set(x + paddingLeft
+                , lineY + paddingTop
+                , x + paddingLeft + getContentWidth()
+                , lineY + paddingTop + getContentHeight());
+        return mContentRect;
+    }
+
+    /**
+     * @return rect of block
+     */
+    public Rect getBlockRect() {
+        mBlockRect.set(x, lineY
+                , x + getContentWidth() + paddingLeft + paddingRight
+                , lineY + getContentHeight() + paddingTop + paddingBottom);
+        return mBlockRect;
     }
 
     public void onTouchEvent(int event, float x, float y) {
-        debug("onEvent: " + event);
+        if (DEBUG)
+            debug("onEvent: " + event);
     }
 
     /**
@@ -132,7 +194,8 @@ public abstract class CYBlock<T> {
      */
     public void setFocus(boolean focus) {
         mFocus = focus;
-        debug("rect: " + getContentRect().toString() + ", focus: " + focus);
+        if (DEBUG)
+            debug("rect: " + getBlockRect().toString() + ", focus: " + focus);
     }
 
     /**

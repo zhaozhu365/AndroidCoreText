@@ -14,12 +14,12 @@ public class CYLineBlock extends CYBlock<CYBlock> {
     }
 
     @Override
-    public int getWidth() {
+    public int getContentWidth() {
         return 0;
     }
 
     @Override
-    public int getHeight() {
+    public int getContentHeight() {
         return getLineHeight();
     }
 
@@ -62,8 +62,8 @@ public class CYLineBlock extends CYBlock<CYBlock> {
             for (int i = 0; i < getChildren().size(); i++) {
                 CYBlock block = getChildren().get(i);
                 if (block instanceof CYTextBlock || (block instanceof CYPlaceHolderBlock
-                        && ((CYPlaceHolderBlock)block).getAlignStyle() == CYPlaceHolderBlock
-                        .AlignStyle.Style_Single_Line)) {
+                        && (((CYPlaceHolderBlock)block).getAlignStyle() == CYPlaceHolderBlock.AlignStyle.Style_Normal)
+                        || ((CYPlaceHolderBlock)block).getAlignStyle() == CYPlaceHolderBlock.AlignStyle.Style_MONOPOLY)) {
                     if (block.getHeight() > mLineHeight) {
                         mLineHeight = block.getHeight();
                     }

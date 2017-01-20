@@ -20,13 +20,13 @@ public class CYBlockUtils {
                 if (subBlocks != null && !subBlocks.isEmpty()) {
                     for (int j = 0; j < subBlocks.size(); j++) {
                         CYBlock subBlock = subBlocks.get(j);
-                        if (subBlock.getContentRect().contains(x, y)){
+                        if (subBlock.getBlockRect().contains(x, y)){
                             return block;
                         }
                     }
                 }
             } else {
-                if (block.getContentRect().contains(x, y)) {
+                if (block.getBlockRect().contains(x, y)) {
                     return block;
                 }
             }
