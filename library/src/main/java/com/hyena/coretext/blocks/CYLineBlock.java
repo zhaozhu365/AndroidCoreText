@@ -1,29 +1,38 @@
 package com.hyena.coretext.blocks;
 
-import java.util.ArrayList;
-import java.util.List;
+import android.graphics.Canvas;
 
 /**
  * Created by yangzc on 16/4/8.
  */
-public class CYLineBlock {
+public class CYLineBlock extends CYBlock<CYBlock> {
 
     private int mLineHeight;
-    private List<CYBlock> mBlocks = new ArrayList<CYBlock>();
 
-    public void addBlock(CYBlock block){
-        mBlocks.add(block);
+    public CYLineBlock() {
+        super(null, "");
     }
 
-    public void clear(){
-        mLineHeight = 0;
-        mBlocks.clear();
+    @Override
+    public int getWidth() {
+        return 0;
     }
 
-    public List<CYBlock> getBlocks(){
-        return mBlocks;
+    @Override
+    public int getHeight() {
+        return getLineHeight();
     }
 
+    @Override
+    public void draw(Canvas canvas) {
+        if (getChildren() != null) {
+            for (int i = 0; i < getChildren().size(); i++) {
+                getChildren().get(i).draw(canvas);
+            }
+        }
+    }
+
+    @Override
     public int getLineHeight() {
         if (mLineHeight <= 0) {
             measure();
@@ -40,18 +49,18 @@ public class CYLineBlock {
     }
 
     public void updateLineY(int lineY){
-        if (mBlocks != null) {
-            for (int i = 0; i < mBlocks.size(); i++) {
-                mBlocks.get(i).lineY = lineY;
+        if (getChildren() != null) {
+            for (int i = 0; i < getChildren().size(); i++) {
+                getChildren().get(i).setLineY(lineY);
             }
         }
     }
 
     private void measureLineHeight(){
-        if (mBlocks != null) {
+        if (getChildren() != null) {
             mLineHeight = 0;
-            for (int i = 0; i < mBlocks.size(); i++) {
-                CYBlock block = mBlocks.get(i);
+            for (int i = 0; i < getChildren().size(); i++) {
+                CYBlock block = getChildren().get(i);
                 if (block instanceof CYTextBlock || (block instanceof CYPlaceHolderBlock
                         && ((CYPlaceHolderBlock)block).getAlignStyle() == CYPlaceHolderBlock
                         .AlignStyle.Style_Single_Line)) {
@@ -68,9 +77,9 @@ public class CYLineBlock {
 
     public int getMaxBlockHeightInLine(){
         int maxHeight = 0;
-        if (mBlocks != null) {
-            for (int i = 0; i < mBlocks.size(); i++) {
-                CYBlock block = mBlocks.get(i);
+        if (getChildren() != null) {
+            for (int i = 0; i < getChildren().size(); i++) {
+                CYBlock block = getChildren().get(i);
                 if (block.getHeight() > maxHeight) {
                     maxHeight = block.getHeight();
                 }
@@ -80,10 +89,10 @@ public class CYLineBlock {
     }
 
     private void syncBlocksHeight(){
-        if (mBlocks != null) {
-            for (int i = 0; i < mBlocks.size(); i++) {
-                CYBlock block = mBlocks.get(i);
-                block.lineHeight = mLineHeight;
+        if (getChildren() != null) {
+            for (int i = 0; i < getChildren().size(); i++) {
+                CYBlock block = getChildren().get(i);
+                block.setLineHeight(mLineHeight);
             }
         }
     }

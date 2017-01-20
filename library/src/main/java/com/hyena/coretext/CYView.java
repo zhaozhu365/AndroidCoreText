@@ -8,7 +8,6 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.hyena.coretext.blocks.CYBlock;
-import com.hyena.coretext.blocks.CYLineBlock;
 import com.hyena.coretext.blocks.CYPageBlock;
 import com.hyena.coretext.event.CYEventDispatcher;
 import com.hyena.coretext.event.CYLayoutEventListener;
@@ -107,8 +106,8 @@ public class CYView extends View {
                         mTouchBlock.setFocus(true);
                 }
                 if (mTouchBlock != null) {
-                    mTouchBlock.onTouchEvent(action, event.getX() - mTouchBlock.x,
-                            event.getY() - mTouchBlock.lineY);
+                    mTouchBlock.onTouchEvent(action, event.getX() - mTouchBlock.getX(),
+                            event.getY() - mTouchBlock.getLineY());
                 }
                 break;
             }
@@ -117,8 +116,8 @@ public class CYView extends View {
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_OUTSIDE: {
                 if (mTouchBlock != null) {
-                    mTouchBlock.onTouchEvent(action, event.getX() - mTouchBlock.x,
-                            event.getY() - mTouchBlock.lineY);
+                    mTouchBlock.onTouchEvent(action, event.getX() - mTouchBlock.getX(),
+                            event.getY() - mTouchBlock.getLineY());
                 }
                 break;
             }
@@ -129,24 +128,15 @@ public class CYView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
         if (pages == null || pages.isEmpty())
             return;
 
         canvas.save();
         canvas.translate(getPaddingLeft(), getPaddingTop());
-
         for (int i = 0; i < pages.size(); i++) {
             CYPageBlock page = pages.get(i);
-            List<CYLineBlock> lines = page.getLines();
-            for (int j = 0; j < lines.size(); j++) {
-                CYLineBlock line = lines.get(j);
-                for (int k = 0; k < line.getBlocks().size(); k++) {
-                    line.getBlocks().get(k).draw(canvas);
-                }
-            }
+            page.draw(canvas);
         }
-
         canvas.restore();
     }
 }

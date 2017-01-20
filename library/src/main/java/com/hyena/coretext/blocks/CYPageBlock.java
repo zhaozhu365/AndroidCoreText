@@ -1,25 +1,38 @@
 package com.hyena.coretext.blocks;
 
+import android.graphics.Canvas;
+import android.graphics.Paint;
+
+import com.hyena.coretext.TextEnv;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by yangzc on 16/4/8.
  */
-public class CYPageBlock {
+public class CYPageBlock extends CYBlock<CYLineBlock> {
 
-    private List<CYLineBlock> mLines = new ArrayList<CYLineBlock>();
-
-    public void addLines(CYLineBlock line){
-        mLines.add(line);
+    public CYPageBlock() {
+        super(null, "");
     }
 
-    public void clear(){
-        mLines.clear();
+    @Override
+    public int getWidth() {
+        return 0;
     }
 
-    public List<CYLineBlock> getLines(){
-        return mLines;
+    @Override
+    public int getHeight() {
+        return 0;
     }
 
+    @Override
+    public void draw(Canvas canvas) {
+        if (getChildren() != null) {
+            for (int i = 0; i < getChildren().size(); i++) {
+                getChildren().get(i).draw(canvas);
+            }
+        }
+    }
 }

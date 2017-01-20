@@ -4,9 +4,9 @@ import android.graphics.Rect;
 
 import com.hyena.coretext.blocks.CYBlock;
 import com.hyena.coretext.blocks.CYBreakLineBlock;
-import com.hyena.coretext.blocks.CYPlaceHolderBlock;
 import com.hyena.coretext.blocks.CYLineBlock;
 import com.hyena.coretext.blocks.CYPageBlock;
+import com.hyena.coretext.blocks.CYPlaceHolderBlock;
 import com.hyena.coretext.blocks.CYTextBlock;
 
 import java.util.ArrayList;
@@ -36,7 +36,7 @@ public class CYHorizontalLayout implements CYLayout {
                     line.updateLineY(y);
                     y += line.getLineHeight();
                 }
-                page.addLines(line);
+                page.addChild(line);
             }
         }
         pages.add(page);
@@ -49,7 +49,7 @@ public class CYHorizontalLayout implements CYLayout {
             for (int i = 0; i < rawBlocks.size(); i++) {
                 CYBlock block = rawBlocks.get(i);
                 if (block instanceof CYTextBlock) {
-                    result.addAll(block.getSubBlocks());
+                    result.addAll(block.getChildren());
                 } else {
                     result.add(block);
                 }
@@ -84,7 +84,7 @@ public class CYHorizontalLayout implements CYLayout {
                 if (itemBlock.getWidth() < leftWidth) {
                     while ((hitCell = getHitCell(linePlaceHolderBlocks, pageWidth - leftWidth, y,
                             itemBlock.getWidth(), itemBlock.getHeight())) != null) {
-                        leftWidth = pageWidth - hitCell.getWidth() - hitCell.x;
+                        leftWidth = pageWidth - hitCell.getWidth() - hitCell.getX();
                     }
 
                     while (leftWidth < itemBlock.getWidth()) {
@@ -97,13 +97,13 @@ public class CYHorizontalLayout implements CYLayout {
 
                         while ((hitCell = getHitCell(linePlaceHolderBlocks, pageWidth - leftWidth, y,
                                 itemBlock.getWidth(), itemBlock.getHeight())) != null) {
-                            leftWidth = pageWidth - hitCell.getWidth() - hitCell.x;
+                            leftWidth = pageWidth - hitCell.getWidth() - hitCell.getX();
                         }
                     }
-                    itemBlock.x = pageWidth - leftWidth;
-                    itemBlock.lineY = y;
+                    itemBlock.setX(pageWidth - leftWidth);
+                    itemBlock.setLineY(y);
                     leftWidth -= itemBlock.getWidth();
-                    line.addBlock(itemBlock);
+                    line.addChild(itemBlock);
                 } else {
                     while (leftWidth < itemBlock.getWidth()) {
                         //wrap
@@ -115,13 +115,13 @@ public class CYHorizontalLayout implements CYLayout {
 
                         while ((hitCell = getHitCell(linePlaceHolderBlocks, pageWidth - leftWidth, y,
                                 itemBlock.getWidth(), itemBlock.getHeight())) != null) {
-                            leftWidth = pageWidth - hitCell.getWidth() - hitCell.x;
+                            leftWidth = pageWidth - hitCell.getWidth() - hitCell.getX();
                         }
                     }
-                    itemBlock.x = pageWidth - leftWidth;
-                    itemBlock.lineY = y;
+                    itemBlock.setX(pageWidth - leftWidth);
+                    itemBlock.setLineY(y);
                     leftWidth -= itemBlock.getWidth();
-                    line.addBlock(itemBlock);
+                    line.addChild(itemBlock);
                 }
             }
         }
@@ -153,7 +153,7 @@ public class CYHorizontalLayout implements CYLayout {
 //                lines.add(line);
 //                linePlaceHolderBlocks = getLinePlaceHolderBlocks(placeHolderBlocks, y);
 //            } else {//must be textBlock
-//                List<CYBlock> subBlocks = itemBlock.getSubBlocks();
+//                List<CYBlock> subBlocks = itemBlock.getChildren();
 //                if (subBlocks != null) {
 //                    for (int j = 0; j < subBlocks.size(); j++) {
 //                        CYBlock block = subBlocks.get(j);
@@ -213,7 +213,7 @@ public class CYHorizontalLayout implements CYLayout {
         List<CYPlaceHolderBlock> linePlaceHolderBlocks = new ArrayList<CYPlaceHolderBlock>();
         for (int i = 0; i < placeHolderBlocks.size(); i++) {
             CYPlaceHolderBlock block = placeHolderBlocks.get(i);
-            if (y >= block.lineY && y <= block.lineY + block.getHeight()) {
+            if (y >= block.getLineY() && y <= block.getLineY() + block.getHeight()) {
                 linePlaceHolderBlocks.add(block);
             }
         }
@@ -227,8 +227,8 @@ public class CYHorizontalLayout implements CYLayout {
         for (int i = 0; i < linePlaceHolderBlocks.size(); i++) {
             CYPlaceHolderBlock cell = linePlaceHolderBlocks.get(i);
 
-            if (new Rect(cell.x, cell.lineY, cell.x + cell.getWidth(),
-                    cell.lineY + cell.getHeight()).intersect(new Rect(x, y, x + width, y + height))) {
+            if (new Rect(cell.getX(), cell.getLineY(), cell.getX() + cell.getWidth(),
+                    cell.getLineY() + cell.getHeight()).intersect(new Rect(x, y, x + width, y + height))) {
                 return cell;
             }
 

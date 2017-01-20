@@ -2,6 +2,8 @@ package com.hyena.coretext.blocks;
 
 import android.graphics.Canvas;
 
+import com.hyena.coretext.TextEnv;
+
 /**
  * Created by yangzc on 16/4/8.
  */
@@ -15,8 +17,8 @@ public class CYPlaceHolderBlock extends CYBlock {
     private AlignStyle mAlignStyle;
     private int mWidth, mHeight;
 
-    public CYPlaceHolderBlock(String content){
-        super(content);
+    public CYPlaceHolderBlock(TextEnv textEnv, String content){
+        super(textEnv, content);
     }
 
     public AlignStyle getAlignStyle(){
@@ -51,4 +53,5 @@ public class CYPlaceHolderBlock extends CYBlock {
     public void draw(Canvas canvas) {
 
     }
+
 }

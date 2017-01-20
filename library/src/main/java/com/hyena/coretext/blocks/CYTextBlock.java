@@ -5,7 +5,8 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.text.TextUtils;
 
-import java.util.ArrayList;
+import com.hyena.coretext.TextEnv;
+
 import java.util.List;
 
 /**
@@ -14,73 +15,96 @@ import java.util.List;
 public class CYTextBlock extends CYBlock {
 
     private String text;
-    private Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private List<CYBlock> mSubBlocks = new ArrayList<CYBlock>();
+    private int color;
+    private int fontSize;
+    private Typeface typeface;
 
-    {
-        mPaint.setTextSize(60);
-    }
+    private Paint mPaint;
 
-    public CYTextBlock(String content){
-        super(content);
+    public CYTextBlock(TextEnv textEnv, String content){
+        super(textEnv, content);
         this.text = content;
     }
 
-    public CYTextBlock(String text, Paint paint){
-        super(null);
-        this.text = text;
+    public CYTextBlock(TextEnv textEnv, Paint paint, String content) {
+        super(textEnv, content);
         this.mPaint = paint;
+        this.text = content;
     }
 
-    public CYTextBlock setTextColor(int color){
-        mPaint.setColor(color);
+    public CYTextBlock setTextColor(int color) {
+        this.color = color;
+        createOrClonePaint();
+        if (mPaint != null && color > 0) {
+            mPaint.setColor(color);
+        }
         return this;
     }
 
     public CYTextBlock setTypeFace(Typeface typeface){
-        mPaint.setTypeface(typeface);
+        this.typeface = typeface;
+        createOrClonePaint();
+        if (mPaint != null && typeface != null) {
+            mPaint.setTypeface(typeface);
+        }
         return this;
     }
 
     public CYTextBlock setTextSize(int fontSize){
-        mPaint.setTextSize(fontSize);
+        this.fontSize = fontSize;
+        createOrClonePaint();
+        if (mPaint != null && fontSize > 0) {
+            mPaint.setTextSize(fontSize);
+        }
         return this;
     }
 
-    @Override
-    public List<CYBlock> getSubBlocks() {
-        if (mSubBlocks == null || mSubBlocks.isEmpty()) {
-            parseSubBlocks();
+    private void createOrClonePaint() {
+        if (mPaint == null) {
+            mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         }
-        return mSubBlocks;
+        mPaint.set(getTextEnv().getPaint());
     }
 
-    private void parseSubBlocks(){
-        if (mSubBlocks == null)
-            mSubBlocks = new ArrayList<CYBlock>();
-        mSubBlocks.clear();
+    private Paint getPaint() {
+        if (mPaint != null) {
+            return mPaint;
+        }
+        return getTextEnv().getPaint();
+    }
+
+    @Override
+    public List<CYBlock> getChildren() {
+        List<CYBlock> children = super.getChildren();
+        if (children == null || children.isEmpty()) {
+            parseSubBlocks();
+        }
+        return children;
+    }
+
+    private void parseSubBlocks() {
         if (!TextUtils.isEmpty(text)) {
             for (int i = 0; i < text.length(); i++) {
                 String word = text.substring(i, i + 1);
-                CYTextBlock block = new CYTextBlock(word, mPaint);
-                mSubBlocks.add(block);
+                CYTextBlock block = new CYTextBlock(getTextEnv(), getPaint(), word);
+                addChild(block);
             }
         }
     }
 
     @Override
     public int getWidth() {
-        return (int) mPaint.measureText(text);
+        return (int) getPaint().measureText(text);
     }
 
     @Override
     public int getHeight() {
-        Paint.FontMetrics fm = mPaint.getFontMetrics();
-        return (int) Math.ceil(fm.descent - fm.top) + 8;
+        Paint.FontMetrics fm = getPaint().getFontMetrics();
+        return (int) Math.ceil(fm.descent - fm.top);
     }
 
     @Override
     public void draw(Canvas canvas) {
-        canvas.drawText(text, x, lineY + lineHeight - 10, mPaint);
+        canvas.drawText(text, getX(), getLineY() + (getLineHeight() + getHeight())/2, getPaint());
     }
 }

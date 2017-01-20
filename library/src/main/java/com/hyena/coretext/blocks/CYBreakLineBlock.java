@@ -1,14 +1,17 @@
 package com.hyena.coretext.blocks;
 
 import android.graphics.Canvas;
+import android.graphics.Paint;
+
+import com.hyena.coretext.TextEnv;
 
 /**
  * Created by yangzc on 16/4/9.
  */
 public class CYBreakLineBlock extends CYBlock {
 
-    public CYBreakLineBlock(String content) {
-        super(content);
+    public CYBreakLineBlock(TextEnv textEnv, String content) {
+        super(textEnv, content);
     }
 
     @Override
@@ -23,5 +26,6 @@ public class CYBreakLineBlock extends CYBlock {
 
     @Override
     public void draw(Canvas canvas) {
+
     }
 }

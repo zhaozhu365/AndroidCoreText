@@ -7,7 +7,8 @@ import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.text.TextUtils;
+
+import com.hyena.coretext.TextEnv;
 
 /**
  * Created by yangzc on 16/4/12.
@@ -22,8 +23,8 @@ public class CYEditBlock extends CYPlaceHolderBlock {
     private boolean mInputHintVisible = false;
     private Handler mHandler;
 
-    public CYEditBlock(String content) {
-        super(content);
+    public CYEditBlock(TextEnv textEnv, String content) {
+        super(textEnv, content);
         init();
     }
 
@@ -92,11 +93,12 @@ public class CYEditBlock extends CYPlaceHolderBlock {
     }
 
     private Rect mRect = new Rect();
+
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
         // 绘制外边框
-        mRect.set(getRect().left, getRect().top + 10, getRect().right, getRect().bottom);
+        mRect.set(getContentRect().left, getContentRect().top + 10, getContentRect().right, getContentRect().bottom);
         canvas.drawRect(mRect, mBgPaint);
     }
 }

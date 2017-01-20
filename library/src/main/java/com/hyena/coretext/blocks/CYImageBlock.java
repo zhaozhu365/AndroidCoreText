@@ -4,6 +4,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Paint;
+
+import com.hyena.coretext.TextEnv;
 
 /**
  * Created by yangzc on 16/4/8.
@@ -12,8 +15,8 @@ public class CYImageBlock extends CYPlaceHolderBlock {
 
     private Bitmap mBitmap;
 
-    public CYImageBlock(String content){
-        super(content);
+    public CYImageBlock(TextEnv textEnv, String content){
+        super(textEnv, content);
     }
 
     public CYImageBlock setResId(Context context, int resId){
@@ -30,7 +33,7 @@ public class CYImageBlock extends CYPlaceHolderBlock {
     public void draw(Canvas canvas) {
         super.draw(canvas);
         if (mBitmap != null)
-            canvas.drawBitmap(mBitmap, null, getRect(), null);
+            canvas.drawBitmap(mBitmap, null, getContentRect(), null);
     }
 
     @Override
