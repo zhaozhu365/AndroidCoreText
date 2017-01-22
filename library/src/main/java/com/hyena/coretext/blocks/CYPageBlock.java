@@ -13,18 +13,38 @@ import java.util.List;
  */
 public class CYPageBlock extends CYBlock<CYLineBlock> {
 
-    public CYPageBlock() {
-        super(null, "");
+    public CYPageBlock(TextEnv textEnv) {
+        super(textEnv, "");
     }
 
     @Override
     public int getContentWidth() {
-        return 0;
+        List<CYBlock> blocks = getBlocks();
+        int maxX = 0;
+        if (blocks != null && !blocks.isEmpty()) {
+            for (int i = 0; i < blocks.size(); i++) {
+                CYBlock block = blocks.get(i);
+                if ((block.getX() + block.getWidth()) > maxX) {
+                    maxX = block.getX() + block.getWidth();
+                }
+            }
+        }
+        return maxX;
     }
 
     @Override
     public int getContentHeight() {
-        return 0;
+        List<CYBlock> blocks = getBlocks();
+        int maxY = 0;
+        if (blocks != null && !blocks.isEmpty()) {
+            for (int i = 0; i < blocks.size(); i++) {
+                CYBlock block = blocks.get(i);
+                if ((block.getLineY() + block.getHeight()) > maxY) {
+                    maxY = block.getLineY() + block.getHeight();
+                }
+            }
+        }
+        return maxY;
     }
 
     @Override
@@ -34,5 +54,17 @@ public class CYPageBlock extends CYBlock<CYLineBlock> {
                 getChildren().get(i).draw(canvas);
             }
         }
+    }
+
+    public List<CYBlock> getBlocks() {
+        List<CYBlock> blocks = new ArrayList<CYBlock>();
+        List<CYLineBlock> lines = getChildren();
+        if (lines != null) {
+            for (int i = 0; i < lines.size(); i++) {
+                CYLineBlock line = lines.get(i);
+                blocks.addAll(line.getChildren());
+            }
+        }
+        return blocks;
     }
 }

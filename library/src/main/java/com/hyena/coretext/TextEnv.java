@@ -13,6 +13,7 @@ import android.graphics.Typeface;
  */
 public class TextEnv {
 
+    private int mVerticalSpacing;
     private Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     private TextEnv() {}
@@ -25,11 +26,20 @@ public class TextEnv {
         return paint;
     }
 
+    public int getVerticalSpacing() {
+        return mVerticalSpacing;
+    }
+
+    private void setVerticalSpacing(int spacing) {
+        this.mVerticalSpacing = spacing;
+    }
+
     public static class Builder {
 
         private int fontSize;
         private int textColor = Color.BLACK;
         private Typeface typeface;
+        private int verticalSpacing = 0;
 
         public Builder() {}
 
@@ -48,6 +58,10 @@ public class TextEnv {
             return this;
         }
 
+        public void setVerticalSpacing(int spacing) {
+            this.verticalSpacing = spacing;
+        }
+
         public TextEnv build() {
             Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
             paint.setColor(textColor);
@@ -60,6 +74,7 @@ public class TextEnv {
 
             TextEnv textEnv = new TextEnv();
             textEnv.setPaint(paint);
+            textEnv.setVerticalSpacing(verticalSpacing);
             return textEnv;
         }
     }

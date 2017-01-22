@@ -15,7 +15,7 @@ import java.util.List;
  */
 public abstract class CYBlock<T> {
 
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
     private static final String TAG = "CYBlock";
     //当前块横坐标
     private int x;

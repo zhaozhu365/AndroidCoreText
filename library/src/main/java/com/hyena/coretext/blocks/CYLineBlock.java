@@ -2,6 +2,10 @@ package com.hyena.coretext.blocks;
 
 import android.graphics.Canvas;
 
+import com.hyena.coretext.TextEnv;
+
+import java.util.List;
+
 /**
  * Created by yangzc on 16/4/8.
  */
@@ -9,13 +13,20 @@ public class CYLineBlock extends CYBlock<CYBlock> {
 
     private int mLineHeight;
 
-    public CYLineBlock() {
-        super(null, "");
+    public CYLineBlock(TextEnv textEnv) {
+        super(textEnv, "");
     }
 
     @Override
     public int getContentWidth() {
-        return 0;
+        List<CYBlock> blocks = getChildren();
+        int width = 0;
+        if (blocks != null && !blocks.isEmpty()) {
+            for (int i = 0; i < blocks.size(); i++) {
+                width += blocks.get(i).getWidth();
+            }
+        }
+        return width;
     }
 
     @Override

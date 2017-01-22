@@ -2,6 +2,7 @@ package com.hyena.coretext.layout;
 
 import android.graphics.Rect;
 
+import com.hyena.coretext.TextEnv;
 import com.hyena.coretext.blocks.CYBlock;
 import com.hyena.coretext.blocks.CYBreakLineBlock;
 import com.hyena.coretext.blocks.CYLineBlock;
@@ -18,23 +19,21 @@ import java.util.List;
 public class CYHorizontalLayout implements CYLayout {
 
     @Override
-    public List<CYPageBlock> parsePage(List<CYBlock> blocks, int pageWidth, int pageHeight) {
-        List<CYLineBlock> lines = parseLines(resetBlocks(blocks), pageWidth);
+    public List<CYPageBlock> parsePage(TextEnv textEnv, List<CYBlock> blocks, int pageWidth, int pageHeight) {
+        List<CYLineBlock> lines = parseLines(textEnv, resetBlocks(blocks), pageWidth);
         List<CYPageBlock> pages = new ArrayList<CYPageBlock>();
-        CYPageBlock page = new CYPageBlock();
-        int height = 0;
+        CYPageBlock page = new CYPageBlock(textEnv);
         int y = 0;
         if (lines != null) {
             for (int i = 0; i < lines.size(); i++) {
                 CYLineBlock line = lines.get(i);
                 int maxBlockHeight = line.getMaxBlockHeightInLine();
-                if (height + maxBlockHeight > pageHeight) {
-                    page = new CYPageBlock();
-                    height = 0;
+                if (y + maxBlockHeight > pageHeight) {
+                    page = new CYPageBlock(textEnv);
                     y = 0;
                 } else {
                     line.updateLineY(y);
-                    y += line.getLineHeight();
+                    y += line.getLineHeight() + textEnv.getVerticalSpacing();
                 }
                 page.addChild(line);
             }
@@ -58,12 +57,12 @@ public class CYHorizontalLayout implements CYLayout {
         return result;
     }
 
-    private List<CYLineBlock> parseLines(List<CYBlock> blocks, int pageWidth) {
+    private List<CYLineBlock> parseLines(TextEnv textEnv, List<CYBlock> blocks, int pageWidth) {
         List<CYLineBlock> lines = new ArrayList<CYLineBlock>();
         List<CYPlaceHolderBlock> placeHolderBlocks = new ArrayList<CYPlaceHolderBlock>();
 
         int leftWidth = pageWidth;
-        CYLineBlock line = new CYLineBlock();
+        CYLineBlock line = new CYLineBlock(textEnv);
         lines.add(line);
         List<CYPlaceHolderBlock> linePlaceHolderBlocks = new ArrayList<CYPlaceHolderBlock>();
         int y = 0;
@@ -71,27 +70,27 @@ public class CYHorizontalLayout implements CYLayout {
             CYBlock itemBlock = blocks.get(i);
             if (itemBlock instanceof CYBreakLineBlock) {
                 //wrap
-                y += line.getLineHeight();
+                y += line.getLineHeight() + textEnv.getVerticalSpacing();
                 leftWidth = pageWidth;
-                line = new CYLineBlock();
+                line = new CYLineBlock(textEnv);
                 lines.add(line);
                 linePlaceHolderBlocks = getLinePlaceHolderBlocks(placeHolderBlocks, y);
             } else {
                 if (itemBlock instanceof CYPlaceHolderBlock) {
                     if (((CYPlaceHolderBlock) itemBlock).getAlignStyle() == CYPlaceHolderBlock.AlignStyle.Style_MONOPOLY) {
                         //add new line
-                        y += line.getLineHeight();
-                        line = new CYLineBlock();
+                        y += line.getLineHeight() + textEnv.getVerticalSpacing();
+                        line = new CYLineBlock(textEnv);
                         lines.add(line);
 
-                        itemBlock.setX((pageWidth - itemBlock.getWidth())/2);
+                        itemBlock.setX((pageWidth - itemBlock.getWidth()) / 2);
                         itemBlock.setLineY(y);
                         line.addChild(itemBlock);
 
                         //add new line
-                        y += line.getLineHeight();
+                        y += line.getLineHeight() + textEnv.getVerticalSpacing();
                         leftWidth = pageWidth;
-                        line = new CYLineBlock();
+                        line = new CYLineBlock(textEnv);
                         lines.add(line);
                         if (placeHolderBlocks != null) {
                             placeHolderBlocks.clear();
@@ -109,9 +108,9 @@ public class CYHorizontalLayout implements CYLayout {
 
                     while (leftWidth < itemBlock.getWidth()) {
                         //wrap
-                        y += line.getLineHeight();
+                        y += line.getLineHeight() + textEnv.getVerticalSpacing();
                         leftWidth = pageWidth;
-                        line = new CYLineBlock();
+                        line = new CYLineBlock(textEnv);
                         lines.add(line);
                         linePlaceHolderBlocks = getLinePlaceHolderBlocks(placeHolderBlocks, y);
 
@@ -127,9 +126,9 @@ public class CYHorizontalLayout implements CYLayout {
                 } else {
                     while (leftWidth < itemBlock.getWidth()) {
                         //wrap
-                        y += line.getLineHeight();
+                        y += line.getLineHeight() + textEnv.getVerticalSpacing();
                         leftWidth = pageWidth;
-                        line = new CYLineBlock();
+                        line = new CYLineBlock(textEnv);
                         lines.add(line);
                         linePlaceHolderBlocks = getLinePlaceHolderBlocks(placeHolderBlocks, y);
 

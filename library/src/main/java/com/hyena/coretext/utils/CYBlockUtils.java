@@ -1,8 +1,11 @@
 package com.hyena.coretext.utils;
 
 import com.hyena.coretext.blocks.CYBlock;
+import com.hyena.coretext.blocks.CYLineBlock;
+import com.hyena.coretext.blocks.CYPageBlock;
 import com.hyena.coretext.blocks.CYTextBlock;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,9 +13,13 @@ import java.util.List;
  */
 public class CYBlockUtils {
 
-    public static CYBlock findBlockByPosition(List<CYBlock> blocks, int x, int y){
+    public static CYBlock findBlockByPosition(CYPageBlock pageBlock, int x, int y){
+        if (pageBlock == null)
+            return null;
+        List<CYBlock> blocks = pageBlock.getBlocks();
         if (blocks == null || blocks.isEmpty())
             return null;
+
         for (int i = 0; i < blocks.size(); i++) {
             CYBlock block = blocks.get(i);
             if (block instanceof CYTextBlock) {
