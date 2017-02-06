@@ -37,7 +37,7 @@ public class SampleRichTextFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         int width = getResources().getDisplayMetrics().widthPixels;
         TextEnv textEnv = new TextEnv.Builder().setTextColor(Color.BLACK).setFontSize(60)
-                .setPageWidth(width - 40).setPageHeight(Integer.MAX_VALUE).build();
+                .setPageWidth(width - 40).setPageHeight(Integer.MAX_VALUE).setEditable(true).build();
 
         List<CYBlock> blocks = new ArrayList<CYBlock>();
         //=================================================================================================================

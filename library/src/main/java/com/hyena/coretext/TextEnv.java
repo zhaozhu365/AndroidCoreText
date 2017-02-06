@@ -16,6 +16,7 @@ public class TextEnv {
     private int mVerticalSpacing;
     private int mPageWidth, mPageHeight;
     private Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private boolean mEditable = true;
 
     private TextEnv() {}
 
@@ -51,6 +52,10 @@ public class TextEnv {
         return mPageHeight;
     }
 
+    private void setEditable(boolean editable) {
+        this.mEditable = editable;
+    }
+
     public static class Builder {
 
         private int fontSize;
@@ -59,6 +64,7 @@ public class TextEnv {
         private int verticalSpacing = 0;
         private int mPageWidth = 0;
         private int mPageHeight = 0;
+        private boolean mEditable = true;
 
         public Builder() {}
 
@@ -91,6 +97,11 @@ public class TextEnv {
             return this;
         }
 
+        public Builder setEditable(boolean editable) {
+            this.mEditable = editable;
+            return this;
+        }
+
         public TextEnv build() {
             Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
             paint.setColor(textColor);
@@ -106,6 +117,7 @@ public class TextEnv {
             textEnv.setVerticalSpacing(verticalSpacing);
             textEnv.setPageWidth(mPageWidth);
             textEnv.setPageHeight(mPageHeight);
+            textEnv.setEditable(mEditable);
             return textEnv;
         }
     }
