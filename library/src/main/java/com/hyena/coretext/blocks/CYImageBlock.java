@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 
 import com.hyena.coretext.TextEnv;
+import com.hyena.framework.utils.ImageFetcher;
 
 /**
  * Created by yangzc on 16/4/8.
@@ -19,8 +20,27 @@ public class CYImageBlock extends CYPlaceHolderBlock {
         super(textEnv, content);
     }
 
-    public CYImageBlock setResId(Context context, int resId){
+    public CYImageBlock setResId(Context context, int resId) {
         mBitmap = BitmapFactory.decodeResource(context.getResources(), resId);
+        return this;
+    }
+
+    public CYImageBlock setResUrl(Context context, String url, int defaultResId) {
+        Bitmap bitmap = ImageFetcher.getImageFetcher().getBitmapInCache(url);
+        if (bitmap != null && !bitmap.isRecycled()) {
+            this.mBitmap = bitmap;
+        } else {
+            setResId(context, defaultResId);
+            ImageFetcher.getImageFetcher().loadImage(url, url, new ImageFetcher.ImageFetcherListener() {
+                @Override
+                public void onLoadComplete(String imageUrl, Bitmap bitmap, Object object) {
+                    if (bitmap != null && !bitmap.isRecycled()) {
+                        mBitmap = bitmap;
+                        requestLayout(true);
+                    }
+                }
+            });
+        }
         return this;
     }
 
@@ -32,7 +52,7 @@ public class CYImageBlock extends CYPlaceHolderBlock {
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
-        if (mBitmap != null)
+        if (mBitmap != null && !mBitmap.isRecycled())
             canvas.drawBitmap(mBitmap, null, getContentRect(), null);
     }
 

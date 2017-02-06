@@ -17,8 +17,9 @@ public class CYEditBlock extends CYPlaceHolderBlock {
 
     private static final int ACTION_FLASH = 1;
 
-    private Paint mLinePaint;
     private Paint mBgPaint;
+    private Paint mBorderPaint;
+    private Paint mInputHintPaint;
 
     private boolean mInputHintVisible = false;
     private Handler mHandler;
@@ -33,9 +34,14 @@ public class CYEditBlock extends CYPlaceHolderBlock {
         mBgPaint.setColor(Color.GRAY);
         mBgPaint.setStrokeWidth(1);
 
-        mLinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mLinePaint.setColor(Color.BLACK);
-        mLinePaint.setStrokeWidth(2);
+        mBorderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mBorderPaint.setColor(Color.BLACK);
+        mBorderPaint.setStyle(Paint.Style.STROKE);
+        mBorderPaint.setStrokeWidth(2);
+
+        mInputHintPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mInputHintPaint.setColor(Color.RED);
+        mInputHintPaint.setStrokeWidth(2);
 
         mHandler = new Handler(Looper.getMainLooper()) {
             @Override
@@ -88,6 +94,7 @@ public class CYEditBlock extends CYPlaceHolderBlock {
         } else {
             mHandler.removeMessages(ACTION_FLASH);
             mInputHintVisible = false;
+            postInvalidate();
         }
     }
 
@@ -98,6 +105,14 @@ public class CYEditBlock extends CYPlaceHolderBlock {
         super.draw(canvas);
         // 绘制外边框
         mRect.set(getContentRect().left, getContentRect().top + 10, getContentRect().right, getContentRect().bottom);
-        canvas.drawRect(mRect, mBgPaint);
+        canvas.drawRect(mRect, mBorderPaint);
+
+        if (isFocus()) {
+            if (mInputHintVisible) {
+                canvas.drawLine(getContentRect().left + 10, getContentRect().top + 10, getContentRect().left + 10, getContentRect().bottom, mInputHintPaint);
+            }
+        } else {
+            canvas.drawRect(mRect, mBgPaint);
+        }
     }
 }

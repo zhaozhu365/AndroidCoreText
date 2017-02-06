@@ -8,8 +8,10 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.hyena.coretext.blocks.CYBlock;
+import com.hyena.coretext.blocks.CYEditBlock;
 import com.hyena.coretext.blocks.CYPageBlock;
 import com.hyena.coretext.event.CYEventDispatcher;
+import com.hyena.coretext.event.CYFocusEventListener;
 import com.hyena.coretext.event.CYLayoutEventListener;
 import com.hyena.coretext.layout.CYHorizontalLayout;
 import com.hyena.coretext.layout.CYLayout;
@@ -21,7 +23,7 @@ import java.util.List;
 /**
  * Created by yangzc on 16/4/8.
  */
-public class CYPageView extends View {
+public class CYPageView extends View implements CYLayoutEventListener {
 
     private CYPageBlock mPageBlock;
     private CYBlock mTouchBlock;
@@ -51,6 +53,7 @@ public class CYPageView extends View {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         setMeasuredDimension(getDefaultSize(getSuggestedMinimumWidth(), widthMeasureSpec)
                 , getMeasureHeight(heightMeasureSpec));
     }
@@ -59,11 +62,11 @@ public class CYPageView extends View {
         int mode = MeasureSpec.getMode(heightSpec);
         int size = MeasureSpec.getSize(heightSpec);
         switch (mode) {
-            case MeasureSpec.AT_MOST:
             case MeasureSpec.EXACTLY: {
                 return size;
             }
-            case MeasureSpec.UNSPECIFIED: {
+            case MeasureSpec.UNSPECIFIED:
+            case MeasureSpec.AT_MOST: {
                 if (mPageBlock != null)
                     return mPageBlock.getHeight();
             }
@@ -87,15 +90,23 @@ public class CYPageView extends View {
             case MotionEvent.ACTION_DOWN: {
                 CYBlock touchBlock = CYBlockUtils.findBlockByPosition(mPageBlock,
                         (int) event.getX(), (int) event.getY());
-                if (touchBlock != mTouchBlock) {
-                    if (mTouchBlock != null)
+                if (touchBlock == null || touchBlock != mTouchBlock) {
+                    if (mTouchBlock != null) {
                         mTouchBlock.setFocus(false);
-
-                    mTouchBlock = touchBlock;
-
-                    if (mTouchBlock != null)
-                        mTouchBlock.setFocus(true);
+                        if (mTouchBlock instanceof CYEditBlock) {
+                            mFocusEventListener.onFocusChange(false, (CYEditBlock) mTouchBlock);
+                        }
+                    }
                 }
+
+                mTouchBlock = touchBlock;
+                if (mTouchBlock != null) {
+                    mTouchBlock.setFocus(true);
+                    if (mTouchBlock instanceof CYEditBlock) {
+                        mFocusEventListener.onFocusChange(true, (CYEditBlock) mTouchBlock);
+                    }
+                }
+
                 if (mTouchBlock != null) {
                     mTouchBlock.onTouchEvent(action, event.getX() - mTouchBlock.getX(),
                             event.getY() - mTouchBlock.getLineY());
@@ -116,4 +127,31 @@ public class CYPageView extends View {
         return super.onTouchEvent(event);
     }
 
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        CYEventDispatcher.getEventDispatcher().addLayoutEventListener(this);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        CYEventDispatcher.getEventDispatcher().removeLayoutEventListener(this);
+    }
+
+    @Override
+    public void onLayout(int pageWidth, int pageHeight) {
+        requestLayout();
+    }
+
+    @Override
+    public void onInvalidate() {
+        postInvalidate();
+    }
+
+    private CYFocusEventListener mFocusEventListener = null;
+
+    public void setFocusEventListener(CYFocusEventListener listener) {
+        this.mFocusEventListener = listener;
+    }
 }

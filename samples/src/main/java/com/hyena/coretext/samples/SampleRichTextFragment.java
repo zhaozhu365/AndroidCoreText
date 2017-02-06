@@ -17,6 +17,7 @@ import com.hyena.coretext.blocks.CYImageBlock;
 import com.hyena.coretext.blocks.CYPageBlock;
 import com.hyena.coretext.blocks.CYPlaceHolderBlock;
 import com.hyena.coretext.blocks.CYTextBlock;
+import com.hyena.coretext.event.CYLayoutEventListener;
 import com.hyena.coretext.layout.CYHorizontalLayout;
 import com.hyena.coretext.layout.CYLayout;
 
@@ -26,7 +27,9 @@ import java.util.List;
 /**
  * Created by yangzc on 16/6/1.
  */
-public class SampleFragment1 extends Fragment {
+public class SampleRichTextFragment extends Fragment {
+
+    private CYPageView mCyPvPageView;
 
     @Nullable
     @Override
@@ -51,17 +54,17 @@ public class SampleFragment1 extends Fragment {
         blocks.add(new CYTextBlock(textEnv, "是一个最好的时代，这是一个最坏的时代；这是一个智慧的年代，这是一个愚蠢的年代；" +
                 "这是一个光明的季节，这是一个黑暗的季节；这是希望之春，这是失望之冬；人们面前应有尽有，人们面前一无所有；人们正踏向天堂之路，人们正走向地狱之门。").setTextSize(40));
 
+        View view = View.inflate(getActivity(), R.layout.content_main, null);
+        mCyPvPageView = (CYPageView) view.findViewById(R.id.page_view);
+
+
         CYLayout layout = new CYHorizontalLayout();
         int width = getResources().getDisplayMetrics().widthPixels;
         List<CYPageBlock> pages = layout.parsePage(textEnv, blocks, width - 40, Integer.MAX_VALUE);
-
-        View view = View.inflate(getActivity(), R.layout.content_main, null);
-        CYPageView pageView = (CYPageView) view.findViewById(R.id.page_view);
         if (pages != null && pages.size() > 0) {
             CYPageBlock pageBlock = pages.get(0);
             pageBlock.setPadding(20, 20, 20, 20);
-
-            pageView.setPageBlock(pageBlock);
+            mCyPvPageView.setPageBlock(pageBlock);
         }
 
 //        AttributedString string = new AttributedString("这是一个最好的时代，这是一个最坏的时代；这是一个智慧的年代，这是一个愚蠢的年代；" +
@@ -74,4 +77,5 @@ public class SampleFragment1 extends Fragment {
 //        view.setBlocks(string.buildBlocks());
         return view;
     }
+
 }
