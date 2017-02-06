@@ -56,9 +56,13 @@ public class TextEnv {
         this.mEditable = editable;
     }
 
+    public boolean isEditable() {
+        return mEditable;
+    }
+
     public static class Builder {
 
-        private int fontSize;
+        private int fontSize = 50;
         private int textColor = Color.BLACK;
         private Typeface typeface;
         private int verticalSpacing = 0;
@@ -83,8 +87,9 @@ public class TextEnv {
             return this;
         }
 
-        public void setVerticalSpacing(int spacing) {
+        public Builder setVerticalSpacing(int spacing) {
             this.verticalSpacing = spacing;
+            return this;
         }
 
         public Builder setPageWidth(int width) {

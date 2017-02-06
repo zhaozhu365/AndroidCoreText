@@ -13,8 +13,6 @@ import com.hyena.coretext.AttributedString;
 import com.hyena.coretext.CYPageView;
 import com.hyena.coretext.TextEnv;
 import com.hyena.coretext.blocks.CYBlock;
-import com.hyena.coretext.blocks.CYBreakLineBlock;
-import com.hyena.coretext.blocks.CYEditBlock;
 import com.hyena.coretext.blocks.CYImageBlock;
 import com.hyena.coretext.blocks.CYPageBlock;
 import com.hyena.coretext.blocks.CYPlaceHolderBlock;

@@ -52,7 +52,7 @@ public class CYPlaceHolderBlock extends CYBlock {
 
     @Override
     public void draw(Canvas canvas) {
-
+        super.draw(canvas);
     }
 
 }

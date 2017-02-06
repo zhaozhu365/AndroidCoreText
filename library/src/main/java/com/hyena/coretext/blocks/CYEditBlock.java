@@ -104,12 +104,11 @@ public class CYEditBlock extends CYPlaceHolderBlock {
     public void draw(Canvas canvas) {
         super.draw(canvas);
         // 绘制外边框
-        mRect.set(getContentRect().left, getContentRect().top + 10, getContentRect().right, getContentRect().bottom);
+        mRect.set(getBlockRect());
         canvas.drawRect(mRect, mBorderPaint);
-
         if (isFocus()) {
             if (mInputHintVisible) {
-                canvas.drawLine(getContentRect().left + 10, getContentRect().top + 10, getContentRect().left + 10, getContentRect().bottom, mInputHintPaint);
+                canvas.drawLine(getContentRect().left + 10, getContentRect().top, getContentRect().left + 10, getContentRect().bottom, mInputHintPaint);
             }
         } else {
             canvas.drawRect(mRect, mBgPaint);

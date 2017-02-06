@@ -16,10 +16,6 @@ import java.util.List;
 public class CYTextBlock extends CYBlock {
 
     private String text;
-//    private int color;
-//    private int fontSize;
-//    private Typeface typeface;
-
     private Paint mPaint;
 
     public CYTextBlock(TextEnv textEnv, String content){
@@ -27,6 +23,7 @@ public class CYTextBlock extends CYBlock {
         this.text = content;
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaint.set(textEnv.getPaint());
+        mPaint.setTextAlign(Paint.Align.CENTER);
     }
 
     public CYTextBlock(TextEnv textEnv, Paint paint, String content) {
@@ -39,8 +36,6 @@ public class CYTextBlock extends CYBlock {
     }
 
     public CYTextBlock setTextColor(int color) {
-//        this.color = color;
-//        createOrClonePaint();
         if (mPaint != null && color > 0) {
             mPaint.setColor(color);
         }
@@ -48,8 +43,6 @@ public class CYTextBlock extends CYBlock {
     }
 
     public CYTextBlock setTypeFace(Typeface typeface){
-//        this.typeface = typeface;
-//        createOrClonePaint();
         if (mPaint != null && typeface != null) {
             mPaint.setTypeface(typeface);
         }
@@ -57,27 +50,11 @@ public class CYTextBlock extends CYBlock {
     }
 
     public CYTextBlock setTextSize(int fontSize){
-//        this.fontSize = fontSize;
-//        createOrClonePaint();
         if (mPaint != null && fontSize > 0) {
             mPaint.setTextSize(fontSize);
         }
         return this;
     }
-
-//    private void createOrClonePaint() {
-//        if (mPaint == null) {
-//            mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-//        }
-//        mPaint.set(getTextEnv().getPaint());
-//    }
-
-//    private Paint getPaint() {
-//        if (mPaint != null) {
-//            return mPaint;
-//        }
-//        return getTextEnv().getPaint();
-//    }
 
     @Override
     public List<CYBlock> getChildren() {
@@ -105,13 +82,14 @@ public class CYTextBlock extends CYBlock {
 
     @Override
     public int getContentHeight() {
-        Paint.FontMetrics fm = mPaint.getFontMetrics();
-        return (int) (Math.ceil(fm.bottom - fm.top) + 0.5f);
+        return (int) (Math.ceil(mPaint.descent() - mPaint.ascent()) + 0.5f);
     }
 
     @Override
     public void draw(Canvas canvas) {
+        super.draw(canvas);
         Rect rect = getContentRect();
-        canvas.drawText(text, rect.left , rect.top + (getLineHeight() + getContentHeight())/2, mPaint);
+        Paint.FontMetrics fontMetrics = mPaint.getFontMetrics();
+        canvas.drawText(text, rect.centerX(), rect.bottom - fontMetrics.bottom, mPaint);
     }
 }

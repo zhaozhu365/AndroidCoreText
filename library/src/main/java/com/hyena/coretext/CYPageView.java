@@ -93,7 +93,7 @@ public class CYPageView extends View implements CYLayoutEventListener {
                 if (touchBlock == null || touchBlock != mTouchBlock) {
                     if (mTouchBlock != null) {
                         mTouchBlock.setFocus(false);
-                        if (mTouchBlock instanceof CYEditBlock) {
+                        if (mTouchBlock instanceof CYEditBlock && mFocusEventListener != null) {
                             mFocusEventListener.onFocusChange(false, (CYEditBlock) mTouchBlock);
                         }
                     }
@@ -102,7 +102,7 @@ public class CYPageView extends View implements CYLayoutEventListener {
                 mTouchBlock = touchBlock;
                 if (mTouchBlock != null) {
                     mTouchBlock.setFocus(true);
-                    if (mTouchBlock instanceof CYEditBlock) {
+                    if (mTouchBlock instanceof CYEditBlock && mFocusEventListener != null) {
                         mFocusEventListener.onFocusChange(true, (CYEditBlock) mTouchBlock);
                     }
                 }

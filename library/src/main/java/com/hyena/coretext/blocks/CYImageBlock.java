@@ -14,7 +14,7 @@ import com.hyena.framework.utils.ImageFetcher;
  */
 public class CYImageBlock extends CYPlaceHolderBlock {
 
-    private Bitmap mBitmap;
+    protected Bitmap mBitmap;
 
     public CYImageBlock(TextEnv textEnv, String content){
         super(textEnv, content);

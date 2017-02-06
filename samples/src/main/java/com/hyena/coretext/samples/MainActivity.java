@@ -14,7 +14,7 @@ public class MainActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.main_container, new SampleRichTextFragment());
+        transaction.replace(R.id.main_container, new SampleQuestionFragment());
         transaction.commit();
     }
 

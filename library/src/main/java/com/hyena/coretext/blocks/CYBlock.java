@@ -1,11 +1,14 @@
 package com.hyena.coretext.blocks;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.Log;
 
 import com.hyena.coretext.TextEnv;
 import com.hyena.coretext.event.CYEventDispatcher;
+import com.hyena.framework.utils.UIUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +18,7 @@ import java.util.List;
  */
 public abstract class CYBlock<T> {
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
     private static final String TAG = "CYBlock";
     //当前块横坐标
     private int x;
@@ -23,7 +26,7 @@ public abstract class CYBlock<T> {
     private int lineY;
     //当前行高度
     private int lineHeight;
-    private int paddingLeft = 10, paddingTop = 10, paddingRight = 10, paddingBottom = 10;
+    private int paddingLeft = 0, paddingTop = 0, paddingRight = 0, paddingBottom = 0;
     //是否存在焦点
     private boolean mFocus = false;
     //内容范围
@@ -33,8 +36,17 @@ public abstract class CYBlock<T> {
     private List<T> mChildren = new ArrayList<T>();
     private TextEnv mTextEnv;
 
+    private Paint mPaint;
+
     public CYBlock(TextEnv textEnv, String content) {
         this.mTextEnv = textEnv;
+        this.paddingTop = UIUtils.dip2px(2);
+        this.paddingBottom = UIUtils.dip2px(2);
+        if (DEBUG) {
+            mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            mPaint.setColor(Color.BLACK);
+            mPaint.setStyle(Paint.Style.STROKE);
+        }
     }
 
     public TextEnv getTextEnv() {
@@ -144,7 +156,11 @@ public abstract class CYBlock<T> {
      * draw block
      * @param canvas canvas
      */
-    public abstract void draw(Canvas canvas);
+    public void draw(Canvas canvas) {
+        if (DEBUG) {
+            canvas.drawRect(getContentRect(), mPaint);
+        }
+    }
 
     /**
      * add child
