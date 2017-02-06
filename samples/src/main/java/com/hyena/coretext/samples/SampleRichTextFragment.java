@@ -17,7 +17,6 @@ import com.hyena.coretext.blocks.CYImageBlock;
 import com.hyena.coretext.blocks.CYPageBlock;
 import com.hyena.coretext.blocks.CYPlaceHolderBlock;
 import com.hyena.coretext.blocks.CYTextBlock;
-import com.hyena.coretext.event.CYLayoutEventListener;
 import com.hyena.coretext.layout.CYHorizontalLayout;
 import com.hyena.coretext.layout.CYLayout;
 
@@ -34,7 +33,9 @@ public class SampleRichTextFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        TextEnv textEnv = new TextEnv.Builder().setTextColor(Color.BLACK).setFontSize(60).build();
+        int width = getResources().getDisplayMetrics().widthPixels;
+        TextEnv textEnv = new TextEnv.Builder().setTextColor(Color.BLACK).setFontSize(60)
+                .setPageWidth(width - 40).setPageHeight(Integer.MAX_VALUE).build();
 
         List<CYBlock> blocks = new ArrayList<CYBlock>();
         blocks.add(new CYTextBlock(textEnv, "这").setTextSize(50).setTextColor(Color.RED));
@@ -59,8 +60,7 @@ public class SampleRichTextFragment extends Fragment {
 
 
         CYLayout layout = new CYHorizontalLayout();
-        int width = getResources().getDisplayMetrics().widthPixels;
-        List<CYPageBlock> pages = layout.parsePage(textEnv, blocks, width - 40, Integer.MAX_VALUE);
+        List<CYPageBlock> pages = layout.parsePage(textEnv, blocks);
         if (pages != null && pages.size() > 0) {
             CYPageBlock pageBlock = pages.get(0);
             pageBlock.setPadding(20, 20, 20, 20);

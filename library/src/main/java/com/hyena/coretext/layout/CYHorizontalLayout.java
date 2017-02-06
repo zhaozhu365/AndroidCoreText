@@ -19,8 +19,8 @@ import java.util.List;
 public class CYHorizontalLayout implements CYLayout {
 
     @Override
-    public List<CYPageBlock> parsePage(TextEnv textEnv, List<CYBlock> blocks, int pageWidth, int pageHeight) {
-        List<CYLineBlock> lines = parseLines(textEnv, resetBlocks(blocks), pageWidth);
+    public List<CYPageBlock> parsePage(TextEnv textEnv, List<CYBlock> blocks) {
+        List<CYLineBlock> lines = parseLines(textEnv, resetBlocks(blocks), textEnv.getPageWidth());
         List<CYPageBlock> pages = new ArrayList<CYPageBlock>();
         CYPageBlock page = new CYPageBlock(textEnv);
         int y = 0;
@@ -28,7 +28,7 @@ public class CYHorizontalLayout implements CYLayout {
             for (int i = 0; i < lines.size(); i++) {
                 CYLineBlock line = lines.get(i);
                 int maxBlockHeight = line.getMaxBlockHeightInLine();
-                if (y + maxBlockHeight > pageHeight) {
+                if (y + maxBlockHeight > textEnv.getPageHeight()) {
                     page = new CYPageBlock(textEnv);
                     y = 0;
                 } else {

@@ -14,6 +14,7 @@ import android.graphics.Typeface;
 public class TextEnv {
 
     private int mVerticalSpacing;
+    private int mPageWidth, mPageHeight;
     private Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     private TextEnv() {}
@@ -34,12 +35,30 @@ public class TextEnv {
         this.mVerticalSpacing = spacing;
     }
 
+    private void setPageWidth(int width) {
+        this.mPageWidth = width;
+    }
+
+    private void setPageHeight(int height) {
+        this.mPageHeight = height;
+    }
+
+    public int getPageWidth() {
+        return mPageWidth;
+    }
+
+    public int getPageHeight() {
+        return mPageHeight;
+    }
+
     public static class Builder {
 
         private int fontSize;
         private int textColor = Color.BLACK;
         private Typeface typeface;
         private int verticalSpacing = 0;
+        private int mPageWidth = 0;
+        private int mPageHeight = 0;
 
         public Builder() {}
 
@@ -62,6 +81,16 @@ public class TextEnv {
             this.verticalSpacing = spacing;
         }
 
+        public Builder setPageWidth(int width) {
+            this.mPageWidth = width;
+            return this;
+        }
+
+        public Builder setPageHeight(int height) {
+            this.mPageHeight = height;
+            return this;
+        }
+
         public TextEnv build() {
             Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
             paint.setColor(textColor);
@@ -75,6 +104,8 @@ public class TextEnv {
             TextEnv textEnv = new TextEnv();
             textEnv.setPaint(paint);
             textEnv.setVerticalSpacing(verticalSpacing);
+            textEnv.setPageWidth(mPageWidth);
+            textEnv.setPageHeight(mPageHeight);
             return textEnv;
         }
     }

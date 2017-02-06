@@ -16,10 +16,8 @@ public interface CYLayout {
      * parse block to page
      * @param textEnv environment
      * @param blocks blocks
-     * @param pageWidth pageWidth
-     * @param pageHeight pageHeight
      * @return pages
      */
-    List<CYPageBlock> parsePage(TextEnv textEnv, List<CYBlock> blocks, int pageWidth, int pageHeight);
+    List<CYPageBlock> parsePage(TextEnv textEnv, List<CYBlock> blocks);
 
 }
