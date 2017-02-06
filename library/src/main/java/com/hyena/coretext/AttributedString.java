@@ -18,9 +18,11 @@ import java.util.List;
 public class AttributedString {
 
     private String mText;
+    private TextEnv mTextEnv;
     private List<BlockSection> mBlockSections;
 
-    public AttributedString(String text) {
+    public AttributedString(TextEnv textEnv, String text) {
+        this.mTextEnv = textEnv;
         this.mText = text;
     }
 
@@ -95,9 +97,9 @@ public class AttributedString {
 
             if (blockClz != null) {
                 try {
-                    Constructor<? extends  CYBlock> constructor = blockClz.getConstructor(String.class);
+                    Constructor<? extends  CYBlock> constructor = blockClz.getConstructor(TextEnv.class, String.class);
                     String content = mText.substring(startIndex, endIndex);
-                    mBlock = constructor.newInstance(content);
+                    mBlock = constructor.newInstance(mTextEnv, content);
                     return mBlock;
                 } catch (NoSuchMethodException e) {
                     e.printStackTrace();
