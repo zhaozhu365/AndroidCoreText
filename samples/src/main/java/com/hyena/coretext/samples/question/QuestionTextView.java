@@ -55,8 +55,8 @@ public class QuestionTextView extends CYPageView {
     }
 
     private void init() {
-        mEnvBuilder = new TextEnv.Builder().setPageHeight(Integer.MAX_VALUE)
-                .setVerticalSpacing(UIUtils.dip2px(getContext(), 1)).setEditable(true);
+        mEnvBuilder = new TextEnv.Builder(getContext()).setPageHeight(Integer.MAX_VALUE)
+                .setVerticalSpacing(UIUtils.dip2px(getContext(), 1)).setEditable(false);
     }
 
     public void setTextColor(int textColor) {
@@ -106,6 +106,7 @@ public class QuestionTextView extends CYPageView {
                     attributedString.replaceBlock(start, end, block);
                 }
             }
+            attributedString.replaceBlock(0, 1, new AudioBlock(mTextEnv, ""));
         }
         return attributedString;
     }
@@ -117,7 +118,7 @@ public class QuestionTextView extends CYPageView {
             if ("blank".equals(type)) {
                 return (T) new BlankBlock(mTextEnv, data);
             } else if("img".equals(type)) {
-                return (T) new ImageBlock(getContext(), mTextEnv, data);
+                return (T) new ImageBlock(mTextEnv, data);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -130,4 +131,9 @@ public class QuestionTextView extends CYPageView {
         analysisData();
     }
 
+    @Override
+    public void onLayout(int pageWidth, int pageHeight) {
+        super.onLayout(pageWidth, pageHeight);
+        analysisData();
+    }
 }

@@ -8,17 +8,13 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.hyena.coretext.blocks.CYBlock;
-import com.hyena.coretext.blocks.CYEditBlock;
+import com.hyena.coretext.blocks.CYEditable;
 import com.hyena.coretext.blocks.CYPageBlock;
 import com.hyena.coretext.event.CYEventDispatcher;
 import com.hyena.coretext.event.CYFocusEventListener;
 import com.hyena.coretext.event.CYLayoutEventListener;
-import com.hyena.coretext.layout.CYHorizontalLayout;
-import com.hyena.coretext.layout.CYLayout;
 import com.hyena.coretext.utils.CYBlockUtils;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.hyena.framework.clientlog.LogUtil;
 
 /**
  * Created by yangzc on 16/4/8.
@@ -26,7 +22,7 @@ import java.util.List;
 public class CYPageView extends View implements CYLayoutEventListener {
 
     private CYPageBlock mPageBlock;
-    private CYBlock mTouchBlock;
+    private CYBlock mFocusBlock;
 
     public CYPageView(Context context) {
         super(context);
@@ -83,33 +79,56 @@ public class CYPageView extends View implements CYLayoutEventListener {
         postInvalidate();
     }
 
+    /**
+     * find editable by tabId
+     * @param tabId tabId
+     * @return
+     */
+    public CYEditable findEditableByTabId(int tabId) {
+        if (mPageBlock != null) {
+            return mPageBlock.findEditableByTabId(tabId);
+        }
+        return null;
+    }
+
+    public void setFocus(int tabId) {
+        CYEditable editable = findEditableByTabId(tabId);
+        if (editable != null) {
+            editable.setFocus(true);
+            if (mFocusBlock != null) {
+                mFocusBlock.setFocus(false);
+            }
+        }
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         int action = MotionEventCompat.getActionMasked(event);
+        LogUtil.v("yangzc", "event action -->" + event.getAction());
         switch (action) {
             case MotionEvent.ACTION_DOWN: {
-                CYBlock touchBlock = CYBlockUtils.findBlockByPosition(mPageBlock,
+                CYBlock focusBlock = CYBlockUtils.findBlockByPosition(mPageBlock,
                         (int) event.getX(), (int) event.getY());
-                if (touchBlock == null || touchBlock != mTouchBlock) {
-                    if (mTouchBlock != null) {
-                        mTouchBlock.setFocus(false);
-                        if (mTouchBlock instanceof CYEditBlock && mFocusEventListener != null) {
-                            mFocusEventListener.onFocusChange(false, (CYEditBlock) mTouchBlock);
+                if (focusBlock == null || focusBlock != mFocusBlock) {
+                    if (mFocusBlock != null) {
+                        mFocusBlock.setFocus(false);
+                        if (mFocusBlock instanceof CYEditable && mFocusEventListener != null) {
+                            mFocusEventListener.onFocusChange(false, (CYEditable) mFocusBlock);
                         }
                     }
                 }
 
-                mTouchBlock = touchBlock;
-                if (mTouchBlock != null) {
-                    mTouchBlock.setFocus(true);
-                    if (mTouchBlock instanceof CYEditBlock && mFocusEventListener != null) {
-                        mFocusEventListener.onFocusChange(true, (CYEditBlock) mTouchBlock);
+                mFocusBlock = focusBlock;
+                if (mFocusBlock != null) {
+                    mFocusBlock.setFocus(true);
+                    if (mFocusBlock instanceof CYEditable && mFocusEventListener != null) {
+                        mFocusEventListener.onFocusChange(true, (CYEditable) mFocusBlock);
                     }
                 }
 
-                if (mTouchBlock != null) {
-                    mTouchBlock.onTouchEvent(action, event.getX() - mTouchBlock.getX(),
-                            event.getY() - mTouchBlock.getLineY());
+                if (mFocusBlock != null) {
+                    mFocusBlock.onTouchEvent(action, event.getX() - mFocusBlock.getX(),
+                            event.getY() - mFocusBlock.getLineY());
                 }
                 break;
             }
@@ -117,14 +136,14 @@ public class CYPageView extends View implements CYLayoutEventListener {
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_OUTSIDE: {
-                if (mTouchBlock != null) {
-                    mTouchBlock.onTouchEvent(action, event.getX() - mTouchBlock.getX(),
-                            event.getY() - mTouchBlock.getLineY());
+                if (mFocusBlock != null) {
+                    mFocusBlock.onTouchEvent(action, event.getX() - mFocusBlock.getX(),
+                            event.getY() - mFocusBlock.getLineY());
                 }
                 break;
             }
         }
-        return super.onTouchEvent(event);
+        return true;
     }
 
     @Override
@@ -137,6 +156,12 @@ public class CYPageView extends View implements CYLayoutEventListener {
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         CYEventDispatcher.getEventDispatcher().removeLayoutEventListener(this);
+        if (mFocusBlock != null) {
+            mFocusBlock.setFocus(false);
+        }
+        if (mPageBlock != null) {
+            mPageBlock.release();
+        }
     }
 
     @Override

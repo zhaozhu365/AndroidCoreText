@@ -7,22 +7,28 @@ import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.text.TextUtils;
 
 import com.hyena.coretext.TextEnv;
+import com.hyena.framework.utils.UIUtils;
 
 /**
  * Created by yangzc on 16/4/12.
  */
-public class CYEditBlock extends CYPlaceHolderBlock {
+public class CYEditBlock extends CYPlaceHolderBlock implements CYEditable {
 
     private static final int ACTION_FLASH = 1;
 
-    private Paint mBgPaint;
-    private Paint mBorderPaint;
-    private Paint mInputHintPaint;
+    protected Paint mBgPaint;
+    protected Paint mBorderPaint;
+    protected Paint mInputHintPaint;
+    protected Paint mTextPaint;
 
     private boolean mInputHintVisible = false;
     private Handler mHandler;
+
+    private int mHintPadding = 0;
+    private String mText;
 
     public CYEditBlock(TextEnv textEnv, String content) {
         super(textEnv, content);
@@ -43,6 +49,14 @@ public class CYEditBlock extends CYPlaceHolderBlock {
         mInputHintPaint.setColor(Color.RED);
         mInputHintPaint.setStrokeWidth(2);
 
+        mTextPaint = new Paint(getTextEnv().getPaint());
+
+        mHintPadding = UIUtils.dip2px(2);
+        Paint paint = getTextEnv().getPaint();
+        int height = (int) (Math.ceil(paint.descent() - paint.ascent()) + 0.5f);
+        setWidth(UIUtils.dip2px(80));
+        setHeight(height);
+
         mHandler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
@@ -50,6 +64,11 @@ public class CYEditBlock extends CYPlaceHolderBlock {
                 handleMessageImpl(msg);
             }
         };
+    }
+
+    public CYEditBlock setHintPadding(int padding) {
+        this.mHintPadding = padding;
+        return this;
     }
 
     private void handleMessageImpl(Message msg) {
@@ -98,20 +117,61 @@ public class CYEditBlock extends CYPlaceHolderBlock {
         }
     }
 
-    private Rect mRect = new Rect();
+//    private Rect mRect = new Rect();
 
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
+        Rect contentRect = getContentRect();
+        Rect blockRect = getBlockRect();
+
+        float textHintMarginLeft = 0;
+        float textX = contentRect.left;
+        if (!TextUtils.isEmpty(mText)) {
+            textHintMarginLeft = mTextPaint.measureText(mText);
+            if (textHintMarginLeft > contentRect.width()) {
+                textX = contentRect.width() - textHintMarginLeft;
+                textHintMarginLeft = contentRect.width();
+            } else {
+                textX = (contentRect.width() - textHintMarginLeft)/2;
+            }
+        }
+
         // 绘制外边框
-        mRect.set(getBlockRect());
-        canvas.drawRect(mRect, mBorderPaint);
+        canvas.drawRect(blockRect, mBorderPaint);
         if (isFocus()) {
             if (mInputHintVisible) {
-                canvas.drawLine(getContentRect().left + 10, getContentRect().top, getContentRect().left + 10, getContentRect().bottom, mInputHintPaint);
+                canvas.drawLine(contentRect.left + textHintMarginLeft, contentRect.top + mHintPadding,
+                        contentRect.left + textHintMarginLeft, contentRect.bottom - mHintPadding, mInputHintPaint);
             }
         } else {
-            canvas.drawRect(mRect, mBgPaint);
+            canvas.drawRect(blockRect, mBgPaint);
         }
+
+        if (!TextUtils.isEmpty(mText)) {
+            Paint.FontMetrics fontMetrics = mTextPaint.getFontMetrics();
+            canvas.drawText(mText, textX, contentRect.bottom - fontMetrics.bottom, mTextPaint);
+        }
+    }
+
+    @Override
+    public int getTabId() {
+        return 0;
+    }
+
+    @Override
+    public void setTabId(int id) {
+    }
+
+    @Override
+    public String getText() {
+        return mText;
+    }
+
+    @Override
+    public void setText(String text) {
+        this.mText = text;
+        postInvalidate();
+//        requestLayout();
     }
 }

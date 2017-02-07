@@ -23,11 +23,11 @@ public class ImageBlock extends CYImageBlock {
     private boolean mIsBigImage = false;
     private float mScreenWidth = 0;
 
-    public ImageBlock(Context context, TextEnv textEnv, String content) {
+    public ImageBlock(TextEnv textEnv, String content) {
         super(textEnv, content);
         MAX_HEIGHT = UIUtils.dip2px(100);
-        mScreenWidth = context.getResources().getDisplayMetrics().widthPixels;
-        init(context, content);
+        mScreenWidth = textEnv.getContext().getResources().getDisplayMetrics().widthPixels;
+        init(textEnv.getContext(), content);
     }
 
     private void init(Context context, String content) {

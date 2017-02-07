@@ -5,7 +5,10 @@
 package com.hyena.coretext.samples.question;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
+import android.text.TextUtils;
 
 import com.hyena.coretext.TextEnv;
 import com.hyena.coretext.blocks.CYEditBlock;
@@ -19,7 +22,6 @@ import org.json.JSONObject;
  */
 public class BlankBlock extends CYEditBlock {
 
-    private int mID = 0;
     private boolean mIsRight = false;
 
     public BlankBlock(TextEnv textEnv, String content) {
@@ -28,20 +30,16 @@ public class BlankBlock extends CYEditBlock {
     }
 
     private void init(String content) {
-        Paint paint = getTextEnv().getPaint();
-        int height = (int) (Math.ceil(paint.descent() - paint.ascent()) + 0.5f);
         setWidth(UIUtils.dip2px(80));
-        setHeight(height);
+        setPadding(UIUtils.dip2px(3), 0, UIUtils.dip2px(3), 0);
+        setHintPadding(UIUtils.dip2px(3));
+        mInputHintPaint.setStrokeWidth(UIUtils.dip2px(2));
         try {
             JSONObject json = new JSONObject(content);
-            this.mID = json.optInt("id");
+            setTabId(json.optInt("id"));
         } catch (JSONException e) {
             e.printStackTrace();
         }
-    }
-
-    public int getId() {
-        return mID;
     }
 
     @Override
@@ -50,6 +48,29 @@ public class BlankBlock extends CYEditBlock {
             super.draw(canvas);
         } else {
             //draw answer
+            Rect contentRect = getContentRect();
+            if (!TextUtils.isEmpty(getText())) {
+                float textX;
+                float textWidth = mTextPaint.measureText(getText());
+                if (textWidth > contentRect.width()) {
+                    textX = contentRect.width() - textWidth;
+                } else {
+                    textX = (contentRect.width() - textWidth)/2;
+                }
+                mTextPaint.setColor(Color.BLACK);
+                Paint.FontMetrics fontMetrics = mTextPaint.getFontMetrics();
+                canvas.drawText(getText(), textX, contentRect.bottom - fontMetrics.bottom, mTextPaint);
+            }
+
+            mTextPaint.setColor(Color.RED);
+            Paint.FontMetrics fontMetrics = mTextPaint.getFontMetrics();
+            canvas.drawText("(", getBlockRect().left, contentRect.bottom - fontMetrics.bottom, mTextPaint);
+            canvas.drawText(")", getContentRect().right, contentRect.bottom - fontMetrics.bottom, mTextPaint);
         }
+    }
+
+    @Override
+    public boolean isDebug() {
+        return false;
     }
 }

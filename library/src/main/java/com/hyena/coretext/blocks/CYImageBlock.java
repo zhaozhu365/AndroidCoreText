@@ -4,10 +4,14 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Paint;
+import android.graphics.Rect;
+import android.util.Log;
 
 import com.hyena.coretext.TextEnv;
+import com.hyena.framework.clientlog.LogUtil;
+import com.hyena.framework.utils.BaseApp;
 import com.hyena.framework.utils.ImageFetcher;
+import com.hyena.framework.utils.UIUtils;
 
 /**
  * Created by yangzc on 16/4/8.
@@ -22,6 +26,7 @@ public class CYImageBlock extends CYPlaceHolderBlock {
 
     public CYImageBlock setResId(Context context, int resId) {
         mBitmap = BitmapFactory.decodeResource(context.getResources(), resId);
+
         return this;
     }
 
@@ -29,6 +34,7 @@ public class CYImageBlock extends CYPlaceHolderBlock {
         Bitmap bitmap = ImageFetcher.getImageFetcher().getBitmapInCache(url);
         if (bitmap != null && !bitmap.isRecycled()) {
             this.mBitmap = bitmap;
+            Log.v("yangzc", "get");
         } else {
             setResId(context, defaultResId);
             ImageFetcher.getImageFetcher().loadImage(url, url, new ImageFetcher.ImageFetcherListener() {
@@ -37,6 +43,7 @@ public class CYImageBlock extends CYPlaceHolderBlock {
                     if (bitmap != null && !bitmap.isRecycled()) {
                         mBitmap = bitmap;
                         requestLayout(true);
+                        Log.v("yangzc", "load");
                     }
                 }
             });
@@ -52,8 +59,14 @@ public class CYImageBlock extends CYPlaceHolderBlock {
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
-        if (mBitmap != null && !mBitmap.isRecycled())
+        if (mBitmap != null && !mBitmap.isRecycled()) {
             canvas.drawBitmap(mBitmap, null, getContentRect(), null);
+        }
+    }
+
+    @Override
+    public boolean isDebug() {
+        return true;
     }
 
     @Override

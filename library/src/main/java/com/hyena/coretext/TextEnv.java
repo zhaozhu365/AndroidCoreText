@@ -4,21 +4,31 @@
 
 package com.hyena.coretext;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+
+import com.hyena.framework.utils.UIUtils;
 
 /**
  * Created by yangzc on 17/1/20.
  */
 public class TextEnv {
 
+    private Context mContext;
     private int mVerticalSpacing;
     private int mPageWidth, mPageHeight;
     private Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private boolean mEditable = true;
 
-    private TextEnv() {}
+    private TextEnv(Context context) {
+        this.mContext = context;
+    }
+
+    public Context getContext() {
+        return mContext;
+    }
 
     public void setPaint(Paint paint) {
         this.paint = paint;
@@ -62,15 +72,18 @@ public class TextEnv {
 
     public static class Builder {
 
+        private Context context;
         private int fontSize = 50;
         private int textColor = Color.BLACK;
         private Typeface typeface;
         private int verticalSpacing = 0;
-        private int mPageWidth = 0;
-        private int mPageHeight = 0;
-        private boolean mEditable = true;
+        private int pageWidth = 0;
+        private int pageHeight = 0;
+        private boolean editable = true;
 
-        public Builder() {}
+        public Builder(Context context) {
+            this.context = context;
+        }
 
         public Builder setFontSize(int fontSize) {
             this.fontSize = fontSize;
@@ -93,17 +106,17 @@ public class TextEnv {
         }
 
         public Builder setPageWidth(int width) {
-            this.mPageWidth = width;
+            this.pageWidth = width;
             return this;
         }
 
         public Builder setPageHeight(int height) {
-            this.mPageHeight = height;
+            this.pageHeight = height;
             return this;
         }
 
         public Builder setEditable(boolean editable) {
-            this.mEditable = editable;
+            this.editable = editable;
             return this;
         }
 
@@ -111,18 +124,18 @@ public class TextEnv {
             Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
             paint.setColor(textColor);
             if (fontSize <= 0) {
-                fontSize = 60;
+                fontSize = UIUtils.dip2px(18);
             }
             paint.setTextSize(fontSize);
             if (typeface != null)
                 paint.setTypeface(typeface);
 
-            TextEnv textEnv = new TextEnv();
+            TextEnv textEnv = new TextEnv(context);
             textEnv.setPaint(paint);
             textEnv.setVerticalSpacing(verticalSpacing);
-            textEnv.setPageWidth(mPageWidth);
-            textEnv.setPageHeight(mPageHeight);
-            textEnv.setEditable(mEditable);
+            textEnv.setPageWidth(pageWidth);
+            textEnv.setPageHeight(pageHeight);
+            textEnv.setEditable(editable);
             return textEnv;
         }
     }

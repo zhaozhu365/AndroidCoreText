@@ -16,9 +16,8 @@ import java.util.List;
 /**
  * Created by yangzc on 16/4/8.
  */
-public abstract class CYBlock<T> {
+public abstract class CYBlock<T extends CYBlock> {
 
-    private static final boolean DEBUG = false;
     private static final String TAG = "CYBlock";
     //当前块横坐标
     private int x;
@@ -42,7 +41,7 @@ public abstract class CYBlock<T> {
         this.mTextEnv = textEnv;
         this.paddingTop = UIUtils.dip2px(2);
         this.paddingBottom = UIUtils.dip2px(2);
-        if (DEBUG) {
+        if (isDebug()) {
             mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             mPaint.setColor(Color.BLACK);
             mPaint.setStyle(Paint.Style.STROKE);
@@ -157,7 +156,7 @@ public abstract class CYBlock<T> {
      * @param canvas canvas
      */
     public void draw(Canvas canvas) {
-        if (DEBUG) {
+        if (isDebug()) {
             canvas.drawRect(getContentRect(), mPaint);
         }
     }
@@ -201,7 +200,7 @@ public abstract class CYBlock<T> {
     }
 
     public void onTouchEvent(int event, float x, float y) {
-        if (DEBUG)
+        if (isDebug())
             debug("onEvent: " + event);
     }
 
@@ -210,7 +209,7 @@ public abstract class CYBlock<T> {
      */
     public void setFocus(boolean focus) {
         mFocus = focus;
-        if (DEBUG)
+        if (isDebug())
             debug("rect: " + getBlockRect().toString() + ", focus: " + focus);
     }
 
@@ -243,7 +242,44 @@ public abstract class CYBlock<T> {
         CYEventDispatcher.getEventDispatcher().postInvalidate();
     }
 
+    public boolean isDebug() {
+        return false;
+    }
+
     protected void debug(String msg) {
         Log.v(TAG, msg);
+    }
+
+    /**
+     * find editable by tabId
+     * @param tabId tabId
+     * @return
+     */
+    public CYEditable findEditableByTabId(int tabId) {
+        List<T> children = getChildren();
+        if (children != null && !children.isEmpty()) {
+            for (int i = 0; i < children.size(); i++) {
+                T block = children.get(i);
+                CYEditable editable = block.findEditableByTabId(tabId);
+                if (editable != null) {
+                    return editable;
+                }
+            }
+        } else {
+            if (this instanceof CYEditBlock && ((CYEditBlock)this).getTabId() == tabId) {
+                return (CYEditable) this;
+            }
+        }
+        return null;
+    }
+
+    public void release() {
+        List<T> children = getChildren();
+        if (children != null && !children.isEmpty()) {
+            for (int i = 0; i < children.size(); i++) {
+                T block = children.get(i);
+                block.release();
+            }
+        }
     }
 }

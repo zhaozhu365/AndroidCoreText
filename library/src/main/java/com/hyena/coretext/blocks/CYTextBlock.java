@@ -8,6 +8,7 @@ import android.text.TextUtils;
 
 import com.hyena.coretext.TextEnv;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -58,11 +59,18 @@ public class CYTextBlock extends CYBlock {
 
     @Override
     public List<CYBlock> getChildren() {
-        List<CYBlock> children = super.getChildren();
-        if (children == null || children.isEmpty()) {
-            parseSubBlocks();
+        if (!TextUtils.isEmpty(text)) {
+            if (text.length() == 1) {
+                return null;
+            } else {
+                List<CYBlock> children = super.getChildren();
+                if (children == null || children.isEmpty()) {
+                    parseSubBlocks();
+                }
+                return children;
+            }
         }
-        return children;
+        return null;
     }
 
     private void parseSubBlocks() {

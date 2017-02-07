@@ -47,7 +47,7 @@ public class CYHorizontalLayout implements CYLayout {
         if (rawBlocks != null) {
             for (int i = 0; i < rawBlocks.size(); i++) {
                 CYBlock block = rawBlocks.get(i);
-                if (block instanceof CYTextBlock) {
+                if (block instanceof CYTextBlock && block.getChildren() != null) {
                     result.addAll(block.getChildren());
                 } else {
                     result.add(block);
