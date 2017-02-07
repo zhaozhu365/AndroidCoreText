@@ -30,9 +30,10 @@ public class BlankBlock extends CYEditBlock {
     }
 
     private void init(String content) {
-        setWidth(UIUtils.dip2px(80));
-        setPadding(UIUtils.dip2px(3), 0, UIUtils.dip2px(3), 0);
+        setWidth(UIUtils.dip2px(50));
+        setPadding(UIUtils.dip2px(3), getPaddingTop(), UIUtils.dip2px(3), getPaddingBottom());
         setHintPadding(UIUtils.dip2px(3));
+        setText("填空");
         mInputHintPaint.setStrokeWidth(UIUtils.dip2px(2));
         try {
             JSONObject json = new JSONObject(content);
@@ -53,9 +54,9 @@ public class BlankBlock extends CYEditBlock {
                 float textX;
                 float textWidth = mTextPaint.measureText(getText());
                 if (textWidth > contentRect.width()) {
-                    textX = contentRect.width() - textWidth;
+                    textX = contentRect.right - textWidth;
                 } else {
-                    textX = (contentRect.width() - textWidth)/2;
+                    textX = contentRect.left + (contentRect.width() - textWidth)/2;
                 }
                 mTextPaint.setColor(Color.BLACK);
                 Paint.FontMetrics fontMetrics = mTextPaint.getFontMetrics();

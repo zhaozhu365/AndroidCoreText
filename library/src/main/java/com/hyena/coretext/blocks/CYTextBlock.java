@@ -8,7 +8,6 @@ import android.text.TextUtils;
 
 import com.hyena.coretext.TextEnv;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

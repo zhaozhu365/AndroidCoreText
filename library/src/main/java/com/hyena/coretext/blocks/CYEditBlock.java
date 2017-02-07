@@ -130,10 +130,10 @@ public class CYEditBlock extends CYPlaceHolderBlock implements CYEditable {
         if (!TextUtils.isEmpty(mText)) {
             textHintMarginLeft = mTextPaint.measureText(mText);
             if (textHintMarginLeft > contentRect.width()) {
-                textX = contentRect.width() - textHintMarginLeft;
+                textX = contentRect.right - textHintMarginLeft;
                 textHintMarginLeft = contentRect.width();
             } else {
-                textX = (contentRect.width() - textHintMarginLeft)/2;
+                textX = contentRect.left + (contentRect.width() - textHintMarginLeft)/2;
             }
         }
 

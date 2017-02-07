@@ -158,6 +158,7 @@ public abstract class CYBlock<T extends CYBlock> {
     public void draw(Canvas canvas) {
         if (isDebug()) {
             canvas.drawRect(getContentRect(), mPaint);
+            canvas.drawRect(getBlockRect(), mPaint);
         }
     }
 
