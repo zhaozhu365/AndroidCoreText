@@ -2,11 +2,10 @@ package com.hyena.coretext.samples.question;
 
 import android.graphics.Canvas;
 import android.graphics.Rect;
-import android.util.Log;
-import android.view.MotionEvent;
 
 import com.hyena.coretext.TextEnv;
 import com.hyena.coretext.blocks.CYEditable;
+import com.hyena.coretext.blocks.CYEditableGroup;
 import com.hyena.coretext.blocks.CYPlaceHolderBlock;
 import com.hyena.coretext.samples.latex.FillInAtom;
 
@@ -21,12 +20,14 @@ import maximsblog.blogspot.com.jlatexmath.core.TeXIcon;
 /**
  * Created by yangzc on 16/6/14.
  */
-public class LatexBlock extends CYPlaceHolderBlock {
+public class LatexBlock extends CYPlaceHolderBlock implements CYEditableGroup {
 
     private TeXFormula mTexFormula;
     private TeXIcon mTexIcon;
     private TeXFormula.TeXIconBuilder mBuilder;
     private String mLatex;
+
+    private CYEditable mFocusEditable;
 
     public LatexBlock(TextEnv textEnv, String content) {
         super(textEnv, content);
@@ -86,46 +87,23 @@ public class LatexBlock extends CYPlaceHolderBlock {
     }
 
     @Override
-    public void setFocus(boolean focus) {
-        super.setFocus(focus);
+    public CYEditable findEditableByTabId(int tabId) {
+        if (mTexIcon == null)
+            return null;
+        return findEditableByTabId(mTexIcon.getBox(), tabId);
     }
 
-    @Override
-    public boolean onTouchEvent(int action, float x, float y) {
-        if (mTexIcon == null && mTexIcon.getSize() != 0)
-            return false;
-        x = x / mTexIcon.getSize();
-        y = y / mTexIcon.getSize();
-        switch (action) {
-            case MotionEvent.ACTION_DOWN:
-            {
-                Log.v("yangzc", "x: " + x + ", y: " + y);
-                FillInAtom.FillInBox fillInBox = getFillInBox(mTexIcon.getBox(), x, y);
-                if (fillInBox != null) {
-                    fillInBox.setFocus(true);
-                }
-                postInvalidate();
-                break;
-            }
-        }
-        return true;
-    }
-
-    public FillInAtom.FillInBox getFocusFillIn(){
-        return getFocusFillIn(mTexIcon.getBox());
-    }
-
-    private FillInAtom.FillInBox getFillInBox(Box box, float x, float y) {
+    private CYEditable findEditableByTabId(Box box, int tabId) {
         if (box != null) {
-            if (box instanceof FillInAtom.FillInBox) {
-                if (((FillInAtom.FillInBox) box).getVisibleRect().contains(x, y)) {
-                    return (FillInAtom.FillInBox) box;
+            if (box instanceof CYEditable) {
+                if (((CYEditable) box).getTabId() == tabId) {
+                    return (CYEditable) box;
                 }
             } else {
                 if (box.getChildren() != null && !box.getChildren().isEmpty()) {
                     for (int i = 0; i < box.getChildren().size(); i++) {
                         Box child = box.getChildren().get(i);
-                        FillInAtom.FillInBox result = getFillInBox(child, x, y);
+                        CYEditable result = findEditableByTabId(child, tabId);
                         if (result != null) {
                             return result;
                         }
@@ -136,7 +114,43 @@ public class LatexBlock extends CYPlaceHolderBlock {
         return null;
     }
 
-    public FillInAtom.FillInBox getFocusFillIn(Box box) {
+    @Override
+    public CYEditable getFocusEditable(){
+        return getFocusEditable(mTexIcon.getBox());
+    }
+
+    @Override
+    public CYEditable findEditable(float x, float y) {
+        if (mTexIcon == null || mTexIcon.getSize() == 0)
+            return null;
+
+        x = x / mTexIcon.getSize();
+        y = y / mTexIcon.getSize();
+        return findEditable(mTexIcon.getBox(), x, y);
+    }
+
+    private CYEditable findEditable(Box box, float x, float y) {
+        if (box != null) {
+            if (box instanceof FillInAtom.FillInBox) {
+                if (((FillInAtom.FillInBox) box).getVisibleRect().contains(x, y)) {
+                    return (CYEditable) box;
+                }
+            } else {
+                if (box.getChildren() != null && !box.getChildren().isEmpty()) {
+                    for (int i = 0; i < box.getChildren().size(); i++) {
+                        Box child = box.getChildren().get(i);
+                        CYEditable result = findEditable(child, x, y);
+                        if (result != null) {
+                            return result;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public CYEditable getFocusEditable(Box box) {
         if (box != null) {
             if (box instanceof FillInAtom.FillInBox) {
                 if (((FillInAtom.FillInBox) box).hasFocus()) {
@@ -146,7 +160,7 @@ public class LatexBlock extends CYPlaceHolderBlock {
                 if (box.getChildren() != null && !box.getChildren().isEmpty()) {
                     for (int i = 0; i < box.getChildren().size(); i++) {
                         Box child = box.getChildren().get(i);
-                        FillInAtom.FillInBox result = getFocusFillIn(child);
+                        CYEditable result = getFocusEditable(child);
                         if (result != null) {
                             return result;
                         }

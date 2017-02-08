@@ -9,6 +9,7 @@ import android.view.View;
 
 import com.hyena.coretext.blocks.CYBlock;
 import com.hyena.coretext.blocks.CYEditable;
+import com.hyena.coretext.blocks.CYEditableGroup;
 import com.hyena.coretext.blocks.CYPageBlock;
 import com.hyena.coretext.event.CYEventDispatcher;
 import com.hyena.coretext.event.CYFocusEventListener;
@@ -117,8 +118,9 @@ public class CYPageView extends View implements CYLayoutEventListener {
                 if (focusBlock == null || focusBlock != mFocusBlock) {
                     if (mFocusBlock != null) {
                         mFocusBlock.setFocus(false);
-                        if (mFocusBlock instanceof CYEditable && mFocusEventListener != null) {
-                            mFocusEventListener.onFocusChange(false, (CYEditable) mFocusBlock);
+
+                        if (mFocusEventListener != null && mFocusBlock instanceof CYEditableGroup) {
+                            mFocusEventListener.onFocusChange(false, ((CYEditableGroup) mFocusBlock).getFocusEditable());
                         }
                     }
                 }
@@ -126,8 +128,13 @@ public class CYPageView extends View implements CYLayoutEventListener {
                 mFocusBlock = focusBlock;
                 if (mFocusBlock != null) {
                     mFocusBlock.setFocus(true);
-                    if (mFocusBlock instanceof CYEditable && mFocusEventListener != null) {
-                        mFocusEventListener.onFocusChange(true, (CYEditable) mFocusBlock);
+                    if (mFocusEventListener != null && mFocusBlock instanceof CYEditableGroup) {
+                        CYEditable editable = ((CYEditableGroup) mFocusBlock).findEditable(x - mFocusBlock.getX(),
+                                y - mFocusBlock.getLineY());
+                        editable.setFocus(true);
+                        if (editable != null) {
+                            mFocusEventListener.onFocusChange(false, editable);
+                        }
                     }
                 }
 

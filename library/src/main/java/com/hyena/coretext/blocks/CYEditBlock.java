@@ -16,7 +16,7 @@ import com.hyena.framework.utils.UIUtils;
 /**
  * Created by yangzc on 16/4/12.
  */
-public class CYEditBlock extends CYPlaceHolderBlock implements CYEditable {
+public class CYEditBlock extends CYPlaceHolderBlock implements CYEditable, CYEditableGroup {
 
     private static final int ACTION_FLASH = 1;
 
@@ -180,5 +180,17 @@ public class CYEditBlock extends CYPlaceHolderBlock implements CYEditable {
         this.mText = text;
         postInvalidate();
 //        requestLayout();
+    }
+
+    @Override
+    public CYEditable findEditable(float x, float y) {
+        return this;
+    }
+
+    @Override
+    public CYEditable getFocusEditable() {
+        if (hasFocus())
+            return this;
+        return null;
     }
 }
