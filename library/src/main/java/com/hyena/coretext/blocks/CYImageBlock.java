@@ -4,14 +4,10 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Rect;
 import android.util.Log;
 
 import com.hyena.coretext.TextEnv;
-import com.hyena.framework.clientlog.LogUtil;
-import com.hyena.framework.utils.BaseApp;
 import com.hyena.framework.utils.ImageFetcher;
-import com.hyena.framework.utils.UIUtils;
 
 /**
  * Created by yangzc on 16/4/8.
@@ -62,11 +58,6 @@ public class CYImageBlock extends CYPlaceHolderBlock {
         if (mBitmap != null && !mBitmap.isRecycled()) {
             canvas.drawBitmap(mBitmap, null, getContentRect(), null);
         }
-    }
-
-    @Override
-    public boolean isDebug() {
-        return true;
     }
 
     @Override

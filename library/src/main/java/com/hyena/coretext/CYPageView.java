@@ -21,6 +21,7 @@ import com.hyena.framework.clientlog.LogUtil;
  */
 public class CYPageView extends View implements CYLayoutEventListener {
 
+    public static int FOCUS_TAB_ID = -1;
     private CYPageBlock mPageBlock;
     private CYBlock mFocusBlock;
 
@@ -103,12 +104,16 @@ public class CYPageView extends View implements CYLayoutEventListener {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if (mPageBlock == null)
+            return super.onTouchEvent(event);
+
         int action = MotionEventCompat.getActionMasked(event);
         LogUtil.v("yangzc", "event action -->" + event.getAction());
+        int x = (int) event.getX() - mPageBlock.getPaddingLeft();
+        int y = (int) event.getY() - mPageBlock.getPaddingTop();
         switch (action) {
             case MotionEvent.ACTION_DOWN: {
-                CYBlock focusBlock = CYBlockUtils.findBlockByPosition(mPageBlock,
-                        (int) event.getX(), (int) event.getY());
+                CYBlock focusBlock = CYBlockUtils.findBlockByPosition(mPageBlock, x, y);
                 if (focusBlock == null || focusBlock != mFocusBlock) {
                     if (mFocusBlock != null) {
                         mFocusBlock.setFocus(false);
@@ -127,8 +132,8 @@ public class CYPageView extends View implements CYLayoutEventListener {
                 }
 
                 if (mFocusBlock != null) {
-                    mFocusBlock.onTouchEvent(action, event.getX() - mFocusBlock.getX(),
-                            event.getY() - mFocusBlock.getLineY());
+                    mFocusBlock.onTouchEvent(action, x - mFocusBlock.getX(),
+                            y - mFocusBlock.getLineY());
                 }
                 break;
             }
@@ -137,8 +142,8 @@ public class CYPageView extends View implements CYLayoutEventListener {
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_OUTSIDE: {
                 if (mFocusBlock != null) {
-                    mFocusBlock.onTouchEvent(action, event.getX() - mFocusBlock.getX(),
-                            event.getY() - mFocusBlock.getLineY());
+                    mFocusBlock.onTouchEvent(action, x - mFocusBlock.getX(),
+                            y - mFocusBlock.getLineY());
                 }
                 break;
             }

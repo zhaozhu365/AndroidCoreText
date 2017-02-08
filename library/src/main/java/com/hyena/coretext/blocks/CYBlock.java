@@ -36,6 +36,8 @@ public abstract class CYBlock<T extends CYBlock> {
     private TextEnv mTextEnv;
 
     private Paint mPaint;
+    //是否在独享行中
+    private boolean mIsInMonopolyRow = true;
 
     public CYBlock(TextEnv textEnv, String content) {
         this.mTextEnv = textEnv;
@@ -152,6 +154,14 @@ public abstract class CYBlock<T extends CYBlock> {
     }
 
     /**
+     * set is in monopoly row
+     * @param isInMonopolyRow isInMonopolyRow
+     */
+    public void setIsInMonopolyRow(boolean isInMonopolyRow) {
+        this.mIsInMonopolyRow = isInMonopolyRow;
+    }
+
+    /**
      * draw block
      * @param canvas canvas
      */
@@ -183,10 +193,20 @@ public abstract class CYBlock<T extends CYBlock> {
      * @return rect of content
      */
     public Rect getContentRect() {
-        mContentRect.set(x + paddingLeft
-                , lineY + paddingTop
-                , x + paddingLeft + getContentWidth()
-                , lineY + paddingTop + getContentHeight());
+        int left = x + paddingLeft;
+        int right = x + paddingLeft + getContentWidth();
+
+        TextEnv.Align align = getTextEnv().getTextAlign();
+        int contentHeight = getContentHeight();
+        int top;
+        if (align == TextEnv.Align.TOP) {
+            top = lineY + paddingTop;
+        } else if (align == TextEnv.Align.CENTER) {
+            top = lineY + (getLineHeight() - contentHeight)/2;
+        } else {
+            top = lineY + getLineHeight() - contentHeight - paddingBottom;
+        }
+        mContentRect.set(left, top, right, top + contentHeight);
         return mContentRect;
     }
 
@@ -194,15 +214,27 @@ public abstract class CYBlock<T extends CYBlock> {
      * @return rect of block
      */
     public Rect getBlockRect() {
-        mBlockRect.set(x, lineY
-                , x + getContentWidth() + paddingLeft + paddingRight
-                , lineY + getContentHeight() + paddingTop + paddingBottom);
+        int left = x;
+        int right = x + getContentWidth() + paddingLeft + paddingRight;
+
+        TextEnv.Align align = getTextEnv().getTextAlign();
+        int contentHeight = getContentHeight();
+        int top;
+        if (align == TextEnv.Align.TOP) {
+            top = lineY;
+        } else if(align == TextEnv.Align.CENTER) {
+            top = lineY + (getLineHeight() - contentHeight)/2 - paddingTop;
+        } else {
+            top = lineY + getLineHeight() - contentHeight - paddingTop - paddingBottom;
+        }
+        mBlockRect.set(left, top, right, top + contentHeight + paddingTop + paddingBottom);
         return mBlockRect;
     }
 
-    public void onTouchEvent(int event, float x, float y) {
+    public boolean onTouchEvent(int action, float x, float y) {
         if (isDebug())
-            debug("onEvent: " + event);
+            debug("onEvent: " + action);
+        return false;
     }
 
     /**
@@ -217,7 +249,7 @@ public abstract class CYBlock<T extends CYBlock> {
     /**
      * @return force or not
      */
-    public boolean isFocus(){
+    public boolean hasFocus(){
         return mFocus;
     }
 

@@ -19,5 +19,5 @@ public interface CYEditable {
 
     public void setFocus(boolean focus);
 
-    public boolean isFocus();
+    public boolean hasFocus();
 }

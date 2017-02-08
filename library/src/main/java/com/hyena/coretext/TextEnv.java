@@ -16,11 +16,16 @@ import com.hyena.framework.utils.UIUtils;
  */
 public class TextEnv {
 
+    public static enum Align {
+        TOP, CENTER, BOTTOM
+    }
+
     private Context mContext;
     private int mVerticalSpacing;
     private int mPageWidth, mPageHeight;
     private Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private boolean mEditable = true;
+    private Align mTextAlign = Align.BOTTOM;
 
     private TextEnv(Context context) {
         this.mContext = context;
@@ -70,6 +75,14 @@ public class TextEnv {
         return mEditable;
     }
 
+    private void setTextAlign(Align align) {
+        this.mTextAlign = align;
+    }
+
+    public Align getTextAlign() {
+        return mTextAlign;
+    }
+
     public static class Builder {
 
         private Context context;
@@ -80,6 +93,7 @@ public class TextEnv {
         private int pageWidth = 0;
         private int pageHeight = 0;
         private boolean editable = true;
+        private Align textAlign = Align.BOTTOM;
 
         public Builder(Context context) {
             this.context = context;
@@ -120,6 +134,11 @@ public class TextEnv {
             return this;
         }
 
+        public Builder setTextAlign(Align align) {
+            this.textAlign = align;
+            return this;
+        }
+
         public TextEnv build() {
             Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
             paint.setColor(textColor);
@@ -136,6 +155,7 @@ public class TextEnv {
             textEnv.setPageWidth(pageWidth);
             textEnv.setPageHeight(pageHeight);
             textEnv.setEditable(editable);
+            textEnv.setTextAlign(textAlign);
             return textEnv;
         }
     }

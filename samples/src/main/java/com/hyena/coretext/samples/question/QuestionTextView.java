@@ -107,6 +107,7 @@ public class QuestionTextView extends CYPageView {
                 }
             }
             attributedString.replaceBlock(0, 1, new AudioBlock(mTextEnv, ""));
+            attributedString.replaceBlock(1, 2, new LatexBlock(mTextEnv, ""));
         }
         return attributedString;
     }

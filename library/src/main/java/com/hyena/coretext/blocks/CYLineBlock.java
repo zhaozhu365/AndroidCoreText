@@ -49,7 +49,7 @@ public class CYLineBlock extends CYBlock<CYBlock> {
             measure();
         }
         if (mLineHeight <= 0) {
-            mLineHeight = 100;
+            mLineHeight = 0;
         }
         return mLineHeight;
     }
@@ -59,12 +59,27 @@ public class CYLineBlock extends CYBlock<CYBlock> {
         syncBlocksHeight();
     }
 
-    public void updateLineY(int lineY){
+    public void updateLineY(int lineY) {
         if (getChildren() != null) {
+            boolean isInMonopolyRow = false;
+            for (int i = 0; i < getChildren().size(); i++) {
+                CYBlock child = getChildren().get(i);
+                if (child instanceof CYPlaceHolderBlock
+                        && ((((CYPlaceHolderBlock)child).getAlignStyle() == CYPlaceHolderBlock.AlignStyle.Style_Normal)
+                        || ((CYPlaceHolderBlock)child).getAlignStyle() == CYPlaceHolderBlock.AlignStyle.Style_MONOPOLY)) {
+                    isInMonopolyRow = true;
+                }
+            }
             for (int i = 0; i < getChildren().size(); i++) {
                 getChildren().get(i).setLineY(lineY);
+                getChildren().get(i).setIsInMonopolyRow(isInMonopolyRow);
             }
         }
+    }
+
+    @Override
+    public void addChild(CYBlock child) {
+        super.addChild(child);
     }
 
     private void measureLineHeight(){

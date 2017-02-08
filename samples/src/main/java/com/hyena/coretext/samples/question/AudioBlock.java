@@ -44,15 +44,16 @@ public class AudioBlock extends CYPlaceHolderBlock {
     }
 
     @Override
-    public void onTouchEvent(int event, float x, float y) {
-        super.onTouchEvent(event, x, y);
-        switch (event) {
+    public boolean onTouchEvent(int action, float x, float y) {
+        super.onTouchEvent(action, x, y);
+        switch (action) {
             case MotionEvent.ACTION_UP: {
                 //action click
                 playOrPause();
                 break;
             }
         }
+        return super.onTouchEvent(action, x, y);
     }
 
     private void playOrPause() {

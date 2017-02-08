@@ -9,6 +9,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.text.TextUtils;
 
+import com.hyena.coretext.CYPageView;
 import com.hyena.coretext.TextEnv;
 import com.hyena.framework.utils.UIUtils;
 
@@ -107,6 +108,7 @@ public class CYEditBlock extends CYPlaceHolderBlock implements CYEditable {
     public void setFocus(boolean focus) {
         super.setFocus(focus);
         if (focus) {
+            CYPageView.FOCUS_TAB_ID = getTabId();
             mHandler.removeMessages(ACTION_FLASH);
             Message next = mHandler.obtainMessage(ACTION_FLASH);
             mHandler.sendMessageDelayed(next, 500);
@@ -117,7 +119,12 @@ public class CYEditBlock extends CYPlaceHolderBlock implements CYEditable {
         }
     }
 
-//    private Rect mRect = new Rect();
+    @Override
+    public boolean hasFocus() {
+        return CYPageView.FOCUS_TAB_ID == getTabId();
+    }
+
+    //    private Rect mRect = new Rect();
 
     @Override
     public void draw(Canvas canvas) {
@@ -139,7 +146,7 @@ public class CYEditBlock extends CYPlaceHolderBlock implements CYEditable {
 
         // 绘制外边框
         canvas.drawRect(blockRect, mBorderPaint);
-        if (isFocus()) {
+        if (hasFocus()) {
             if (mInputHintVisible) {
                 canvas.drawLine(contentRect.left + textHintMarginLeft, contentRect.top + mHintPadding,
                         contentRect.left + textHintMarginLeft, contentRect.bottom - mHintPadding, mInputHintPaint);
