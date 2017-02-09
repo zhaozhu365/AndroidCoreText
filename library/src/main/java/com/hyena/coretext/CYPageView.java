@@ -93,6 +93,22 @@ public class CYPageView extends View implements CYLayoutEventListener {
         return null;
     }
 
+    public void setText(int tabId, String text) {
+        CYEditable editable = findEditableByTabId(tabId);
+        if (editable != null) {
+            editable.setText(text);
+        }
+
+    }
+
+    public String getText(int tabId) {
+        CYEditable editable = findEditableByTabId(tabId);
+        if (editable != null) {
+            return editable.getText();
+        }
+        return null;
+    }
+
     public void setFocus(int tabId) {
         CYEditable editable = findEditableByTabId(tabId);
         if (editable != null) {
@@ -109,7 +125,6 @@ public class CYPageView extends View implements CYLayoutEventListener {
             return super.onTouchEvent(event);
 
         int action = MotionEventCompat.getActionMasked(event);
-        LogUtil.v("yangzc", "event action -->" + event.getAction());
         int x = (int) event.getX() - mPageBlock.getPaddingLeft();
         int y = (int) event.getY() - mPageBlock.getPaddingTop();
         switch (action) {
@@ -120,7 +135,7 @@ public class CYPageView extends View implements CYLayoutEventListener {
                         mFocusBlock.setFocus(false);
 
                         if (mFocusEventListener != null && mFocusBlock instanceof CYEditableGroup) {
-                            mFocusEventListener.onFocusChange(false, ((CYEditableGroup) mFocusBlock).getFocusEditable());
+                            mFocusEventListener.onFocusChange(false, ((CYEditableGroup) mFocusBlock).getFocusEditable().getTabId());
                         }
                     }
                 }
@@ -128,12 +143,14 @@ public class CYPageView extends View implements CYLayoutEventListener {
                 mFocusBlock = focusBlock;
                 if (mFocusBlock != null) {
                     mFocusBlock.setFocus(true);
-                    if (mFocusEventListener != null && mFocusBlock instanceof CYEditableGroup) {
+                    if (mFocusBlock instanceof CYEditableGroup) {
                         CYEditable editable = ((CYEditableGroup) mFocusBlock).findEditable(x - mFocusBlock.getX(),
                                 y - mFocusBlock.getLineY());
-                        editable.setFocus(true);
                         if (editable != null) {
-                            mFocusEventListener.onFocusChange(false, editable);
+                            editable.setFocus(true);
+                            if (mFocusEventListener != null) {
+                                mFocusEventListener.onFocusChange(true, editable.getTabId());
+                            }
                         }
                     }
                 }

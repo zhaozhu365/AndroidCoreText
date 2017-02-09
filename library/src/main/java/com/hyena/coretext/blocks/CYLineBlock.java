@@ -3,6 +3,7 @@ package com.hyena.coretext.blocks;
 import android.graphics.Canvas;
 
 import com.hyena.coretext.TextEnv;
+import com.hyena.framework.utils.UIUtils;
 
 import java.util.List;
 
@@ -49,7 +50,7 @@ public class CYLineBlock extends CYBlock<CYBlock> {
             measure();
         }
         if (mLineHeight <= 0) {
-            mLineHeight = 0;
+            mLineHeight = UIUtils.dip2px(20);
         }
         return mLineHeight;
     }

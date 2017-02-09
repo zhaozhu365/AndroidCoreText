@@ -29,7 +29,7 @@ public class CYEditBlock extends CYPlaceHolderBlock implements CYEditable, CYEdi
     private Handler mHandler;
 
     private int mHintPadding = 0;
-    private String mText;
+    private int mTabId = 0;
 
     public CYEditBlock(TextEnv textEnv, String content) {
         super(textEnv, content);
@@ -132,10 +132,11 @@ public class CYEditBlock extends CYPlaceHolderBlock implements CYEditable, CYEdi
         Rect contentRect = getContentRect();
         Rect blockRect = getBlockRect();
 
+        String text = getText();
         float textHintMarginLeft = 0;
         float textX = contentRect.left;
-        if (!TextUtils.isEmpty(mText)) {
-            textHintMarginLeft = mTextPaint.measureText(mText);
+        if (!TextUtils.isEmpty(text)) {
+            textHintMarginLeft = mTextPaint.measureText(text);
             if (textHintMarginLeft > contentRect.width()) {
                 textX = contentRect.right - textHintMarginLeft;
                 textHintMarginLeft = contentRect.width();
@@ -155,30 +156,31 @@ public class CYEditBlock extends CYPlaceHolderBlock implements CYEditable, CYEdi
             canvas.drawRect(blockRect, mBgPaint);
         }
 
-        if (!TextUtils.isEmpty(mText)) {
+        if (!TextUtils.isEmpty(text)) {
             Paint.FontMetrics fontMetrics = mTextPaint.getFontMetrics();
-            canvas.drawText(mText, textX, contentRect.bottom - fontMetrics.bottom, mTextPaint);
+            canvas.drawText(text, textX, contentRect.bottom - fontMetrics.bottom, mTextPaint);
         }
     }
 
     @Override
     public int getTabId() {
-        return 0;
+        return mTabId;
     }
 
     @Override
     public void setTabId(int id) {
+        this.mTabId = id;
     }
 
     @Override
     public String getText() {
-        return mText;
+        return getTextEnv().getEditableValue(getTabId());
     }
 
     @Override
     public void setText(String text) {
-        this.mText = text;
-        postInvalidate();
+        getTextEnv().setEditableValue(getTabId(), text);
+//        postInvalidate();
 //        requestLayout();
     }
 

@@ -8,11 +8,15 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Typeface;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.hyena.coretext.CYPageView;
+import com.hyena.coretext.TextEnv;
 import com.hyena.coretext.blocks.CYEditable;
 import com.hyena.coretext.blocks.CYPageBlock;
+import com.hyena.coretext.event.CYEventDispatcher;
+import com.hyena.framework.utils.UIUtils;
 
 import maximsblog.blogspot.com.jlatexmath.core.AjLatexMath;
 import maximsblog.blogspot.com.jlatexmath.core.Atom;
@@ -48,7 +52,7 @@ public class FillInAtom extends Atom {
         }
         boolean smallCap = env.getSmallCap();
         Text ch = getString(env.getTeXFont(), env.getStyle(), smallCap);
-        Box box = new FillInBox(mIndex, ch);
+        Box box = new FillInBox((TextEnv) env.getTag(), mIndex, ch);
         if (smallCap && Character.isLowerCase('0')) {
             // We have a small capital
             box = new ScaleBox(box, 0.8f, 0.8f);
@@ -70,13 +74,19 @@ public class FillInAtom extends Atom {
         private final float size;
         private RectF mRect = new RectF();
         private int mIndex;
+        private TextEnv mTextEnv;
 
-        public FillInBox(String index, Text c) {
+
+        public FillInBox(TextEnv textEnv, String index, Text c) {
             super();
+            this.mTextEnv = textEnv;
             this.mIndex = Integer.valueOf(index);
+            mTextEnv.setEditableValue(mIndex, c.getText());
             cf = c.getTextFont();
             size = c.getMetrics().getSize();
-            width = c.getWidth();
+            float scale = 20.0f * textEnv.getContext().getResources().getDisplayMetrics().scaledDensity / TeXFormula.PIXELS_PER_POINT;
+            width = UIUtils.dip2px(50) / scale;
+//            width = 50/TeXFormula.PIXELS_PER_POINT;
             height = c.getHeight();
             depth = c.getDepth();
         }
@@ -108,7 +118,18 @@ public class FillInAtom extends Atom {
             }
 
             st.setStyle(Paint.Style.FILL);
-            g2.drawText(cf.c, 0.0f, -0.0f, st);
+            String text = getText();
+
+            if (!TextUtils.isEmpty(text)) {
+                float textX;
+                float textWidth = st.measureText(text);
+                if (textWidth > getWidth()) {
+                    textX = getWidth() - textWidth;
+                } else {
+                    textX = (getWidth() - textWidth) / 2;
+                }
+                g2.drawText(text, textX, 0.0f, st);
+            }
             g2.restore();
         }
 
@@ -125,22 +146,18 @@ public class FillInAtom extends Atom {
             return mRectF;
         }
 
-//		public void setText(String text){
-//			if (cf != null) {
-//				cf.c = text;
-//			}
-//			if (cString != null) {
-//				cString.setText(text);
-//			}
-//			//update width
-//			width = cString.getWidth();
-//		}
-
         @Override
         public void setFocus(boolean focus) {
             if (focus) {
                 CYPageView.FOCUS_TAB_ID = mIndex;
+                Log.v("yangzc", "setFocus: " + mIndex);
             }
+            CYEventDispatcher.getEventDispatcher().postInvalidate();
+        }
+
+        @Override
+        public float getWidth() {
+            return super.getWidth();
         }
 
         @Override
@@ -155,20 +172,18 @@ public class FillInAtom extends Atom {
 
         @Override
         public void setTabId(int id) {
-
+            this.mIndex = id;
         }
 
         @Override
         public String getText() {
-            if (cf != null) {
-                return cf.c;
-            }
-            return "";
+            return mTextEnv.getEditableValue(mIndex);
         }
 
         @Override
         public void setText(String text) {
-
+            mTextEnv.setEditableValue(mIndex, text);
+            CYEventDispatcher.getEventDispatcher().postInvalidate();
         }
 
     }

@@ -27,6 +27,9 @@ public class CYHorizontalLayout implements CYLayout {
         if (lines != null) {
             for (int i = 0; i < lines.size(); i++) {
                 CYLineBlock line = lines.get(i);
+                if (line.getChildren() == null || line.getChildren().isEmpty())
+                    continue;
+
                 int maxBlockHeight = line.getMaxBlockHeightInLine();
                 if (y + maxBlockHeight > textEnv.getPageHeight()) {
                     page = new CYPageBlock(textEnv);
@@ -35,6 +38,7 @@ public class CYHorizontalLayout implements CYLayout {
                     line.updateLineY(y);
                     y += line.getLineHeight() + textEnv.getVerticalSpacing();
                 }
+
                 page.addChild(line);
             }
         }
@@ -106,7 +110,7 @@ public class CYHorizontalLayout implements CYLayout {
                         leftWidth = pageWidth - hitCell.getWidth() - hitCell.getX();
                     }
 
-                    while (leftWidth < itemBlock.getWidth()) {
+                    while (leftWidth != pageWidth && leftWidth < itemBlock.getWidth()) {
                         //wrap
                         y += line.getLineHeight() + textEnv.getVerticalSpacing();
                         leftWidth = pageWidth;
@@ -124,7 +128,7 @@ public class CYHorizontalLayout implements CYLayout {
                     leftWidth -= itemBlock.getWidth();
                     line.addChild(itemBlock);
                 } else {
-                    while (leftWidth < itemBlock.getWidth()) {
+                    while (leftWidth != pageWidth && leftWidth < itemBlock.getWidth()) {
                         //wrap
                         y += line.getLineHeight() + textEnv.getVerticalSpacing();
                         leftWidth = pageWidth;

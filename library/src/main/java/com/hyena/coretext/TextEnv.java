@@ -8,8 +8,11 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.util.SparseArray;
 
 import com.hyena.framework.utils.UIUtils;
+
+import java.util.HashMap;
 
 /**
  * Created by yangzc on 17/1/20.
@@ -26,6 +29,8 @@ public class TextEnv {
     private Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private boolean mEditable = true;
     private Align mTextAlign = Align.BOTTOM;
+
+    private SparseArray<String> mEditableValues = new SparseArray<String>();
 
     private TextEnv(Context context) {
         this.mContext = context;
@@ -81,6 +86,29 @@ public class TextEnv {
 
     public Align getTextAlign() {
         return mTextAlign;
+    }
+
+    public void setEditableValue(int tabId, String value) {
+        if (mEditableValues == null)
+            mEditableValues = new SparseArray<String>();
+        mEditableValues.put(tabId, value);
+    }
+
+    public String getEditableValue(int tabId) {
+        if (mEditableValues != null) {
+            return mEditableValues.get(tabId);
+        }
+        return null;
+    }
+
+    public SparseArray<String> getEditableValues() {
+        return mEditableValues;
+    }
+
+    public void clearEditableValues() {
+        if (mEditableValues != null) {
+            mEditableValues.clear();
+        }
     }
 
     public static class Builder {

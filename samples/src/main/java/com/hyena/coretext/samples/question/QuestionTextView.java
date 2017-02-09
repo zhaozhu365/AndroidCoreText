@@ -132,14 +132,6 @@ public class QuestionTextView extends CYPageView {
         analysisData();
     }
 
-    public void setText(int tabId, String text) {
-
-    }
-
-    public String getText(int tabId) {
-        return null;
-    }
-
     @Override
     public void onLayout(int pageWidth, int pageHeight) {
         super.onLayout(pageWidth, pageHeight);

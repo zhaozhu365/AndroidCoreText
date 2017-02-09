@@ -8,6 +8,7 @@ import com.hyena.coretext.blocks.CYEditable;
 import com.hyena.coretext.blocks.CYEditableGroup;
 import com.hyena.coretext.blocks.CYPlaceHolderBlock;
 import com.hyena.coretext.samples.latex.FillInAtom;
+import com.hyena.framework.utils.UIUtils;
 
 import maximsblog.blogspot.com.jlatexmath.ExampleFormula;
 import maximsblog.blogspot.com.jlatexmath.core.AjLatexMath;
@@ -38,11 +39,12 @@ public class LatexBlock extends CYPlaceHolderBlock implements CYEditableGroup {
         mTexFormula = new TeXFormula();
         mBuilder = mTexFormula.new TeXIconBuilder()
                 .setStyle(TeXConstants.STYLE_DISPLAY)
-                .setSize(30)
+                .setSize(UIUtils.px2dip(getTextEnv().getPaint().getTextSize()))
                 .setWidth(TeXConstants.UNIT_PIXEL, getTextEnv().getPageWidth(), TeXConstants.ALIGN_LEFT)
                 .setIsMaxWidth(true)//非精准宽度
-                .setInterLineSpacing(TeXConstants.UNIT_PIXEL,
-                AjLatexMath.getLeading(30));
+                .setInterLineSpacing(TeXConstants.UNIT_PIXEL,AjLatexMath.getLeading(30))
+                .setTag(getTextEnv());
+
         setFormula(ExampleFormula.mExample8);
     }
 
@@ -169,10 +171,5 @@ public class LatexBlock extends CYPlaceHolderBlock implements CYEditableGroup {
             }
         }
         return null;
-    }
-
-    @Override
-    public boolean isDebug() {
-        return true;
     }
 }
