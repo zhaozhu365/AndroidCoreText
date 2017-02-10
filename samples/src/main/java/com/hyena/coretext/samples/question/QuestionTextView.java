@@ -56,7 +56,7 @@ public class QuestionTextView extends CYPageView {
 
     private void init() {
         mEnvBuilder = new TextEnv.Builder(getContext()).setPageHeight(Integer.MAX_VALUE)
-                .setVerticalSpacing(UIUtils.dip2px(getContext(), 1)).setEditable(false);
+                .setVerticalSpacing(UIUtils.dip2px(getContext(), 3)).setEditable(false);
     }
 
     public void setTextColor(int textColor) {

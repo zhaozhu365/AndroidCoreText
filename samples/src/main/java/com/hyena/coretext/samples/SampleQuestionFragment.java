@@ -13,7 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.hyena.coretext.blocks.CYEditable;
+import com.hyena.coretext.blocks.ICYEditable;
 import com.hyena.coretext.event.CYFocusEventListener;
 import com.hyena.coretext.samples.question.QuestionTextView;
 import com.hyena.framework.clientlog.LogUtil;
@@ -70,7 +70,7 @@ public class SampleQuestionFragment extends Fragment {
             if (v != null && v instanceof TextView) {
                 TextView textView = (TextView) v;
                 if (mFocusTabId >= 0) {
-                    CYEditable editable = mQtvQuestion.findEditableByTabId(mFocusTabId);
+                    ICYEditable editable = mQtvQuestion.findEditableByTabId(mFocusTabId);
                     if (editable != null) {
                         String currentText = mQtvQuestion.getText(mFocusTabId);
                         String text = textView.getText().toString();

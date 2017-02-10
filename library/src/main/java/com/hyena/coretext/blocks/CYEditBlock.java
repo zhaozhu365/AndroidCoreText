@@ -1,35 +1,18 @@
 package com.hyena.coretext.blocks;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
-import android.text.TextUtils;
 
-import com.hyena.coretext.CYPageView;
 import com.hyena.coretext.TextEnv;
 import com.hyena.framework.utils.UIUtils;
 
 /**
  * Created by yangzc on 16/4/12.
  */
-public class CYEditBlock extends CYPlaceHolderBlock implements CYEditable, CYEditableGroup {
+public class CYEditBlock extends CYPlaceHolderBlock implements ICYEditable {
 
-    private static final int ACTION_FLASH = 1;
-
-    protected Paint mBgPaint;
-    protected Paint mBorderPaint;
-    protected Paint mInputHintPaint;
-    protected Paint mTextPaint;
-
-    private boolean mInputHintVisible = false;
-    private Handler mHandler;
-
-    private int mHintPadding = 0;
     private int mTabId = 0;
+    private CYEditFace mEditFace;
 
     public CYEditBlock(TextEnv textEnv, String content) {
         super(textEnv, content);
@@ -37,129 +20,24 @@ public class CYEditBlock extends CYPlaceHolderBlock implements CYEditable, CYEdi
     }
 
     private void init(){
-        mBgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mBgPaint.setColor(Color.GRAY);
-        mBgPaint.setStrokeWidth(1);
-
-        mBorderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mBorderPaint.setColor(Color.BLACK);
-        mBorderPaint.setStyle(Paint.Style.STROKE);
-        mBorderPaint.setStrokeWidth(2);
-
-        mInputHintPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mInputHintPaint.setColor(Color.RED);
-        mInputHintPaint.setStrokeWidth(2);
-
-        mTextPaint = new Paint(getTextEnv().getPaint());
-
-        mHintPadding = UIUtils.dip2px(2);
         Paint paint = getTextEnv().getPaint();
         int height = (int) (Math.ceil(paint.descent() - paint.ascent()) + 0.5f);
         setWidth(UIUtils.dip2px(80));
         setHeight(height);
-
-        mHandler = new Handler(Looper.getMainLooper()) {
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                handleMessageImpl(msg);
-            }
-        };
+        setFocusable(true);
+        mEditFace = createEditFace(getTextEnv(), this);
+        mEditFace.setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight()
+                , getPaddingBottom());
     }
 
-    public CYEditBlock setHintPadding(int padding) {
-        this.mHintPadding = padding;
-        return this;
+    protected CYEditFace createEditFace(TextEnv textEnv, ICYEditable editable) {
+        return new CYEditFace(textEnv, editable);
     }
-
-    private void handleMessageImpl(Message msg) {
-        int what = msg.what;
-        switch (what) {
-            case ACTION_FLASH: {
-                mInputHintVisible = !mInputHintVisible;
-
-                postInvalidate();
-
-                Message next = mHandler.obtainMessage(ACTION_FLASH);
-                mHandler.sendMessageDelayed(next, 500);
-                break;
-            }
-            default:
-                break;
-        }
-    }
-
-    @Override
-    public CYEditBlock setWidth(int width) {
-        return (CYEditBlock) super.setWidth(width);
-    }
-
-    @Override
-    public CYEditBlock setHeight(int height) {
-        return (CYEditBlock) super.setHeight(height);
-    }
-
-    @Override
-    public CYEditBlock setAlignStyle(AlignStyle style) {
-        return (CYEditBlock) super.setAlignStyle(style);
-    }
-
-    @Override
-    public void setFocus(boolean focus) {
-        super.setFocus(focus);
-        if (focus) {
-            CYPageView.FOCUS_TAB_ID = getTabId();
-            mHandler.removeMessages(ACTION_FLASH);
-            Message next = mHandler.obtainMessage(ACTION_FLASH);
-            mHandler.sendMessageDelayed(next, 500);
-        } else {
-            mHandler.removeMessages(ACTION_FLASH);
-            mInputHintVisible = false;
-            postInvalidate();
-        }
-    }
-
-    @Override
-    public boolean hasFocus() {
-        return CYPageView.FOCUS_TAB_ID == getTabId();
-    }
-
-    //    private Rect mRect = new Rect();
 
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
-        Rect contentRect = getContentRect();
-        Rect blockRect = getBlockRect();
-
-        String text = getText();
-        float textHintMarginLeft = 0;
-        float textX = contentRect.left;
-        if (!TextUtils.isEmpty(text)) {
-            textHintMarginLeft = mTextPaint.measureText(text);
-            if (textHintMarginLeft > contentRect.width()) {
-                textX = contentRect.right - textHintMarginLeft;
-                textHintMarginLeft = contentRect.width();
-            } else {
-                textX = contentRect.left + (contentRect.width() - textHintMarginLeft)/2;
-            }
-        }
-
-        // 绘制外边框
-        canvas.drawRect(blockRect, mBorderPaint);
-        if (hasFocus()) {
-            if (mInputHintVisible) {
-                canvas.drawLine(contentRect.left + textHintMarginLeft, contentRect.top + mHintPadding,
-                        contentRect.left + textHintMarginLeft, contentRect.bottom - mHintPadding, mInputHintPaint);
-            }
-        } else {
-            canvas.drawRect(blockRect, mBgPaint);
-        }
-
-        if (!TextUtils.isEmpty(text)) {
-            Paint.FontMetrics fontMetrics = mTextPaint.getFontMetrics();
-            canvas.drawText(text, textX, contentRect.bottom - fontMetrics.bottom, mTextPaint);
-        }
+        mEditFace.onDraw(canvas, getBlockRect());
     }
 
     @Override
@@ -167,32 +45,46 @@ public class CYEditBlock extends CYPlaceHolderBlock implements CYEditable, CYEdi
         return mTabId;
     }
 
-    @Override
-    public void setTabId(int id) {
-        this.mTabId = id;
+    public void setTabId(int tabId) {
+        this.mTabId = tabId;
     }
 
     @Override
     public String getText() {
-        return getTextEnv().getEditableValue(getTabId());
+        return mEditFace.getText();
     }
 
     @Override
     public void setText(String text) {
-        getTextEnv().setEditableValue(getTabId(), text);
-//        postInvalidate();
-//        requestLayout();
+        mEditFace.setText(text);
     }
 
     @Override
-    public CYEditable findEditable(float x, float y) {
-        return this;
+    public void setFocus(boolean focus) {
+        super.setFocus(focus);
+        if (isFocusable()) {
+            mEditFace.setFocus(focus);
+        }
     }
 
     @Override
-    public CYEditable getFocusEditable() {
-        if (hasFocus())
-            return this;
-        return null;
+    public void setPadding(int left, int top, int right, int bottom) {
+        super.setPadding(left, top, right, bottom);
+        if (mEditFace != null) {
+            mEditFace.setPadding(left, top, right, bottom);
+        }
+    }
+
+    @Override
+    public boolean hasFocus() {
+        return mEditFace.hasFocus();
+    }
+
+    @Override
+    public void setFocusable(boolean focusable) {
+        super.setFocusable(focusable);
+        if (mEditFace != null) {
+            mEditFace.setEditable(focusable);
+        }
     }
 }

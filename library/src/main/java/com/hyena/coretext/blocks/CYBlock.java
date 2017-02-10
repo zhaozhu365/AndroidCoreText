@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Created by yangzc on 16/4/8.
  */
-public abstract class CYBlock<T extends CYBlock> {
+public abstract class CYBlock<T extends CYBlock> implements ICYFocusable {
 
     private static final String TAG = "CYBlock";
     //当前块横坐标
@@ -38,6 +38,7 @@ public abstract class CYBlock<T extends CYBlock> {
     private Paint mPaint;
     //是否在独享行中
     private boolean mIsInMonopolyRow = true;
+    private boolean mFocusable = false;
 
     public CYBlock(TextEnv textEnv, String content) {
         this.mTextEnv = textEnv;
@@ -199,7 +200,7 @@ public abstract class CYBlock<T extends CYBlock> {
         TextEnv.Align align = getTextEnv().getTextAlign();
         int contentHeight = getContentHeight();
         int top;
-        if (align == TextEnv.Align.TOP) {
+        if (align == TextEnv.Align.TOP || mIsInMonopolyRow) {
             top = lineY + paddingTop;
         } else if (align == TextEnv.Align.CENTER) {
             top = lineY + (getLineHeight() - contentHeight)/2;
@@ -220,7 +221,7 @@ public abstract class CYBlock<T extends CYBlock> {
         TextEnv.Align align = getTextEnv().getTextAlign();
         int contentHeight = getContentHeight();
         int top;
-        if (align == TextEnv.Align.TOP) {
+        if (align == TextEnv.Align.TOP || mIsInMonopolyRow) {
             top = lineY;
         } else if(align == TextEnv.Align.CENTER) {
             top = lineY + (getLineHeight() - contentHeight)/2 - paddingTop;
@@ -235,22 +236,6 @@ public abstract class CYBlock<T extends CYBlock> {
         if (isDebug())
             debug("onEvent: " + action);
         return false;
-    }
-
-    /**
-     * @param focus mark force or not
-     */
-    public void setFocus(boolean focus) {
-        mFocus = focus;
-        if (isDebug())
-            debug("rect: " + getBlockRect().toString() + ", focus: " + focus);
-    }
-
-    /**
-     * @return force or not
-     */
-    public boolean hasFocus(){
-        return mFocus;
     }
 
     /**
@@ -283,24 +268,55 @@ public abstract class CYBlock<T extends CYBlock> {
         Log.v(TAG, msg);
     }
 
+
+    /**
+     * @param focus mark force or not
+     */
+    @Override
+    public void setFocus(boolean focus) {
+        if (isFocusable()) {
+            mFocus = focus;
+            if (isDebug())
+                debug("rect: " + getBlockRect().toString() + ", focus: " + focus);
+        }
+    }
+
+    /**
+     * @return force or not
+     */
+    @Override
+    public boolean hasFocus(){
+        return mFocus;
+    }
+
+    @Override
+    public void setFocusable(boolean focusable) {
+        this.mFocusable = focusable;
+    }
+
+    @Override
+    public boolean isFocusable() {
+        return mFocusable;
+    }
+
     /**
      * find editable by tabId
      * @param tabId tabId
      * @return
      */
-    public CYEditable findEditableByTabId(int tabId) {
+    public ICYEditable findEditableByTabId(int tabId) {
         List<T> children = getChildren();
         if (children != null && !children.isEmpty()) {
             for (int i = 0; i < children.size(); i++) {
                 T block = children.get(i);
-                CYEditable editable = block.findEditableByTabId(tabId);
+                ICYEditable editable = block.findEditableByTabId(tabId);
                 if (editable != null) {
                     return editable;
                 }
             }
         } else {
             if (this instanceof CYEditBlock && ((CYEditBlock)this).getTabId() == tabId) {
-                return (CYEditable) this;
+                return (ICYEditable) this;
             }
         }
         return null;
