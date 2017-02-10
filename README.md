@@ -13,5 +13,8 @@
 * 输入框Block
 * LatexBlock
 
+## 引用
+[AndroidLatexExt](https://github.com/yangzc/AndroidLatexExt) （一个基于jlatexmath扩展的项目）
+
 ## 效果
 <img src="https://github.com/yangzc/AndroidCoreText/raw/master/screenshots/screen1.png" width="50%" height="50%" />
