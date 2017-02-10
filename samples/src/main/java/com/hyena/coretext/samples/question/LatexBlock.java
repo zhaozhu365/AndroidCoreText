@@ -11,7 +11,6 @@ import com.hyena.coretext.samples.latex.FillInAtom;
 import com.hyena.framework.utils.UIUtils;
 
 import maximsblog.blogspot.com.jlatexmath.ExampleFormula;
-import maximsblog.blogspot.com.jlatexmath.core.AjLatexMath;
 import maximsblog.blogspot.com.jlatexmath.core.Box;
 import maximsblog.blogspot.com.jlatexmath.core.Insets;
 import maximsblog.blogspot.com.jlatexmath.core.TeXConstants;
@@ -171,5 +170,27 @@ public class LatexBlock extends CYPlaceHolderBlock implements ICYEditableGroup {
             }
         }
         return null;
+    }
+
+    private void releaseAll(Box box) {
+        if (box != null) {
+            if (box instanceof FillInAtom.FillInBox) {
+                ((FillInAtom.FillInBox) box).release();
+            } else {
+                if (box.getChildren() != null && !box.getChildren().isEmpty()) {
+                    for (int i = 0; i < box.getChildren().size(); i++) {
+                        Box child = box.getChildren().get(i);
+                        releaseAll(child);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void release() {
+        super.release();
+        if (mTexIcon != null)
+            releaseAll(mTexIcon.getBox());
     }
 }

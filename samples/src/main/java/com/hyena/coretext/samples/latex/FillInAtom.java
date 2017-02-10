@@ -155,5 +155,10 @@ public class FillInAtom extends Atom {
                 mEditFace.setText(text);
         }
 
+        public void release() {
+            if (mEditFace != null)
+                mEditFace.release();
+        }
+
     }
 }

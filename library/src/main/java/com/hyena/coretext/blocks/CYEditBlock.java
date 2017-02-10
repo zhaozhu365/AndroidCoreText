@@ -87,4 +87,11 @@ public class CYEditBlock extends CYPlaceHolderBlock implements ICYEditable {
             mEditFace.setEditable(focusable);
         }
     }
+
+    @Override
+    public void release() {
+        super.release();
+        if (mEditFace != null)
+            mEditFace.release();
+    }
 }
