@@ -1,5 +1,6 @@
 package com.hyena.coretext.layout;
 
+import com.hyena.coretext.TextEnv;
 import com.hyena.coretext.blocks.CYBlock;
 import com.hyena.coretext.blocks.CYLineBlock;
 import com.hyena.coretext.blocks.CYPageBlock;
@@ -13,11 +14,10 @@ public interface CYLayout {
 
     /**
      * parse block to page
+     * @param textEnv environment
      * @param blocks blocks
-     * @param pageWidth pageWidth
-     * @param pageHeight pageHeight
      * @return pages
      */
-    List<CYPageBlock> parsePage(List<CYBlock> blocks, int pageWidth, int pageHeight);
+    List<CYPageBlock> parsePage(TextEnv textEnv, List<CYBlock> blocks);
 
 }

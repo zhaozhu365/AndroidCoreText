@@ -1,102 +1,97 @@
 package com.hyena.coretext.blocks;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
-import android.text.TextUtils;
+
+import com.hyena.coretext.TextEnv;
+import com.hyena.framework.utils.UIUtils;
 
 /**
  * Created by yangzc on 16/4/12.
  */
-public class CYEditBlock extends CYPlaceHolderBlock {
+public class CYEditBlock extends CYPlaceHolderBlock implements ICYEditable {
 
-    private static final int ACTION_FLASH = 1;
+    private int mTabId = 0;
+    private CYEditFace mEditFace;
 
-    private Paint mLinePaint;
-    private Paint mBgPaint;
-
-    private boolean mInputHintVisible = false;
-    private Handler mHandler;
-
-    public CYEditBlock(String content) {
-        super(content);
+    public CYEditBlock(TextEnv textEnv, String content) {
+        super(textEnv, content);
         init();
     }
 
     private void init(){
-
-        mBgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mBgPaint.setColor(Color.GRAY);
-        mBgPaint.setStrokeWidth(1);
-
-        mLinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mLinePaint.setColor(Color.BLACK);
-        mLinePaint.setStrokeWidth(2);
-
-        mHandler = new Handler(Looper.getMainLooper()) {
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                handleMessageImpl(msg);
-            }
-        };
+        Paint paint = getTextEnv().getPaint();
+        int height = (int) (Math.ceil(paint.descent() - paint.ascent()) + 0.5f);
+        setWidth(UIUtils.dip2px(80));
+        setHeight(height);
+        setFocusable(true);
+        mEditFace = createEditFace(getTextEnv(), this);
+        mEditFace.setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight()
+                , getPaddingBottom());
     }
 
-    private void handleMessageImpl(Message msg) {
-        int what = msg.what;
-        switch (what) {
-            case ACTION_FLASH: {
-                mInputHintVisible = !mInputHintVisible;
-
-                postInvalidate();
-
-                Message next = mHandler.obtainMessage(ACTION_FLASH);
-                mHandler.sendMessageDelayed(next, 500);
-                break;
-            }
-            default:
-                break;
-        }
+    protected CYEditFace createEditFace(TextEnv textEnv, ICYEditable editable) {
+        return new CYEditFace(textEnv, editable);
     }
 
     @Override
-    public CYEditBlock setWidth(int width) {
-        return (CYEditBlock) super.setWidth(width);
+    public void draw(Canvas canvas) {
+        super.draw(canvas);
+        mEditFace.onDraw(canvas, getBlockRect());
     }
 
     @Override
-    public CYEditBlock setHeight(int height) {
-        return (CYEditBlock) super.setHeight(height);
+    public int getTabId() {
+        return mTabId;
+    }
+
+    public void setTabId(int tabId) {
+        this.mTabId = tabId;
     }
 
     @Override
-    public CYEditBlock setAlignStyle(AlignStyle style) {
-        return (CYEditBlock) super.setAlignStyle(style);
+    public String getText() {
+        return mEditFace.getText();
+    }
+
+    @Override
+    public void setText(String text) {
+        mEditFace.setText(text);
     }
 
     @Override
     public void setFocus(boolean focus) {
         super.setFocus(focus);
-        if (focus) {
-            mHandler.removeMessages(ACTION_FLASH);
-            Message next = mHandler.obtainMessage(ACTION_FLASH);
-            mHandler.sendMessageDelayed(next, 500);
-        } else {
-            mHandler.removeMessages(ACTION_FLASH);
-            mInputHintVisible = false;
+        if (isFocusable()) {
+            mEditFace.setFocus(focus);
         }
     }
 
-    private Rect mRect = new Rect();
     @Override
-    public void draw(Canvas canvas) {
-        super.draw(canvas);
-        // 绘制外边框
-        mRect.set(getRect().left, getRect().top + 10, getRect().right, getRect().bottom);
-        canvas.drawRect(mRect, mBgPaint);
+    public void setPadding(int left, int top, int right, int bottom) {
+        super.setPadding(left, top, right, bottom);
+        if (mEditFace != null) {
+            mEditFace.setPadding(left, top, right, bottom);
+        }
+    }
+
+    @Override
+    public boolean hasFocus() {
+        return mEditFace.hasFocus();
+    }
+
+    @Override
+    public void setFocusable(boolean focusable) {
+        super.setFocusable(focusable);
+        if (mEditFace != null) {
+            mEditFace.setEditable(focusable);
+        }
+    }
+
+    @Override
+    public void release() {
+        super.release();
+        if (mEditFace != null)
+            mEditFace.release();
     }
 }

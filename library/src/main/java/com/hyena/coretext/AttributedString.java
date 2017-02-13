@@ -18,9 +18,11 @@ import java.util.List;
 public class AttributedString {
 
     private String mText;
+    private TextEnv mTextEnv;
     private List<BlockSection> mBlockSections;
 
-    public AttributedString(String text) {
+    public AttributedString(TextEnv textEnv, String text) {
+        this.mTextEnv = textEnv;
         this.mText = text;
     }
 
@@ -44,34 +46,54 @@ public class AttributedString {
         }
     }
 
-    public List<CYBlock> buildBlocks(){
+    public void replaceBlock(int start, int end, CYBlock block) {
+        if (TextUtils.isEmpty(mText) || block == null)
+            return;
+
         if (mBlockSections == null)
-            return null;
-        Collections.sort(mBlockSections, new Comparator<BlockSection>() {
-            @Override
-            public int compare(BlockSection t1, BlockSection t2) {
-                return t1.startIndex - t2.startIndex;
-            }
-        });
+            mBlockSections = new ArrayList<BlockSection>();
 
-        int endIndex = 0;
-        List<CYBlock> blocks = new ArrayList<CYBlock>();
-        for (int i = 0; i < mBlockSections.size(); i++) {
-            BlockSection blockSection = mBlockSections.get(i);
-            if (blockSection.startIndex != endIndex) {
-                BlockSection ghostSection = new BlockSection(endIndex
-                        , blockSection.startIndex, CYTextBlock.class);
-                blocks.add(ghostSection.getOrNewBlock());
-            }
-            blocks.add(blockSection.getOrNewBlock());
-
-            endIndex = blockSection.endIndex;
+        if (start >=0 && end >=0 && end <= mText.length() && start<= mText.length()
+                && end >= start) {
+            BlockSection section = new BlockSection(start, end, block);
+            mBlockSections.add(section);
+        } else {
+            throw new IndexOutOfBoundsException("IndexOutOfBoundsException");
         }
+    }
 
-        if (endIndex < mText.length()) {
-            BlockSection ghostSection = new BlockSection(endIndex
+    public List<CYBlock> buildBlocks() {
+        List<CYBlock> blocks = new ArrayList<CYBlock>();
+        if (mBlockSections == null) {
+            BlockSection ghostSection = new BlockSection(0
                     , mText.length(), CYTextBlock.class);
             blocks.add(ghostSection.getOrNewBlock());
+        } else {
+            Collections.sort(mBlockSections, new Comparator<BlockSection>() {
+                @Override
+                public int compare(BlockSection t1, BlockSection t2) {
+                    return t1.startIndex - t2.startIndex;
+                }
+            });
+
+            int endIndex = 0;
+            for (int i = 0; i < mBlockSections.size(); i++) {
+                BlockSection blockSection = mBlockSections.get(i);
+                if (blockSection.startIndex != endIndex) {
+                    BlockSection ghostSection = new BlockSection(endIndex
+                            , blockSection.startIndex, CYTextBlock.class);
+                    blocks.add(ghostSection.getOrNewBlock());
+                }
+                blocks.add(blockSection.getOrNewBlock());
+
+                endIndex = blockSection.endIndex;
+            }
+
+            if (endIndex < mText.length()) {
+                BlockSection ghostSection = new BlockSection(endIndex
+                        , mText.length(), CYTextBlock.class);
+                blocks.add(ghostSection.getOrNewBlock());
+            }
         }
         return blocks;
     }
@@ -89,15 +111,22 @@ public class AttributedString {
             this.blockClz = blockClz;
         }
 
+        public BlockSection(int startIndex, int endIndex, CYBlock block) {
+            this.startIndex = startIndex;
+            this.endIndex = endIndex;
+            mBlock = block;
+        }
+
         public CYBlock getOrNewBlock(){
             if (mBlock != null)
                 return mBlock;
 
             if (blockClz != null) {
                 try {
-                    Constructor<? extends  CYBlock> constructor = blockClz.getConstructor(String.class);
+                    Constructor<? extends  CYBlock> constructor = blockClz.getConstructor(TextEnv.class, String.class);
                     String content = mText.substring(startIndex, endIndex);
-                    mBlock = constructor.newInstance(content);
+                    content = content.replaceAll("labelsharp", "#");
+                    mBlock = constructor.newInstance(mTextEnv, content);
                     return mBlock;
                 } catch (NoSuchMethodException e) {
                     e.printStackTrace();

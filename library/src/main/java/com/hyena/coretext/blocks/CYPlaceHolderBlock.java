@@ -2,21 +2,24 @@ package com.hyena.coretext.blocks;
 
 import android.graphics.Canvas;
 
+import com.hyena.coretext.TextEnv;
+
 /**
  * Created by yangzc on 16/4/8.
  */
 public class CYPlaceHolderBlock extends CYBlock {
 
     public enum AlignStyle {
-        Style_Round,
-        Style_Single_Line
+        Style_Normal, //顺序平铺
+        Style_Round, //环绕效果
+        Style_MONOPOLY //独享一行
     }
 
-    private AlignStyle mAlignStyle;
+    private AlignStyle mAlignStyle = AlignStyle.Style_Normal;
     private int mWidth, mHeight;
 
-    public CYPlaceHolderBlock(String content){
-        super(content);
+    public CYPlaceHolderBlock(TextEnv textEnv, String content){
+        super(textEnv, content);
     }
 
     public AlignStyle getAlignStyle(){
@@ -38,17 +41,18 @@ public class CYPlaceHolderBlock extends CYBlock {
     }
 
     @Override
-    public int getWidth() {
+    public int getContentWidth() {
         return mWidth;
     }
 
     @Override
-    public int getHeight() {
+    public int getContentHeight() {
         return mHeight;
     }
 
     @Override
     public void draw(Canvas canvas) {
-
+        super.draw(canvas);
     }
+
 }

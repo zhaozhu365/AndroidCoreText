@@ -18,7 +18,7 @@
 //import com.hyena.coretext.blocks.CYBreakLineBlock;
 //import com.hyena.coretext.blocks.CYEditBlock;
 //import com.hyena.coretext.layout.CYHorizontalLayout;
-//import com.hyena.coretext.samples.blocks.LatexBlock;
+//import com.hyena.coretext.samples.question.LatexBlock;
 //import com.hyena.fillin.utils.PluginInstaller;
 //
 //import java.util.ArrayList;
