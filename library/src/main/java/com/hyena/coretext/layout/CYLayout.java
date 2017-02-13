@@ -10,14 +10,23 @@ import java.util.List;
 /**
  * Created by yangzc on 16/4/8.
  */
-public interface CYLayout {
+public abstract class CYLayout {
+
+    private TextEnv mTextEnv;
+
+    public CYLayout(TextEnv textEnv) {
+        this.mTextEnv = textEnv;
+    }
+
+    public TextEnv getTextEnv() {
+        return mTextEnv;
+    }
 
     /**
      * parse block to page
-     * @param textEnv environment
      * @param blocks blocks
      * @return pages
      */
-    List<CYPageBlock> parsePage(TextEnv textEnv, List<CYBlock> blocks);
+    public abstract List<CYPageBlock> parsePage(List<CYBlock> blocks);
 
 }

@@ -83,8 +83,8 @@ public class QuestionTextView extends CYPageView {
         if (TextUtils.isEmpty(mQuestionTxt) || getWidth() <= 0)
             return;
         List<CYBlock> blocks = analysisCommand().buildBlocks();
-        CYLayout layout = new CYHorizontalLayout();
-        List<CYPageBlock> pages = layout.parsePage(mTextEnv, blocks);
+        CYLayout layout = new CYHorizontalLayout(mTextEnv);
+        List<CYPageBlock> pages = layout.parsePage(blocks);
         if (pages != null && pages.size() > 0) {
             CYPageBlock pageBlock = pages.get(0);
             pageBlock.setPadding(20, 20, 20, 20);

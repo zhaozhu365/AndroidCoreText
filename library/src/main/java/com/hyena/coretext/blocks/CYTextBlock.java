@@ -17,6 +17,7 @@ public class CYTextBlock extends CYBlock {
 
     private String text;
     private Paint mPaint;
+    private CYParagraphStyle mParagraphStyle;
 
     public CYTextBlock(TextEnv textEnv, String content){
         super(textEnv, content);
@@ -33,6 +34,11 @@ public class CYTextBlock extends CYBlock {
             mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
         this.text = content;
+    }
+
+    public void setParagraphStyle(CYParagraphStyle style) {
+        this.mParagraphStyle = style;
+
     }
 
     public CYTextBlock setTextColor(int color) {
