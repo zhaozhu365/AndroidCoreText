@@ -8,17 +8,9 @@ import java.util.List;
  */
 public class CYEventDispatcher {
 
-    private static CYEventDispatcher mDispatcher;
-
     private List<CYLayoutEventListener> mLayoutListeners;
 
-    private CYEventDispatcher() {
-    }
-
-    public static CYEventDispatcher getEventDispatcher() {
-        if (mDispatcher == null)
-            mDispatcher = new CYEventDispatcher();
-        return mDispatcher;
+    public CYEventDispatcher() {
     }
 
     public void addLayoutEventListener(CYLayoutEventListener listener) {

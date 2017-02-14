@@ -59,7 +59,7 @@ public class SampleQuestionFragment extends Fragment {
             }
         });
         mQtvQuestion.setTextSize(18);
-        String question = "根据图片意思选择相符的句子#{\"type\":\"blank\",\"id\":1}##{\"type\":\"img\",\"id\"=1,\"size\":\"big_image\",\"src\":\"http://img1.3lian.com/2015/w8/28/d/66.jpg\"}#";
+        String question = "根据图片意思选择相符的句子#{\"type\":\"blank\",\"id\":1}##{\"type\":\"img\",\"id\"=1,\"size\":\"big_image\",\"src\":\"http://img1.3lian.com/2015/w8/28/d/66.jpg\"}#啊啊啊啊啊";
         mQtvQuestion.setText(question);
     }
 

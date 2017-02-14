@@ -13,9 +13,10 @@ import java.util.List;
 public class CYLineBlock extends CYBlock<CYBlock> {
 
     private int mLineHeight;
-
-    public CYLineBlock(TextEnv textEnv) {
+    private CYParagraphStyle mParagraphStyle;
+    public CYLineBlock(TextEnv textEnv, CYParagraphStyle style) {
         super(textEnv, "");
+        this.mParagraphStyle = style;
     }
 
     @Override
@@ -38,8 +39,21 @@ public class CYLineBlock extends CYBlock<CYBlock> {
     @Override
     public void draw(Canvas canvas) {
         if (getChildren() != null) {
+            if (mParagraphStyle != null) {
+                canvas.save();
+                if (mParagraphStyle.getHorizontalAlign() == CYHorizontalAlign.LEFT) {
+                    canvas.translate(0, 0);
+                } else if(mParagraphStyle.getHorizontalAlign() == CYHorizontalAlign.CENTER) {
+                    canvas.translate((getTextEnv().getPageWidth() - getWidth())/2, 0);
+                } else {
+                    canvas.translate(getTextEnv().getPageWidth() - getWidth(), 0);
+                }
+            }
             for (int i = 0; i < getChildren().size(); i++) {
                 getChildren().get(i).draw(canvas);
+            }
+            if (mParagraphStyle != null) {
+                canvas.restore();
             }
         }
     }
@@ -81,6 +95,9 @@ public class CYLineBlock extends CYBlock<CYBlock> {
     @Override
     public void addChild(CYBlock child) {
         super.addChild(child);
+        if (child != null) {
+            child.setParagraphStyle(mParagraphStyle);
+        }
     }
 
     private void measureLineHeight(){
@@ -124,4 +141,15 @@ public class CYLineBlock extends CYBlock<CYBlock> {
         }
     }
 
+    public void setIsFinishingLineInParagraph(boolean isFinishingLine) {
+        if (isFinishingLine && mParagraphStyle != null) {
+            setPadding(0, getPaddingTop(), 0, mParagraphStyle.getMarginBottom());
+        }
+    }
+
+    public void setIsFirstLineInParagraph(boolean isFirstLine) {
+        if (isFirstLine && mParagraphStyle != null) {
+            setPadding(0, mParagraphStyle.getMarginTop(), 0, getPaddingBottom());
+        }
+    }
 }

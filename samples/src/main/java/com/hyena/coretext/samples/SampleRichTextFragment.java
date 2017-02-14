@@ -72,12 +72,12 @@ public class SampleRichTextFragment extends Fragment {
         mCyPvPageView = (CYPageView) view.findViewById(R.id.page_view);
 
 
-        CYLayout layout = new CYHorizontalLayout();
-        List<CYPageBlock> pages = layout.parsePage(textEnv, blocks);
+        CYLayout layout = new CYHorizontalLayout(textEnv);
+        List<CYPageBlock> pages = layout.parsePage(blocks);
         if (pages != null && pages.size() > 0) {
             CYPageBlock pageBlock = pages.get(0);
             pageBlock.setPadding(20, 20, 20, 20);
-            mCyPvPageView.setPageBlock(pageBlock);
+            mCyPvPageView.setPageBlock(textEnv, pageBlock);
         }
         return view;
     }

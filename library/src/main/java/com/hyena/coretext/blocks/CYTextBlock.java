@@ -35,6 +35,15 @@ public class CYTextBlock extends CYBlock {
         this.text = content;
     }
 
+    @Override
+    public void setParagraphStyle(CYParagraphStyle style) {
+        super.setParagraphStyle(style);
+        if (style != null) {
+            mPaint.setTextSize(style.getTextSize());
+            mPaint.setColor(style.getTextColor());
+        }
+    }
+
     public CYTextBlock setTextColor(int color) {
         if (mPaint != null && color > 0) {
             mPaint.setColor(color);

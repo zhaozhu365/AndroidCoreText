@@ -5,22 +5,20 @@
 package com.hyena.coretext.samples.question;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 
 import com.hyena.coretext.AttributedString;
 import com.hyena.coretext.CYPageView;
 import com.hyena.coretext.TextEnv;
 import com.hyena.coretext.blocks.CYBlock;
-import com.hyena.coretext.blocks.CYImageBlock;
+import com.hyena.coretext.blocks.CYBreakLineBlock;
 import com.hyena.coretext.blocks.CYPageBlock;
-import com.hyena.coretext.blocks.CYPlaceHolderBlock;
-import com.hyena.coretext.blocks.CYTextBlock;
+import com.hyena.coretext.blocks.CYParagraphEndBlock;
+import com.hyena.coretext.blocks.CYParagraphStartBlock;
 import com.hyena.coretext.layout.CYHorizontalLayout;
 import com.hyena.coretext.layout.CYLayout;
-import com.hyena.coretext.samples.R;
 import com.hyena.framework.utils.UIUtils;
 
 import org.json.JSONException;
@@ -56,7 +54,13 @@ public class QuestionTextView extends CYPageView {
 
     private void init() {
         mEnvBuilder = new TextEnv.Builder(getContext()).setPageHeight(Integer.MAX_VALUE)
-                .setVerticalSpacing(UIUtils.dip2px(getContext(), 3)).setEditable(false);
+                .setVerticalSpacing(UIUtils.dip2px(getContext(), 3));
+    }
+
+    public void setEditable(boolean editable) {
+        mEnvBuilder.setEditable(editable);
+        mTextEnv = mEnvBuilder.build();
+        analysisData();
     }
 
     public void setTextColor(int textColor) {
@@ -74,21 +78,26 @@ public class QuestionTextView extends CYPageView {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        mEnvBuilder.setPageWidth(w - 40);
+        mEnvBuilder.setPageWidth(w);
         mTextEnv = mEnvBuilder.build();
         analysisData();
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return super.onTouchEvent(event);
     }
 
     private void analysisData() {
         if (TextUtils.isEmpty(mQuestionTxt) || getWidth() <= 0)
             return;
         List<CYBlock> blocks = analysisCommand().buildBlocks();
-        CYLayout layout = new CYHorizontalLayout();
-        List<CYPageBlock> pages = layout.parsePage(mTextEnv, blocks);
+        CYLayout layout = new CYHorizontalLayout(mTextEnv);
+        List<CYPageBlock> pages = layout.parsePage(blocks);
         if (pages != null && pages.size() > 0) {
             CYPageBlock pageBlock = pages.get(0);
-            pageBlock.setPadding(20, 20, 20, 20);
-            setPageBlock(pageBlock);
+            pageBlock.setPadding(0, 0, 0, 0);
+            setPageBlock(mTextEnv, pageBlock);
         }
     }
 
@@ -106,8 +115,8 @@ public class QuestionTextView extends CYPageView {
                     attributedString.replaceBlock(start, end, block);
                 }
             }
-            attributedString.replaceBlock(0, 1, new AudioBlock(mTextEnv, ""));
-            attributedString.replaceBlock(1, 2, new LatexBlock(mTextEnv, ""));
+//            attributedString.replaceBlock(0, 1, new AudioBlock(mTextEnv, ""));
+//            attributedString.replaceBlock(1, 2, new LatexBlock(mTextEnv, ""));
         }
         return attributedString;
     }
@@ -120,6 +129,14 @@ public class QuestionTextView extends CYPageView {
                 return (T) new BlankBlock(mTextEnv, data);
             } else if("img".equals(type)) {
                 return (T) new ImageBlock(mTextEnv, data);
+            } else if("P".equals(type)) {
+                return (T) new CYBreakLineBlock(mTextEnv, data);
+            } else if ("para_begin".equals(type)) {
+                return (T) new ParagraphStartBlock(mTextEnv, data);
+            } else if ("para_end".equals(type)) {
+                return (T) new CYParagraphEndBlock(mTextEnv, data);
+            } else if ("audio".equals(type)) {
+                return (T) new AudioBlock(mTextEnv, data);
             }
         } catch (JSONException e) {
             e.printStackTrace();

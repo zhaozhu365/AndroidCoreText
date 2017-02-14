@@ -39,6 +39,7 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable {
     //是否在独享行中
     private boolean mIsInMonopolyRow = true;
     private boolean mFocusable = false;
+    private CYParagraphStyle mParagraphStyle;
 
     public CYBlock(TextEnv textEnv, String content) {
         this.mTextEnv = textEnv;
@@ -200,7 +201,7 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable {
         TextEnv.Align align = getTextEnv().getTextAlign();
         int contentHeight = getContentHeight();
         int top;
-        if (align == TextEnv.Align.TOP || mIsInMonopolyRow) {
+        if (align == TextEnv.Align.TOP || !mIsInMonopolyRow) {
             top = lineY + paddingTop;
         } else if (align == TextEnv.Align.CENTER) {
             top = lineY + (getLineHeight() - contentHeight)/2;
@@ -221,7 +222,7 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable {
         TextEnv.Align align = getTextEnv().getTextAlign();
         int contentHeight = getContentHeight();
         int top;
-        if (align == TextEnv.Align.TOP || mIsInMonopolyRow) {
+        if (align == TextEnv.Align.TOP || !mIsInMonopolyRow) {
             top = lineY;
         } else if(align == TextEnv.Align.CENTER) {
             top = lineY + (getLineHeight() - contentHeight)/2 - paddingTop;
@@ -242,7 +243,8 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable {
      * relayout
      */
     public void requestLayout() {
-        CYEventDispatcher.getEventDispatcher().requestLayout();
+        if (mTextEnv != null)
+            mTextEnv.getEventDispatcher().requestLayout();
     }
 
     /**
@@ -250,14 +252,16 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable {
      * @param force force or not
      */
     public void requestLayout(boolean force) {
-        CYEventDispatcher.getEventDispatcher().requestLayout(force);
+        if (mTextEnv != null)
+            mTextEnv.getEventDispatcher().requestLayout(force);
     }
 
     /**
      * reDraw
      */
     public void postInvalidate() {
-        CYEventDispatcher.getEventDispatcher().postInvalidate();
+        if (mTextEnv != null)
+            mTextEnv.getEventDispatcher().postInvalidate();
     }
 
     public boolean isDebug() {
@@ -322,6 +326,14 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable {
         return null;
     }
 
+    public void setParagraphStyle(CYParagraphStyle style) {
+        this.mParagraphStyle = style;
+    }
+
+    public CYParagraphStyle getParagraphStyle() {
+        return mParagraphStyle;
+    }
+
     public void release() {
         List<T> children = getChildren();
         if (children != null && !children.isEmpty()) {
@@ -330,5 +342,9 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable {
                 block.release();
             }
         }
+    }
+
+    public int getTextHeight(Paint paint) {
+        return (int) (Math.ceil(paint.descent() - paint.ascent()) + 0.5f);
     }
 }

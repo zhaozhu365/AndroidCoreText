@@ -11,6 +11,7 @@ import android.graphics.RectF;
 import com.hyena.coretext.TextEnv;
 import com.hyena.coretext.blocks.CYEditFace;
 import com.hyena.coretext.blocks.ICYEditable;
+import com.hyena.coretext.samples.question.EditFace;
 import com.hyena.framework.utils.UIUtils;
 
 import maximsblog.blogspot.com.jlatexmath.core.Atom;
@@ -73,7 +74,7 @@ public class FillInAtom extends Atom {
             this.mTextEnv = textEnv;
             this.mTabId = Integer.valueOf(tabId);
             this.mText = text;
-            mEditFace = new CYEditFace(textEnv, this);
+            mEditFace = new EditFace(textEnv, this);
 
             this.mScale = UIUtils.px2dip(textEnv.getContext(), textEnv.getPaint().getTextSize())
                     * textEnv.getContext().getResources().getDisplayMetrics()

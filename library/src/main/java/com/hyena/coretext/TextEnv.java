@@ -10,6 +10,7 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.util.SparseArray;
 
+import com.hyena.coretext.event.CYEventDispatcher;
 import com.hyena.framework.utils.UIUtils;
 
 import java.util.HashMap;
@@ -31,6 +32,8 @@ public class TextEnv {
     private Align mTextAlign = Align.BOTTOM;
 
     private SparseArray<String> mEditableValues = new SparseArray<String>();
+
+    private CYEventDispatcher mEventDispatcher = new CYEventDispatcher();
 
     private TextEnv(Context context) {
         this.mContext = context;
@@ -109,6 +112,10 @@ public class TextEnv {
         if (mEditableValues != null) {
             mEditableValues.clear();
         }
+    }
+
+    public CYEventDispatcher getEventDispatcher() {
+        return mEventDispatcher;
     }
 
     public static class Builder {
