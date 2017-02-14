@@ -5,7 +5,7 @@ package com.hyena.coretext.event;
  */
 public interface CYLayoutEventListener {
 
-    void onLayout(int pageWidth, int pageHeight);
+    void doLayout(boolean force);
 
     void onInvalidate();
 }

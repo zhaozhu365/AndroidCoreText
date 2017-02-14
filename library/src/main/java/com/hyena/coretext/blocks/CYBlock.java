@@ -248,15 +248,6 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable {
     }
 
     /**
-     * force relayout
-     * @param force force or not
-     */
-    public void requestLayout(boolean force) {
-        if (mTextEnv != null)
-            mTextEnv.getEventDispatcher().requestLayout(force);
-    }
-
-    /**
      * reDraw
      */
     public void postInvalidate() {

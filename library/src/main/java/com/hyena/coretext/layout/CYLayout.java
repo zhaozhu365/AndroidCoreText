@@ -24,9 +24,10 @@ public abstract class CYLayout {
 
     /**
      * parse block to page
-     * @param blocks blocks
-     * @return pages
      */
-    public abstract List<CYPageBlock> parsePage(List<CYBlock> blocks);
+    public abstract List<CYPageBlock> parse();
 
+    public abstract List<CYPageBlock> getPages();
+
+    public abstract List<CYBlock> getBlocks();
 }

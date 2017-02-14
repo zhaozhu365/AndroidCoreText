@@ -32,22 +32,12 @@ public class CYEventDispatcher {
     }
 
     public void requestLayout(boolean force) {
-        requestLayout(force, mPageWidth, mPageHeight);
-    }
-
-    private int mPageWidth, mPageHeight;
-
-    public void requestLayout(boolean force, int pageWidth, int pageHeight) {
         if (mLayoutListeners == null || mLayoutListeners.isEmpty())
             return;
 
-        if (force || pageWidth != mPageWidth || pageHeight != mPageHeight) {
-            this.mPageWidth = pageWidth;
-            this.mPageHeight = pageHeight;
-            for (int i = 0; i < mLayoutListeners.size(); i++) {
-                CYLayoutEventListener listener = mLayoutListeners.get(i);
-                listener.onLayout(pageWidth, pageHeight);
-            }
+        for (int i = 0; i < mLayoutListeners.size(); i++) {
+            CYLayoutEventListener listener = mLayoutListeners.get(i);
+            listener.doLayout(force);
         }
     }
 

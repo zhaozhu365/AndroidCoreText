@@ -38,7 +38,7 @@ public class CYImageBlock extends CYPlaceHolderBlock {
                 public void onLoadComplete(String imageUrl, Bitmap bitmap, Object object) {
                     if (bitmap != null && !bitmap.isRecycled()) {
                         mBitmap = bitmap;
-                        requestLayout(true);
+                        requestLayout();
                         Log.v("yangzc", "load");
                     }
                 }

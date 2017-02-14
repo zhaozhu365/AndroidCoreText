@@ -16,7 +16,6 @@ import com.hyena.coretext.blocks.CYBlock;
 import com.hyena.coretext.blocks.CYBreakLineBlock;
 import com.hyena.coretext.blocks.CYPageBlock;
 import com.hyena.coretext.blocks.CYParagraphEndBlock;
-import com.hyena.coretext.blocks.CYParagraphStartBlock;
 import com.hyena.coretext.layout.CYHorizontalLayout;
 import com.hyena.coretext.layout.CYLayout;
 import com.hyena.framework.utils.UIUtils;
@@ -36,6 +35,7 @@ public class QuestionTextView extends CYPageView {
     private TextEnv.Builder mEnvBuilder;
     private TextEnv mTextEnv;
     private String mQuestionTxt;
+    private CYLayout mLayout;
 
     public QuestionTextView(Context context) {
         super(context);
@@ -60,19 +60,27 @@ public class QuestionTextView extends CYPageView {
     public void setEditable(boolean editable) {
         mEnvBuilder.setEditable(editable);
         mTextEnv = mEnvBuilder.build();
-        analysisData();
+        mTextEnv.getEventDispatcher().addLayoutEventListener(this);
+        doLayout(true);
     }
 
     public void setTextColor(int textColor) {
         mEnvBuilder.setTextColor(textColor);
         mTextEnv = mEnvBuilder.build();
-        analysisData();
+        mTextEnv.getEventDispatcher().addLayoutEventListener(this);
+        doLayout(true);
     }
 
     public void setTextSize(int dp) {
         mEnvBuilder.setFontSize(UIUtils.dip2px(getContext(), dp));
         mTextEnv = mEnvBuilder.build();
-        analysisData();
+        mTextEnv.getEventDispatcher().addLayoutEventListener(this);
+        doLayout(true);
+    }
+
+    public void setText(String questionTxt) {
+        this.mQuestionTxt = questionTxt.replaceAll("\\\\#", "labelsharp");
+        doLayout(true);
     }
 
     @Override
@@ -80,7 +88,8 @@ public class QuestionTextView extends CYPageView {
         super.onSizeChanged(w, h, oldw, oldh);
         mEnvBuilder.setPageWidth(w);
         mTextEnv = mEnvBuilder.build();
-        analysisData();
+        mTextEnv.getEventDispatcher().addLayoutEventListener(this);
+        doLayout(true);
     }
 
     @Override
@@ -88,16 +97,21 @@ public class QuestionTextView extends CYPageView {
         return super.onTouchEvent(event);
     }
 
-    private void analysisData() {
+    private void reLayout(boolean force) {
         if (TextUtils.isEmpty(mQuestionTxt) || getWidth() <= 0)
             return;
-        List<CYBlock> blocks = analysisCommand().buildBlocks();
-        CYLayout layout = new CYHorizontalLayout(mTextEnv);
-        List<CYPageBlock> pages = layout.parsePage(blocks);
-        if (pages != null && pages.size() > 0) {
-            CYPageBlock pageBlock = pages.get(0);
-            pageBlock.setPadding(0, 0, 0, 0);
-            setPageBlock(mTextEnv, pageBlock);
+
+        if (mLayout == null || force) {
+            List<CYBlock> blocks = analysisCommand().buildBlocks();
+            mLayout = new CYHorizontalLayout(mTextEnv, blocks);
+        }
+        if (mLayout != null) {
+            List<CYPageBlock> pages = mLayout.parse();
+            if (pages != null && pages.size() > 0) {
+                CYPageBlock pageBlock = pages.get(0);
+                pageBlock.setPadding(0, 0, 0, 0);
+                setPageBlock(mTextEnv, pageBlock);
+            }
         }
     }
 
@@ -144,14 +158,11 @@ public class QuestionTextView extends CYPageView {
         return null;
     }
 
-    public void setText(String questionTxt) {
-        this.mQuestionTxt = questionTxt.replaceAll("\\\\#", "labelsharp");
-        analysisData();
-    }
-
     @Override
-    public void onLayout(int pageWidth, int pageHeight) {
-        super.onLayout(pageWidth, pageHeight);
-        analysisData();
+    public void doLayout(boolean force) {
+        super.doLayout(force);
+        reLayout(force);
+        requestLayout();
+        postInvalidate();
     }
 }

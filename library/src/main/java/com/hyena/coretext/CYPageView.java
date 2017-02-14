@@ -11,7 +11,6 @@ import com.hyena.coretext.blocks.CYBlock;
 import com.hyena.coretext.blocks.CYPageBlock;
 import com.hyena.coretext.blocks.ICYEditable;
 import com.hyena.coretext.blocks.ICYEditableGroup;
-import com.hyena.coretext.event.CYEventDispatcher;
 import com.hyena.coretext.event.CYFocusEventListener;
 import com.hyena.coretext.event.CYLayoutEventListener;
 import com.hyena.coretext.utils.CYBlockUtils;
@@ -80,10 +79,6 @@ public class CYPageView extends View implements CYLayoutEventListener {
     public void setPageBlock(TextEnv textEnv, CYPageBlock pageBlock) {
         mTextEnv = textEnv;
         this.mPageBlock = pageBlock;
-        if (mTextEnv != null) {
-            mTextEnv.getEventDispatcher().addLayoutEventListener(this);
-        }
-        postInvalidate();
     }
 
     /**
@@ -221,9 +216,9 @@ public class CYPageView extends View implements CYLayoutEventListener {
         }
     }
 
+
     @Override
-    public void onLayout(int pageWidth, int pageHeight) {
-        requestLayout();
+    public void doLayout(boolean force) {
     }
 
     @Override

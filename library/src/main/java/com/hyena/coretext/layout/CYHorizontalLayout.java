@@ -22,23 +22,38 @@ import java.util.Stack;
  */
 public class CYHorizontalLayout extends CYLayout {
 
-    int leftWidth = 0;
-    int y = 0;
-    CYLineBlock line = null;
-    List<CYPlaceHolderBlock> placeHolderBlocks = new ArrayList<CYPlaceHolderBlock>();
-    List<CYPlaceHolderBlock> linePlaceHolderBlocks = new ArrayList<CYPlaceHolderBlock>();
-    Stack<CYParagraphStyle> styleParagraphStack = new Stack<CYParagraphStyle>();
-    List<CYLineBlock> lines = new ArrayList<CYLineBlock>();
+    private int leftWidth = 0;
+    private int y = 0;
+    private CYLineBlock line = null;
+    private List<CYPlaceHolderBlock> placeHolderBlocks = new ArrayList<CYPlaceHolderBlock>();
+    private List<CYPlaceHolderBlock> linePlaceHolderBlocks = new ArrayList<CYPlaceHolderBlock>();
+    private Stack<CYParagraphStyle> styleParagraphStack = new Stack<CYParagraphStyle>();
+    private List<CYLineBlock> lines = new ArrayList<CYLineBlock>();
 
-    public CYHorizontalLayout(TextEnv textEnv) {
+    private List<CYBlock> mBlocks;
+    private List<CYPageBlock> mPageBlocks = new ArrayList<CYPageBlock>();
+
+    public CYHorizontalLayout(TextEnv textEnv, List<CYBlock> blocks) {
         super(textEnv);
         this.leftWidth = textEnv.getPageWidth();
+        this.mBlocks = resetBlocks(blocks);
+    }
+
+    private void reset() {
+        this.leftWidth = getTextEnv().getPageWidth();
+        this.y = 0;
+        line = null;
+        placeHolderBlocks.clear();
+        linePlaceHolderBlocks.clear();
+        styleParagraphStack.clear();
+        lines.clear();
     }
 
     @Override
-    public List<CYPageBlock> parsePage(List<CYBlock> blocks) {
-        List<CYLineBlock> lines = parseLines(resetBlocks(blocks));
-        List<CYPageBlock> pages = new ArrayList<CYPageBlock>();
+    public List<CYPageBlock> parse() {
+        reset();
+
+        List<CYLineBlock> lines = parseLines(mBlocks);
         CYPageBlock page = new CYPageBlock(getTextEnv());
         int y = 0;
         if (lines != null) {
@@ -56,8 +71,18 @@ public class CYHorizontalLayout extends CYLayout {
                 page.addChild(line);
             }
         }
-        pages.add(page);
-        return pages;
+        mPageBlocks.add(page);
+        return mPageBlocks;
+    }
+
+    @Override
+    public List<CYPageBlock> getPages() {
+        return mPageBlocks;
+    }
+
+    @Override
+    public List<CYBlock> getBlocks() {
+        return mBlocks;
     }
 
     private List<CYLineBlock> parseLines(List<CYBlock> blocks) {
