@@ -200,7 +200,7 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable {
         TextEnv.Align align = getTextEnv().getTextAlign();
         int contentHeight = getContentHeight();
         int top;
-        if (align == TextEnv.Align.TOP || mIsInMonopolyRow) {
+        if (align == TextEnv.Align.TOP || !mIsInMonopolyRow) {
             top = lineY + paddingTop;
         } else if (align == TextEnv.Align.CENTER) {
             top = lineY + (getLineHeight() - contentHeight)/2;
@@ -221,7 +221,7 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable {
         TextEnv.Align align = getTextEnv().getTextAlign();
         int contentHeight = getContentHeight();
         int top;
-        if (align == TextEnv.Align.TOP || mIsInMonopolyRow) {
+        if (align == TextEnv.Align.TOP || !mIsInMonopolyRow) {
             top = lineY;
         } else if(align == TextEnv.Align.CENTER) {
             top = lineY + (getLineHeight() - contentHeight)/2 - paddingTop;
@@ -242,7 +242,8 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable {
      * relayout
      */
     public void requestLayout() {
-        CYEventDispatcher.getEventDispatcher().requestLayout();
+        if (mTextEnv != null)
+            mTextEnv.getEventDispatcher().requestLayout();
     }
 
     /**
@@ -250,18 +251,20 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable {
      * @param force force or not
      */
     public void requestLayout(boolean force) {
-        CYEventDispatcher.getEventDispatcher().requestLayout(force);
+        if (mTextEnv != null)
+            mTextEnv.getEventDispatcher().requestLayout(force);
     }
 
     /**
      * reDraw
      */
     public void postInvalidate() {
-        CYEventDispatcher.getEventDispatcher().postInvalidate();
+        if (mTextEnv != null)
+            mTextEnv.getEventDispatcher().postInvalidate();
     }
 
     public boolean isDebug() {
-        return false;
+        return true;
     }
 
     protected void debug(String msg) {

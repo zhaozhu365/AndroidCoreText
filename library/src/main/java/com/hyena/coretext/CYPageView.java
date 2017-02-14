@@ -25,6 +25,7 @@ public class CYPageView extends View implements CYLayoutEventListener {
     private CYPageBlock mPageBlock;
     private CYBlock mFocusBlock;
     private ICYEditable mFocusEditable;
+    private TextEnv mTextEnv;
 
     public CYPageView(Context context) {
         super(context);
@@ -76,8 +77,12 @@ public class CYPageView extends View implements CYLayoutEventListener {
      * set blocks items
      * @param pageBlock page
      */
-    public void setPageBlock(CYPageBlock pageBlock) {
+    public void setPageBlock(TextEnv textEnv, CYPageBlock pageBlock) {
+        mTextEnv = textEnv;
         this.mPageBlock = pageBlock;
+        if (mTextEnv != null) {
+            mTextEnv.getEventDispatcher().addLayoutEventListener(this);
+        }
         postInvalidate();
     }
 
@@ -196,13 +201,18 @@ public class CYPageView extends View implements CYLayoutEventListener {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        CYEventDispatcher.getEventDispatcher().addLayoutEventListener(this);
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        CYEventDispatcher.getEventDispatcher().removeLayoutEventListener(this);
+        release();
+    }
+
+    protected void release() {
+        if (mTextEnv != null) {
+            mTextEnv.getEventDispatcher().removeLayoutEventListener(this);
+        }
         if (mFocusEditable != null) {
             mFocusEditable.setFocus(false);
         }

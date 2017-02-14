@@ -40,6 +40,10 @@ public class CYEditBlock extends CYPlaceHolderBlock implements ICYEditable {
         mEditFace.onDraw(canvas, getBlockRect());
     }
 
+    public CYEditFace getEditFace() {
+        return mEditFace;
+    }
+
     @Override
     public int getTabId() {
         return mTabId;
@@ -57,6 +61,10 @@ public class CYEditBlock extends CYPlaceHolderBlock implements ICYEditable {
     @Override
     public void setText(String text) {
         mEditFace.setText(text);
+    }
+
+    public void setDefaultText(String defaultText) {
+        mEditFace.setDefaultText(defaultText);
     }
 
     @Override

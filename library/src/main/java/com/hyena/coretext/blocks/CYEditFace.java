@@ -39,8 +39,10 @@ public class CYEditFace {
     protected Paint mFlashPaint;
     protected Paint mBorderPaint;
     protected Paint mBackGroundPaint;
+    protected Paint mDefaultTxtPaint;
 
     private Rect mContentRect = new Rect();
+    private String mDefaultText;
     private int paddingLeft, paddingTop, paddingRight, paddingBottom;
 
     public CYEditFace(TextEnv textEnv, ICYEditable editable) {
@@ -54,6 +56,8 @@ public class CYEditFace {
         //文本画笔
         mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mTextPaint.set(mTextEnv.getPaint());
+        //默认文字画笔
+        mDefaultTxtPaint = new Paint(mTextPaint);
         //闪动提示画笔
         mFlashPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mFlashPaint.setStrokeWidth(UIUtils.dip2px(mTextEnv.getContext(), 2));
@@ -82,6 +86,10 @@ public class CYEditFace {
         this.paddingBottom = bottom;
     }
 
+    public void setDefaultText(String defaultText) {
+        this.mDefaultText = defaultText;
+    }
+
     public Paint getTextPaint() {
         return mTextPaint;
     }
@@ -97,7 +105,12 @@ public class CYEditFace {
         drawBorder(canvas, blockRect);
         drawBackGround(canvas, blockRect);
         drawFlash(canvas, mContentRect);
-        drawText(canvas, mContentRect);
+        String text = getText();
+        if (TextUtils.isEmpty(text)) {
+            drawDefaultText(canvas, mContentRect);
+        } else {
+            drawText(canvas, getText(), mContentRect);
+        }
     }
 
     protected void drawBorder(Canvas canvas, Rect blockRect) {
@@ -128,8 +141,7 @@ public class CYEditFace {
         }
     }
 
-    protected void drawText(Canvas canvas, Rect contentRect) {
-        String text = getText();
+    protected void drawText(Canvas canvas, String text, Rect contentRect) {
         if (!TextUtils.isEmpty(text)) {
             float textWidth = mTextPaint.measureText(text);
             float contentWidth = contentRect.width();
@@ -147,6 +159,24 @@ public class CYEditFace {
         }
     }
 
+    protected void drawDefaultText(Canvas canvas, Rect contentRect) {
+        if (!TextUtils.isEmpty(mDefaultText)) {
+            float textWidth = mDefaultTxtPaint.measureText(mDefaultText);
+            float contentWidth = contentRect.width();
+            float x;
+            if (textWidth > contentWidth) {
+                x = contentRect.right - textWidth;
+            } else {
+                x = contentRect.left + (contentRect.width() - textWidth)/2;
+            }
+            canvas.save();
+            canvas.clipRect(contentRect);
+            Paint.FontMetrics fontMetrics = mDefaultTxtPaint.getFontMetrics();
+            canvas.drawText(mDefaultText, x, contentRect.bottom - fontMetrics.bottom, mTextPaint);
+            canvas.restore();
+        }
+    }
+
     private void handleMessageImpl(Message msg) {
         int what = msg.what;
         switch (what) {
@@ -154,7 +184,8 @@ public class CYEditFace {
                 mInputFlash = !mInputFlash;
                 Message next = mHandler.obtainMessage(ACTION_FLASH);
                 mHandler.sendMessageDelayed(next, 500);
-                CYEventDispatcher.getEventDispatcher().postInvalidate();
+                if (mTextEnv != null)
+                    mTextEnv.getEventDispatcher().postInvalidate();
                 break;
             }
             default:
@@ -172,12 +203,14 @@ public class CYEditFace {
         if (mTextEnv == null || mEditable == null)
             return;
         mTextEnv.setEditableValue(mEditable.getTabId(), text);
-        CYEventDispatcher.getEventDispatcher().postInvalidate();
+        if (mTextEnv != null)
+            mTextEnv.getEventDispatcher().postInvalidate();
     }
 
     public void setEditable(boolean isEditable) {
         this.mIsEditable = isEditable;
-        CYEventDispatcher.getEventDispatcher().postInvalidate();
+        if (mTextEnv != null)
+            mTextEnv.getEventDispatcher().postInvalidate();
     }
 
     public void setFocus(boolean hasFocus) {
@@ -188,7 +221,8 @@ public class CYEditFace {
         } else {
             mHandler.removeMessages(ACTION_FLASH);
         }
-        CYEventDispatcher.getEventDispatcher().postInvalidate();
+        if (mTextEnv != null)
+            mTextEnv.getEventDispatcher().postInvalidate();
     }
 
     /**
@@ -197,6 +231,10 @@ public class CYEditFace {
      */
     public boolean hasFocus() {
         return mIsEditable && CYPageView.FOCUS_TAB_ID == mEditable.getTabId();
+    }
+
+    public TextEnv getTextEnv() {
+        return mTextEnv;
     }
 
     public void release() {

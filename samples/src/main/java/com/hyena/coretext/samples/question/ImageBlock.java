@@ -39,8 +39,14 @@ public class ImageBlock extends CYImageBlock {
             if ("big_image".equals(size)) {
                 setAlignStyle(AlignStyle.Style_MONOPOLY);
                 mIsBigImage = true;
+            } else if ("small_img".equals(size)) {
+                mIsBigImage = false;
+                setWidth(UIUtils.dip2px(37));
+                setHeight(UIUtils.dip2px(37));
             } else {
                 mIsBigImage = false;
+                setWidth(UIUtils.dip2px(60));
+                setHeight(UIUtils.dip2px(60));
             }
         } catch (JSONException e) {
             e.printStackTrace();
