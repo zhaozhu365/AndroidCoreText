@@ -37,6 +37,8 @@ public class QuestionTextView extends CYPageView {
     private String mQuestionTxt;
     private CYLayout mLayout;
 
+    private List<CYBlock> blocks;
+
     public QuestionTextView(Context context) {
         super(context);
         init();
@@ -80,6 +82,7 @@ public class QuestionTextView extends CYPageView {
 
     public void setText(String questionTxt) {
         this.mQuestionTxt = questionTxt.replaceAll("\\\\#", "labelsharp");
+        blocks = analysisCommand().buildBlocks();
         doLayout(true);
     }
 
@@ -98,11 +101,10 @@ public class QuestionTextView extends CYPageView {
     }
 
     private void reLayout(boolean force) {
-        if (TextUtils.isEmpty(mQuestionTxt) || getWidth() <= 0)
+        if (getWidth() <= 0 || blocks == null || blocks.isEmpty())
             return;
 
         if (mLayout == null || force) {
-            List<CYBlock> blocks = analysisCommand().buildBlocks();
             mLayout = new CYHorizontalLayout(mTextEnv, blocks);
         }
         if (mLayout != null) {
