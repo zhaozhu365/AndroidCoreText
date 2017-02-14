@@ -27,32 +27,36 @@ public class BlankBlock extends CYEditBlock {
     }
 
     private void init(String content) {
-        setPadding(UIUtils.dip2px(3), getPaddingTop(), UIUtils.dip2px(3), getPaddingBottom());
+        setPadding(UIUtils.dip2px(3), UIUtils.dip2px(2), UIUtils.dip2px(3), UIUtils.dip2px(2));
         try {
             JSONObject json = new JSONObject(content);
             setTabId(json.optInt("id"));
+            setText("测试");
             setDefaultText(json.optString("default"));
             String size = json.optString("size");
+
+            int textHeight = getTextHeight(getTextEnv().getPaint());
             if (!getTextEnv().isEditable()) {
-                int height = (int) (Math.ceil(getTextEnv().getPaint().descent()
-                        - getTextEnv().getPaint().ascent()) + 0.5f);
                 int width = (int) getTextEnv().getPaint().measureText(getEditFace().getText());
                 setWidth(width + UIUtils.dip2px(10));
-                setHeight(height);
+                setHeight(textHeight + getPaddingTop() + getPaddingBottom());
             } else {
+                //config width and height
                 if ("letter".equals(size)) {
-                    //
                     setWidth(UIUtils.dip2px(30));
+                    setHeight(textHeight + getPaddingTop() + getPaddingBottom());
                 } else if ("line".equals(size)) {
                     setWidth(UIUtils.dip2px(265) + getPaddingLeft() + getPaddingRight());
-                    setHeight(UIUtils.dip2px(55) + getPaddingTop() + getPaddingBottom());
+                    getEditFace().getTextPaint().setTextSize(UIUtils.dip2px(20));
+                    getEditFace().getDefaultTextPaint().setTextSize(UIUtils.dip2px(20));
+                    setHeight(getTextHeight(getEditFace().getTextPaint()) + getPaddingTop() + getPaddingBottom());
                     setAlignStyle(AlignStyle.Style_MONOPOLY);
                 } else if ("express".equals(size)) {
                     setWidth(UIUtils.dip2px(50));
-                    setHeight(UIUtils.dip2px(55));
+                    setHeight(textHeight + getPaddingTop() + getPaddingBottom());
                 } else {
                     setWidth(UIUtils.dip2px(50));
-                    setHeight(UIUtils.dip2px(55));
+                    setHeight(textHeight + getPaddingTop() + getPaddingBottom());
                 }
             }
 
@@ -61,6 +65,7 @@ public class BlankBlock extends CYEditBlock {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        setText("测试");
     }
 
     @Override

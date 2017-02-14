@@ -8,7 +8,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.RectF;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -16,7 +15,6 @@ import android.text.TextUtils;
 
 import com.hyena.coretext.CYPageView;
 import com.hyena.coretext.TextEnv;
-import com.hyena.coretext.event.CYEventDispatcher;
 import com.hyena.framework.utils.UIUtils;
 
 /**
@@ -44,6 +42,7 @@ public class CYEditFace {
     private Rect mContentRect = new Rect();
     private String mDefaultText;
     private int paddingLeft, paddingTop, paddingRight, paddingBottom;
+    private CYParagraphStyle mParagraphStyle;
 
     public CYEditFace(TextEnv textEnv, ICYEditable editable) {
         this.mTextEnv = textEnv;
@@ -92,6 +91,10 @@ public class CYEditFace {
 
     public Paint getTextPaint() {
         return mTextPaint;
+    }
+
+    public Paint getDefaultTextPaint() {
+        return mDefaultTxtPaint;
     }
 
     public Paint getBackGroundPaint() {
@@ -235,6 +238,10 @@ public class CYEditFace {
 
     public TextEnv getTextEnv() {
         return mTextEnv;
+    }
+
+    public void setParagraphStyle(CYParagraphStyle style) {
+        this.mParagraphStyle = style;
     }
 
     public void release() {

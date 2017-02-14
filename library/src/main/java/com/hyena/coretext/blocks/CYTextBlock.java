@@ -17,7 +17,6 @@ public class CYTextBlock extends CYBlock {
 
     private String text;
     private Paint mPaint;
-    private CYParagraphStyle mParagraphStyle;
 
     public CYTextBlock(TextEnv textEnv, String content){
         super(textEnv, content);
@@ -36,9 +35,13 @@ public class CYTextBlock extends CYBlock {
         this.text = content;
     }
 
+    @Override
     public void setParagraphStyle(CYParagraphStyle style) {
-        this.mParagraphStyle = style;
-
+        super.setParagraphStyle(style);
+        if (style != null) {
+            mPaint.setTextSize(style.getTextSize());
+            mPaint.setColor(style.getTextColor());
+        }
     }
 
     public CYTextBlock setTextColor(int color) {

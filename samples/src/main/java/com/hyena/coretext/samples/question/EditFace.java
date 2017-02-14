@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.text.TextUtils;
 
 import com.hyena.coretext.TextEnv;
 import com.hyena.coretext.blocks.CYEditFace;
@@ -26,6 +27,8 @@ public class EditFace extends CYEditFace {
     }
 
     public void setClass(String clazz) {
+        if (TextUtils.isEmpty(clazz))
+            clazz = "fillin";
         this.mClass = clazz;
     }
 
@@ -44,12 +47,15 @@ public class EditFace extends CYEditFace {
         if (!getTextEnv().isEditable())
             return;
 
-        mBackGroundPaint.setColor(Color.WHITE);
+        mBackGroundPaint.setColor(Color.GRAY);
         mBackGroundPaint.setStyle(Paint.Style.FILL);
         mRectF.set(blockRect);
         if ("fillin".equals(mClass)) {
             canvas.drawRoundRect(mRectF, 10, 10, mBackGroundPaint);
         } else if ("choose".equals(mClass)) {
+            canvas.drawRoundRect(mRectF, 10, 10, mBackGroundPaint);
+        } else {
+            canvas.drawRoundRect(mRectF, 10, 10, mBackGroundPaint);
         }
     }
 
@@ -66,10 +72,15 @@ public class EditFace extends CYEditFace {
 
     @Override
     public String getText() {
+        String text = super.getText();
         if (getTextEnv().isEditable()) {
-            return super.getText();
+            return text;
         } else {
-            return "(" + super.getText() + ")";
+            if (TextUtils.isEmpty(text)) {
+                return "(    )";
+            } else {
+                return "(" + text + ")";
+            }
         }
     }
 }

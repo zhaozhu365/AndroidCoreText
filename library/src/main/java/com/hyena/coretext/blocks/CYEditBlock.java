@@ -97,6 +97,24 @@ public class CYEditBlock extends CYPlaceHolderBlock implements ICYEditable {
     }
 
     @Override
+    public void setParagraphStyle(CYParagraphStyle style) {
+        super.setParagraphStyle(style);
+        if (mEditFace != null) {
+            mEditFace.setParagraphStyle(style);
+        }
+    }
+
+    @Override
+    public int getContentWidth() {
+        return super.getContentWidth();
+    }
+
+    @Override
+    public int getContentHeight() {
+        return super.getContentHeight();
+    }
+
+    @Override
     public void release() {
         super.release();
         if (mEditFace != null)

@@ -39,6 +39,7 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable {
     //是否在独享行中
     private boolean mIsInMonopolyRow = true;
     private boolean mFocusable = false;
+    private CYParagraphStyle mParagraphStyle;
 
     public CYBlock(TextEnv textEnv, String content) {
         this.mTextEnv = textEnv;
@@ -264,7 +265,7 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable {
     }
 
     public boolean isDebug() {
-        return true;
+        return false;
     }
 
     protected void debug(String msg) {
@@ -325,6 +326,14 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable {
         return null;
     }
 
+    public void setParagraphStyle(CYParagraphStyle style) {
+        this.mParagraphStyle = style;
+    }
+
+    public CYParagraphStyle getParagraphStyle() {
+        return mParagraphStyle;
+    }
+
     public void release() {
         List<T> children = getChildren();
         if (children != null && !children.isEmpty()) {
@@ -333,5 +342,9 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable {
                 block.release();
             }
         }
+    }
+
+    public int getTextHeight(Paint paint) {
+        return (int) (Math.ceil(paint.descent() - paint.ascent()) + 0.5f);
     }
 }
