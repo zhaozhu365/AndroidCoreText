@@ -13,8 +13,6 @@ import android.util.SparseArray;
 import com.hyena.coretext.event.CYEventDispatcher;
 import com.hyena.framework.utils.UIUtils;
 
-import java.util.HashMap;
-
 /**
  * Created by yangzc on 17/1/20.
  */

@@ -30,6 +30,7 @@ public class MainActivity extends FragmentActivity {
         });
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.main_container, new QuestionListFragment());
+//        transaction.replace(R.id.main_container, new SampleQuestionFragment());
         transaction.commit();
     }
 

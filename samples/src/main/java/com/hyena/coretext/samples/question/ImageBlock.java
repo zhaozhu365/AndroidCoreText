@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import com.hyena.coretext.TextEnv;
 import com.hyena.coretext.blocks.CYImageBlock;
 import com.hyena.coretext.samples.R;
+import com.hyena.framework.clientlog.LogUtil;
 import com.hyena.framework.utils.UIUtils;
 
 import org.json.JSONException;
@@ -37,8 +38,8 @@ public class ImageBlock extends CYImageBlock {
         try {
             JSONObject json = new JSONObject(content);
             String url = json.optString("src");
-            setResUrl(context, url, R.drawable.baidu);
             String size = json.optString("size");
+            LogUtil.v("yangzc", content);
             if ("big_image".equals(size)) {
                 setAlignStyle(AlignStyle.Style_MONOPOLY);
                 mIsBigImage = true;
@@ -53,6 +54,7 @@ public class ImageBlock extends CYImageBlock {
                 setWidth(UIUtils.dip2px(60));
                 setHeight(UIUtils.dip2px(60));
             }
+            setResUrl(context, url, R.drawable.baidu);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -65,7 +67,9 @@ public class ImageBlock extends CYImageBlock {
             float scale = Math.min(mScreenWidth/mBitmap.getWidth(), MAX_HEIGHT / mBitmap.getHeight());
             setWidth((int) (mBitmap.getWidth() * scale));
             setHeight((int) (mBitmap.getHeight() * scale));
+            getTextEnv().getEventDispatcher().requestLayout();
         }
+        getTextEnv().getEventDispatcher().postInvalidate();
     }
 
 }
