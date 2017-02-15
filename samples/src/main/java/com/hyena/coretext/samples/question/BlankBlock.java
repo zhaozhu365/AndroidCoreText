@@ -20,6 +20,7 @@ public class BlankBlock extends CYEditBlock {
 
     private boolean mIsRight = false;
     private String mClass = "choose";
+    private String size;
 
     public BlankBlock(TextEnv textEnv, String content) {
         super(textEnv, content);
@@ -31,41 +32,58 @@ public class BlankBlock extends CYEditBlock {
         try {
             JSONObject json = new JSONObject(content);
             setTabId(json.optInt("id"));
-            setText("测试");
             setDefaultText(json.optString("default"));
-            String size = json.optString("size");
-
-            int textHeight = getTextHeight(getTextEnv().getPaint());
-            if (!getTextEnv().isEditable()) {
-                int width = (int) getTextEnv().getPaint().measureText(getEditFace().getText());
-                setWidth(width + UIUtils.dip2px(10));
-                setHeight(textHeight + getPaddingTop() + getPaddingBottom());
-            } else {
-                //config width and height
-                if ("letter".equals(size)) {
-                    setWidth(UIUtils.dip2px(30));
-                    setHeight(textHeight + getPaddingTop() + getPaddingBottom());
-                } else if ("line".equals(size)) {
-                    setWidth(UIUtils.dip2px(265) + getPaddingLeft() + getPaddingRight());
+            this.size = json.optString("size");
+            this.mClass = json.optString("class");//choose fillin
+            if (getTextEnv().isEditable()) {
+                if ("line".equals(size)) {
                     getEditFace().getTextPaint().setTextSize(UIUtils.dip2px(20));
                     getEditFace().getDefaultTextPaint().setTextSize(UIUtils.dip2px(20));
-                    setHeight(getTextHeight(getEditFace().getTextPaint()) + getPaddingTop() + getPaddingBottom());
                     setAlignStyle(AlignStyle.Style_MONOPOLY);
-                } else if ("express".equals(size)) {
-                    setWidth(UIUtils.dip2px(50));
-                    setHeight(textHeight + getPaddingTop() + getPaddingBottom());
-                } else {
-                    setWidth(UIUtils.dip2px(50));
-                    setHeight(textHeight + getPaddingTop() + getPaddingBottom());
                 }
             }
-
-            this.mClass = json.optString("class");//choose fillin
             ((EditFace)getEditFace()).setClass(mClass);
         } catch (JSONException e) {
             e.printStackTrace();
         }
         setText("测试");
+    }
+
+    @Override
+    public int getContentWidth() {
+        if (!getTextEnv().isEditable()) {
+            int width = (int) getTextEnv().getPaint()
+                    .measureText(getEditFace().getText());
+            return width + UIUtils.dip2px(10);
+        } else {
+            if ("letter".equals(size)) {
+                return UIUtils.dip2px(30);
+            } else if ("line".equals(size)) {
+                return UIUtils.dip2px(265);
+            } else if ("express".equals(size)) {
+                return UIUtils.dip2px(50);
+            } else {
+                return UIUtils.dip2px(50);
+            }
+        }
+    }
+
+    @Override
+    public int getContentHeight() {
+        int textHeight = getTextHeight(getTextEnv().getPaint());
+        if (!getTextEnv().isEditable()) {
+            return textHeight;
+        } else {
+            if ("letter".equals(size)) {
+                return textHeight;
+            } else if ("line".equals(size)) {
+                return getTextHeight(getEditFace().getTextPaint());
+            } else if ("express".equals(size)) {
+                return textHeight;
+            } else {
+                return textHeight;
+            }
+        }
     }
 
     @Override

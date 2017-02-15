@@ -207,8 +207,8 @@ public class CYEditFace {
             return;
         mTextEnv.setEditableValue(mEditable.getTabId(), text);
         if (mTextEnv != null) {
-            mTextEnv.getEventDispatcher().postInvalidate();
-//            mTextEnv.getEventDispatcher().requestLayout();
+//            mTextEnv.getEventDispatcher().postInvalidate();
+            mTextEnv.getEventDispatcher().requestLayout();
         }
     }
 
