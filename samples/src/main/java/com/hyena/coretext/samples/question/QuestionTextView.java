@@ -58,6 +58,8 @@ public class QuestionTextView extends CYPageView {
         int width = getContext().getResources().getDisplayMetrics().widthPixels;
         mEnvBuilder = new TextEnv.Builder(getContext())
                 .setPageWidth(width)
+                .setTextColor(0xff333333)
+                .setFontSize(UIUtils.dip2px(15))
                 .setPageHeight(Integer.MAX_VALUE)
                 .setVerticalSpacing(UIUtils.dip2px(getContext(), 3));
     }

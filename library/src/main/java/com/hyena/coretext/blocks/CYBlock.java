@@ -256,7 +256,7 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable {
     }
 
     public boolean isDebug() {
-        return true;
+        return false;
     }
 
     protected void debug(String msg) {
