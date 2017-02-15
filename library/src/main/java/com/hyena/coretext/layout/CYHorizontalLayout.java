@@ -140,7 +140,7 @@ public class CYHorizontalLayout extends CYLayout {
                 CYPlaceHolderBlock hitCell;
                 if (itemBlock.getWidth() < leftWidth) {
                     while ((hitCell = getHitCell(linePlaceHolderBlocks, pageWidth - leftWidth, y,
-                            itemBlock.getWidth(), itemBlock.getContentHeight())) != null) {
+                            itemBlock)) != null) {
                         leftWidth = pageWidth - hitCell.getWidth() - hitCell.getX();
                     }
 
@@ -148,7 +148,7 @@ public class CYHorizontalLayout extends CYLayout {
                         //wrap
                         wrapLine();
                         while ((hitCell = getHitCell(linePlaceHolderBlocks, pageWidth - leftWidth, y,
-                                itemBlock.getWidth(), itemBlock.getContentHeight())) != null) {
+                                itemBlock)) != null) {
                             leftWidth = pageWidth - hitCell.getWidth() - hitCell.getX();
                         }
                     }
@@ -161,7 +161,7 @@ public class CYHorizontalLayout extends CYLayout {
                         //wrap
                         wrapLine();
                         while ((hitCell = getHitCell(linePlaceHolderBlocks, pageWidth - leftWidth, y,
-                                itemBlock.getWidth(), itemBlock.getContentHeight())) != null) {
+                                itemBlock)) != null) {
                             leftWidth = pageWidth - hitCell.getWidth() - hitCell.getX();
                         }
                     }
@@ -205,14 +205,15 @@ public class CYHorizontalLayout extends CYLayout {
     }
 
     private CYPlaceHolderBlock getHitCell(List<CYPlaceHolderBlock> linePlaceHolderBlocks
-            , int x, int y, int width, int height) {
+            , int x, int y, CYBlock block) {
         if (linePlaceHolderBlocks == null || linePlaceHolderBlocks.isEmpty())
             return null;
         for (int i = 0; i < linePlaceHolderBlocks.size(); i++) {
             CYPlaceHolderBlock cell = linePlaceHolderBlocks.get(i);
 
-            if (new Rect(cell.getX(), cell.getLineY(), cell.getX() + cell.getWidth(),
-                    cell.getLineY() + cell.getContentHeight()).intersect(new Rect(x, y, x + width, y + height))) {
+            if (cell != block && new Rect(cell.getX(), cell.getLineY(), cell.getX() + cell.getWidth(),
+                    cell.getLineY() + cell.getContentHeight()).intersect(new Rect(x, y,
+                    x + block.getWidth(), y + block.getHeight()))) {
                 return cell;
             }
 

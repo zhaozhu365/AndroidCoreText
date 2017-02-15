@@ -55,7 +55,10 @@ public class QuestionTextView extends CYPageView {
     }
 
     private void init() {
-        mEnvBuilder = new TextEnv.Builder(getContext()).setPageHeight(Integer.MAX_VALUE)
+        int width = getContext().getResources().getDisplayMetrics().widthPixels;
+        mEnvBuilder = new TextEnv.Builder(getContext())
+                .setPageWidth(width)
+                .setPageHeight(Integer.MAX_VALUE)
                 .setVerticalSpacing(UIUtils.dip2px(getContext(), 3));
     }
 
@@ -101,7 +104,7 @@ public class QuestionTextView extends CYPageView {
     }
 
     private void reLayout(boolean force) {
-        if (getWidth() <= 0 || blocks == null || blocks.isEmpty())
+        if (blocks == null || blocks.isEmpty())
             return;
 
         if (mLayout == null || force) {

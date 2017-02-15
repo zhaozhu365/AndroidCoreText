@@ -63,6 +63,12 @@ public class CYEditBlock extends CYPlaceHolderBlock implements ICYEditable {
         mEditFace.setText(text);
     }
 
+    @Override
+    public void setTextColor(int color) {
+        getEditFace().getTextPaint().setColor(color);
+        postInvalidate();
+    }
+
     public void setDefaultText(String defaultText) {
         mEditFace.setDefaultText(defaultText);
     }

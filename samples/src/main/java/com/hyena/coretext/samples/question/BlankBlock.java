@@ -46,7 +46,6 @@ public class BlankBlock extends CYEditBlock {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        setText("测试");
     }
 
     @Override
