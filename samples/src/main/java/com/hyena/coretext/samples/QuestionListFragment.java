@@ -80,7 +80,7 @@ public class QuestionListFragment extends Fragment {
 
         @Override
         public int getCount() {
-            return 10;
+            return 100;
         }
 
         class ViewHolder {

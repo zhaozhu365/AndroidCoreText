@@ -21,6 +21,7 @@ public class BlankBlock extends CYEditBlock {
     private boolean mIsRight = false;
     private String mClass = "choose";
     private String size;
+    private int mWidth, mHeight;
 
     public BlankBlock(TextEnv textEnv, String content) {
         super(textEnv, content);
@@ -46,43 +47,50 @@ public class BlankBlock extends CYEditBlock {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        updateSize();
+    }
+
+    @Override
+    public void setText(String text) {
+        if (getTextEnv() != null) {
+            getTextEnv().setEditableValue(getTabId(), text);
+            updateSize();
+            getTextEnv().getEventDispatcher().requestLayout();
+        }
+    }
+
+    private void updateSize() {
+        int textHeight = getTextHeight(getTextEnv().getPaint());
+        if (!getTextEnv().isEditable()) {
+            int width = (int) getTextEnv().getPaint()
+                    .measureText(getEditFace().getText());
+            this.mWidth = width + UIUtils.dip2px(10);
+            this.mHeight = textHeight;
+        } else {
+            if ("letter".equals(size)) {
+                this.mWidth = UIUtils.dip2px(30);
+                this.mHeight = textHeight;
+            } else if ("line".equals(size)) {
+                this.mWidth = UIUtils.dip2px(265);
+                this.mHeight = getTextHeight(getEditFace().getTextPaint());
+            } else if ("express".equals(size)) {
+                this.mWidth = UIUtils.dip2px(50);
+                this.mHeight = textHeight;
+            } else {
+                this.mWidth = UIUtils.dip2px(50);
+                this.mHeight = textHeight;
+            }
+        }
     }
 
     @Override
     public int getContentWidth() {
-        if (!getTextEnv().isEditable()) {
-            int width = (int) getTextEnv().getPaint()
-                    .measureText(getEditFace().getText());
-            return width + UIUtils.dip2px(10);
-        } else {
-            if ("letter".equals(size)) {
-                return UIUtils.dip2px(30);
-            } else if ("line".equals(size)) {
-                return UIUtils.dip2px(265);
-            } else if ("express".equals(size)) {
-                return UIUtils.dip2px(50);
-            } else {
-                return UIUtils.dip2px(50);
-            }
-        }
+        return mWidth;
     }
 
     @Override
     public int getContentHeight() {
-        int textHeight = getTextHeight(getTextEnv().getPaint());
-        if (!getTextEnv().isEditable()) {
-            return textHeight;
-        } else {
-            if ("letter".equals(size)) {
-                return textHeight;
-            } else if ("line".equals(size)) {
-                return getTextHeight(getEditFace().getTextPaint());
-            } else if ("express".equals(size)) {
-                return textHeight;
-            } else {
-                return textHeight;
-            }
-        }
+        return mHeight;
     }
 
     @Override
