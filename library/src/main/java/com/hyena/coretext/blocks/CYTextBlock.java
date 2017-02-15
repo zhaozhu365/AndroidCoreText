@@ -17,6 +17,7 @@ public class CYTextBlock extends CYBlock {
 
     private String text;
     private Paint mPaint;
+    private int mWidth, mHeight;
 
     public CYTextBlock(TextEnv textEnv, String content){
         super(textEnv, content);
@@ -24,6 +25,7 @@ public class CYTextBlock extends CYBlock {
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaint.set(textEnv.getPaint());
         mPaint.setTextAlign(Paint.Align.CENTER);
+        updateSize();
     }
 
     public CYTextBlock(TextEnv textEnv, Paint paint, String content) {
@@ -33,6 +35,7 @@ public class CYTextBlock extends CYBlock {
             mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
         this.text = content;
+        updateSize();
     }
 
     @Override
@@ -41,12 +44,14 @@ public class CYTextBlock extends CYBlock {
         if (style != null) {
             mPaint.setTextSize(style.getTextSize());
             mPaint.setColor(style.getTextColor());
+            updateSize();
         }
     }
 
     public CYTextBlock setTextColor(int color) {
         if (mPaint != null && color > 0) {
             mPaint.setColor(color);
+            updateSize();
         }
         return this;
     }
@@ -54,6 +59,7 @@ public class CYTextBlock extends CYBlock {
     public CYTextBlock setTypeFace(Typeface typeface){
         if (mPaint != null && typeface != null) {
             mPaint.setTypeface(typeface);
+            updateSize();
         }
         return this;
     }
@@ -61,6 +67,7 @@ public class CYTextBlock extends CYBlock {
     public CYTextBlock setTextSize(int fontSize){
         if (mPaint != null && fontSize > 0) {
             mPaint.setTextSize(fontSize);
+            updateSize();
         }
         return this;
     }
@@ -93,12 +100,17 @@ public class CYTextBlock extends CYBlock {
 
     @Override
     public int getContentWidth() {
-        return (int) mPaint.measureText(text);
+        return mWidth;
     }
 
     @Override
     public int getContentHeight() {
-        return (int) (Math.ceil(mPaint.descent() - mPaint.ascent()) + 0.5f);
+        return mHeight;
+    }
+
+    private void updateSize() {
+        this.mWidth = (int) mPaint.measureText(text);
+        this.mHeight = getTextHeight(mPaint);
     }
 
     @Override

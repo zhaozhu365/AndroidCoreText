@@ -13,8 +13,6 @@ import android.util.SparseArray;
 import com.hyena.coretext.event.CYEventDispatcher;
 import com.hyena.framework.utils.UIUtils;
 
-import java.util.HashMap;
-
 /**
  * Created by yangzc on 17/1/20.
  */
@@ -31,12 +29,12 @@ public class TextEnv {
     private boolean mEditable = true;
     private Align mTextAlign = Align.BOTTOM;
 
+    private CYEventDispatcher mEventDispatcher = new CYEventDispatcher();
     private SparseArray<String> mEditableValues = new SparseArray<String>();
 
-    private CYEventDispatcher mEventDispatcher = new CYEventDispatcher();
-
-    private TextEnv(Context context) {
+    private TextEnv(Context context, SparseArray<String> editableValues) {
         this.mContext = context;
+        this.mEditableValues = editableValues;
     }
 
     public Context getContext() {
@@ -91,9 +89,13 @@ public class TextEnv {
         return mTextAlign;
     }
 
+    public CYEventDispatcher getEventDispatcher() {
+        return mEventDispatcher;
+    }
+
     public void setEditableValue(int tabId, String value) {
         if (mEditableValues == null)
-            mEditableValues = new SparseArray<String>();
+            return;
         mEditableValues.put(tabId, value);
     }
 
@@ -114,10 +116,6 @@ public class TextEnv {
         }
     }
 
-    public CYEventDispatcher getEventDispatcher() {
-        return mEventDispatcher;
-    }
-
     public static class Builder {
 
         private Context context;
@@ -129,6 +127,8 @@ public class TextEnv {
         private int pageHeight = 0;
         private boolean editable = true;
         private Align textAlign = Align.BOTTOM;
+
+        private SparseArray<String> mEditableValues = new SparseArray<String>();
 
         public Builder(Context context) {
             this.context = context;
@@ -184,7 +184,7 @@ public class TextEnv {
             if (typeface != null)
                 paint.setTypeface(typeface);
 
-            TextEnv textEnv = new TextEnv(context);
+            TextEnv textEnv = new TextEnv(context, mEditableValues);
             textEnv.setPaint(paint);
             textEnv.setVerticalSpacing(verticalSpacing);
             textEnv.setPageWidth(pageWidth);

@@ -5,6 +5,7 @@
 package com.hyena.coretext.samples;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import com.hyena.coretext.blocks.ICYEditable;
 import com.hyena.coretext.samples.question.QuestionTextView;
 import com.hyena.framework.app.adapter.SingleTypeAdapter;
 
@@ -66,15 +68,19 @@ public class QuestionListFragment extends Fragment {
             } else {
                 viewHolder = (ViewHolder) convertView.getTag();
             }
-            String question = "根据图片意思选择相符的句子#{\"type\":\"blank\",\"id\":1}#啊啊啊啊啊";
+            String question = "第" + position + "题：根据图片意思选择相符的句子#{\"type\":\"blank\",\"id\":1}##{\"type\":\"img\",\"id\"=1,\"size\":\"big_image\",\"src\":\"http://img1.3lian.com/2015/w8/28/d/66.jpg?aa=bb\"}#啊啊啊啊啊";
             viewHolder.mQtvQuestion.setText(question);
-
+            ICYEditable editable = viewHolder.mQtvQuestion.findEditableByTabId(1);
+            if (editable != null) {
+                editable.setText("第" + position + "题答案");
+                editable.setTextColor(Color.RED);
+            }
             return convertView;
         }
 
         @Override
         public int getCount() {
-            return 10;
+            return 100;
         }
 
         class ViewHolder {

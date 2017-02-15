@@ -206,8 +206,10 @@ public class CYEditFace {
         if (mTextEnv == null || mEditable == null)
             return;
         mTextEnv.setEditableValue(mEditable.getTabId(), text);
-        if (mTextEnv != null)
-            mTextEnv.getEventDispatcher().postInvalidate();
+        if (mTextEnv != null) {
+//            mTextEnv.getEventDispatcher().postInvalidate();
+            mTextEnv.getEventDispatcher().requestLayout();
+        }
     }
 
     public void setEditable(boolean isEditable) {
