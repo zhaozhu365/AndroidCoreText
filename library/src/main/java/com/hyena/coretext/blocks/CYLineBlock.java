@@ -14,6 +14,7 @@ public class CYLineBlock extends CYBlock<CYBlock> {
 
     private int mLineHeight;
     private CYParagraphStyle mParagraphStyle;
+    private int mMaxHeightInLine = 0;
     public CYLineBlock(TextEnv textEnv, CYParagraphStyle style) {
         super(textEnv, "");
         this.mParagraphStyle = style;
@@ -97,6 +98,9 @@ public class CYLineBlock extends CYBlock<CYBlock> {
         super.addChild(child);
         if (child != null) {
             child.setParagraphStyle(mParagraphStyle);
+            if (child.getHeight() > mMaxHeightInLine) {
+                mMaxHeightInLine = child.getHeight();
+            }
         }
     }
 
@@ -120,16 +124,7 @@ public class CYLineBlock extends CYBlock<CYBlock> {
     }
 
     public int getMaxBlockHeightInLine(){
-        int maxHeight = 0;
-        if (getChildren() != null) {
-            for (int i = 0; i < getChildren().size(); i++) {
-                CYBlock block = getChildren().get(i);
-                if (block.getHeight() > maxHeight) {
-                    maxHeight = block.getHeight();
-                }
-            }
-        }
-        return maxHeight;
+        return mMaxHeightInLine;
     }
 
     private void syncBlocksHeight(){

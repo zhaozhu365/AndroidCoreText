@@ -156,6 +156,13 @@ public class FillInAtom extends Atom {
                 mEditFace.setText(text);
         }
 
+        @Override
+        public void setTextColor(int color) {
+            if (mEditFace != null)
+                mEditFace.getTextPaint().setColor(color);
+
+        }
+
         public void release() {
             if (mEditFace != null)
                 mEditFace.release();

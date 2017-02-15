@@ -4,9 +4,12 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.util.Log;
+import android.graphics.Paint;
+import android.text.TextUtils;
 
 import com.hyena.coretext.TextEnv;
+import com.hyena.coretext.utils.ImageLoader;
+import com.hyena.framework.clientlog.LogUtil;
 import com.hyena.framework.utils.ImageFetcher;
 
 /**
@@ -15,36 +18,35 @@ import com.hyena.framework.utils.ImageFetcher;
 public class CYImageBlock extends CYPlaceHolderBlock {
 
     protected Bitmap mBitmap;
+    private String mUrl;
 
     public CYImageBlock(TextEnv textEnv, String content){
         super(textEnv, content);
+        ImageLoader.getImageLoader().addImageFetcherListener(mImageFetcherListener);
     }
 
     public CYImageBlock setResId(Context context, int resId) {
         mBitmap = BitmapFactory.decodeResource(context.getResources(), resId);
-
+        setBitmap(mBitmap);
+        LogUtil.v("yangzc", "setBitmap res: " + (mBitmap == null));
         return this;
     }
 
     public CYImageBlock setResUrl(Context context, String url, int defaultResId) {
-        Bitmap bitmap = ImageFetcher.getImageFetcher().getBitmapInCache(url);
+        this.mUrl = url;
+        Bitmap bitmap = ImageLoader.getImageLoader().getImageLoader().loadImage(url);
         if (bitmap != null && !bitmap.isRecycled()) {
-            this.mBitmap = bitmap;
-            Log.v("yangzc", "get");
+            LogUtil.v("yangzc", "setBitmap local: " + (bitmap == null));
+            setBitmap(bitmap);
         } else {
             setResId(context, defaultResId);
-            ImageFetcher.getImageFetcher().loadImage(url, url, new ImageFetcher.ImageFetcherListener() {
-                @Override
-                public void onLoadComplete(String imageUrl, Bitmap bitmap, Object object) {
-                    if (bitmap != null && !bitmap.isRecycled()) {
-                        mBitmap = bitmap;
-                        requestLayout(true);
-                        Log.v("yangzc", "load");
-                    }
-                }
-            });
         }
         return this;
+    }
+
+    protected void setBitmap(Bitmap bitmap) {
+        this.mBitmap = bitmap;
+        getTextEnv().getEventDispatcher().postInvalidate();
     }
 
     @Override
@@ -55,22 +57,28 @@ public class CYImageBlock extends CYPlaceHolderBlock {
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
+        LogUtil.v("yangzc", "drawBitmap: " + (mBitmap == null));
         if (mBitmap != null && !mBitmap.isRecycled()) {
-            canvas.drawBitmap(mBitmap, null, getContentRect(), null);
+            canvas.drawBitmap(mBitmap, null, getContentRect(), getTextEnv().getPaint());
+        } else {
+            canvas.drawRect(getContentRect(), getTextEnv().getPaint());
         }
     }
 
     @Override
-    public int getContentWidth() {
-        if (mBitmap != null)
-            return mBitmap.getWidth();
-        return 100;
+    public void release() {
+        super.release();
+        ImageLoader.getImageLoader().getImageLoader().removeImageFetcherListener(mImageFetcherListener);
     }
 
-    @Override
-    public int getContentHeight() {
-        if (mBitmap != null)
-            return mBitmap.getHeight();
-        return 100;
-    }
+    private ImageFetcher.ImageFetcherListener mImageFetcherListener = new ImageFetcher.ImageFetcherListener() {
+        @Override
+        public void onLoadComplete(String imageUrl, Bitmap bitmap, Object object) {
+            if (!TextUtils.isEmpty(mUrl) && mUrl.equals(imageUrl) && bitmap != null && !bitmap.isRecycled()) {
+                LogUtil.v("yangzc", "setBitmap net: " + (bitmap == null));
+                setBitmap(bitmap);
+            }
+        }
+    };
+
 }
