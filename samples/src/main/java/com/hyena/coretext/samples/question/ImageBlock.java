@@ -5,6 +5,7 @@
 package com.hyena.coretext.samples.question;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 
 import com.hyena.coretext.TextEnv;
 import com.hyena.coretext.blocks.CYImageBlock;
@@ -23,6 +24,8 @@ public class ImageBlock extends CYImageBlock {
     private boolean mIsBigImage = false;
     private float mScreenWidth = 0;
 
+    private int mWidth, mHeight;
+
     public ImageBlock(TextEnv textEnv, String content) {
         super(textEnv, content);
         MAX_HEIGHT = UIUtils.dip2px(100);
@@ -39,6 +42,8 @@ public class ImageBlock extends CYImageBlock {
             if ("big_image".equals(size)) {
                 setAlignStyle(AlignStyle.Style_MONOPOLY);
                 mIsBigImage = true;
+                setWidth((int) mScreenWidth);
+                setHeight(100);
             } else if ("small_img".equals(size)) {
                 mIsBigImage = false;
                 setWidth(UIUtils.dip2px(37));
@@ -54,20 +59,13 @@ public class ImageBlock extends CYImageBlock {
     }
 
     @Override
-    public int getContentWidth() {
+    protected void setBitmap(Bitmap bitmap) {
+        super.setBitmap(bitmap);
         if (mIsBigImage && mBitmap != null && !mBitmap.isRecycled()) {
             float scale = Math.min(mScreenWidth/mBitmap.getWidth(), MAX_HEIGHT / mBitmap.getHeight());
-            return (int) (mBitmap.getWidth() * scale);
+            setWidth((int) (mBitmap.getWidth() * scale));
+            setHeight((int) (mBitmap.getHeight() * scale));
         }
-        return super.getContentWidth();
     }
 
-    @Override
-    public int getContentHeight() {
-        if (mIsBigImage && mBitmap != null && !mBitmap.isRecycled()) {
-            float scale = Math.min(mScreenWidth/mBitmap.getWidth(), MAX_HEIGHT / mBitmap.getHeight());
-            return (int) (mBitmap.getHeight() * scale);
-        }
-        return super.getContentHeight();
-    }
 }
