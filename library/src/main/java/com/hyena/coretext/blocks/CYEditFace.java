@@ -188,7 +188,7 @@ public class CYEditFace {
                 Message next = mHandler.obtainMessage(ACTION_FLASH);
                 mHandler.sendMessageDelayed(next, 500);
                 if (mTextEnv != null)
-                    mTextEnv.getEventDispatcher().postInvalidate();
+                    mTextEnv.getEventDispatcher().postInvalidate(null);
                 break;
             }
             default:
@@ -215,7 +215,7 @@ public class CYEditFace {
     public void setEditable(boolean isEditable) {
         this.mIsEditable = isEditable;
         if (mTextEnv != null)
-            mTextEnv.getEventDispatcher().postInvalidate();
+            mTextEnv.getEventDispatcher().postInvalidate(null);
     }
 
     public void setFocus(boolean hasFocus) {
@@ -227,7 +227,7 @@ public class CYEditFace {
             mHandler.removeMessages(ACTION_FLASH);
         }
         if (mTextEnv != null)
-            mTextEnv.getEventDispatcher().postInvalidate();
+            mTextEnv.getEventDispatcher().postInvalidate(null);
     }
 
     /**

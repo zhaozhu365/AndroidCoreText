@@ -54,7 +54,7 @@ public class CYImageBlock extends CYPlaceHolderBlock {
 
     protected void setBitmap(Bitmap bitmap) {
         this.mBitmap = bitmap;
-        getTextEnv().getEventDispatcher().postInvalidate();
+        postInvalidate();
     }
 
     @Override
