@@ -43,7 +43,6 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable {
 
     public CYBlock(TextEnv textEnv, String content) {
         this.mTextEnv = textEnv;
-        this.paddingTop = UIUtils.dip2px(2);
         this.paddingBottom = UIUtils.dip2px(2);
         if (isDebug()) {
             mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
