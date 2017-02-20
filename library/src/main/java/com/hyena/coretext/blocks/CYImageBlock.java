@@ -28,9 +28,9 @@ public class CYImageBlock extends CYPlaceHolderBlock {
     }
 
     public CYImageBlock setResId(Context context, int resId) {
-        mBitmap = BitmapFactory.decodeResource(context.getResources(), resId);
-        setBitmap(mBitmap);
-        LogUtil.v("yangzc", "setBitmap res: " + (mBitmap == null));
+        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), resId);
+        setBitmap(bitmap);
+        LogUtil.v("yangzc", "setBitmap res: " + (bitmap == null));
         return this;
     }
 
@@ -44,8 +44,8 @@ public class CYImageBlock extends CYPlaceHolderBlock {
         if (TextUtils.isEmpty(url))
             return this;
 
-        Bitmap bitmap = ImageLoader.getImageLoader().getImageLoader().loadImage(url);
-        if (bitmap != null && !bitmap.isRecycled()) {
+        Bitmap bitmap = ImageLoader.getImageLoader().loadImage(url);
+        if (bitmap != null) {
             LogUtil.v("yangzc", "setBitmap local: " + (bitmap == null));
             setBitmap(bitmap);
         }
@@ -53,7 +53,9 @@ public class CYImageBlock extends CYPlaceHolderBlock {
     }
 
     protected void setBitmap(Bitmap bitmap) {
-        this.mBitmap = bitmap;
+        if (bitmap != null && !bitmap.isRecycled()) {
+            this.mBitmap = bitmap;
+        }
         postInvalidate();
     }
 
@@ -76,13 +78,13 @@ public class CYImageBlock extends CYPlaceHolderBlock {
     @Override
     public void release() {
         super.release();
-        ImageLoader.getImageLoader().getImageLoader().removeImageFetcherListener(mImageFetcherListener);
+        ImageLoader.getImageLoader().removeImageFetcherListener(mImageFetcherListener);
     }
 
     private ImageFetcher.ImageFetcherListener mImageFetcherListener = new ImageFetcher.ImageFetcherListener() {
         @Override
         public void onLoadComplete(String imageUrl, Bitmap bitmap, Object object) {
-            if (!TextUtils.isEmpty(mUrl) && mUrl.equals(imageUrl) && bitmap != null && !bitmap.isRecycled()) {
+            if (!TextUtils.isEmpty(mUrl) && mUrl.equals(imageUrl)) {
                 LogUtil.v("yangzc", "setBitmap net: " + (bitmap == null));
                 setBitmap(bitmap);
             }
