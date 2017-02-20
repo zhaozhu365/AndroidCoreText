@@ -43,8 +43,7 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable {
 
     public CYBlock(TextEnv textEnv, String content) {
         this.mTextEnv = textEnv;
-        this.paddingTop = UIUtils.dip2px(2);
-        this.paddingBottom = UIUtils.dip2px(2);
+        this.paddingBottom = UIUtils.dip2px(1);
         if (isDebug()) {
             mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             mPaint.setColor(Color.BLACK);
@@ -250,9 +249,17 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable {
     /**
      * reDraw
      */
+    public void postInvalidateThis() {
+        if (mTextEnv != null)
+            mTextEnv.getEventDispatcher().postInvalidate(getBlockRect());
+    }
+
+    /**
+     * reDraw
+     */
     public void postInvalidate() {
         if (mTextEnv != null)
-            mTextEnv.getEventDispatcher().postInvalidate();
+            mTextEnv.getEventDispatcher().postInvalidate(null);
     }
 
     public boolean isDebug() {

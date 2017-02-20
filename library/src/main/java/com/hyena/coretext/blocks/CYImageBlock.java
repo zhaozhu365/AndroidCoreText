@@ -19,9 +19,11 @@ public class CYImageBlock extends CYPlaceHolderBlock {
 
     protected Bitmap mBitmap;
     private String mUrl;
+    private Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     public CYImageBlock(TextEnv textEnv, String content){
         super(textEnv, content);
+        mPaint.setColor(0xfff2f2f4);
         ImageLoader.getImageLoader().addImageFetcherListener(mImageFetcherListener);
     }
 
@@ -32,21 +34,27 @@ public class CYImageBlock extends CYPlaceHolderBlock {
         return this;
     }
 
-    public CYImageBlock setResUrl(Context context, String url, int defaultResId) {
+    public CYImageBlock setDefaultBackGroundColor(int color) {
+        mPaint.setColor(color);
+        return this;
+    }
+
+    public CYImageBlock setResUrl(String url) {
         this.mUrl = url;
+        if (TextUtils.isEmpty(url))
+            return this;
+
         Bitmap bitmap = ImageLoader.getImageLoader().getImageLoader().loadImage(url);
         if (bitmap != null && !bitmap.isRecycled()) {
             LogUtil.v("yangzc", "setBitmap local: " + (bitmap == null));
             setBitmap(bitmap);
-        } else {
-            setResId(context, defaultResId);
         }
         return this;
     }
 
     protected void setBitmap(Bitmap bitmap) {
         this.mBitmap = bitmap;
-        getTextEnv().getEventDispatcher().postInvalidate();
+        postInvalidate();
     }
 
     @Override
@@ -59,9 +67,9 @@ public class CYImageBlock extends CYPlaceHolderBlock {
         super.draw(canvas);
         LogUtil.v("yangzc", "drawBitmap: " + (mBitmap == null));
         if (mBitmap != null && !mBitmap.isRecycled()) {
-            canvas.drawBitmap(mBitmap, null, getContentRect(), getTextEnv().getPaint());
+            canvas.drawBitmap(mBitmap, null, getContentRect(), mPaint);
         } else {
-            canvas.drawRect(getContentRect(), getTextEnv().getPaint());
+            canvas.drawRect(getContentRect(), mPaint);
         }
     }
 

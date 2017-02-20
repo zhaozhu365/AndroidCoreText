@@ -179,7 +179,7 @@ public class CYHorizontalLayout extends CYLayout {
     }
 
     private void wrapLine() {
-        if (line != null && line.getChildren() == null || line.getChildren().isEmpty())
+        if (line == null || line.getChildren() == null || line.getChildren().isEmpty())
             return;
 
         y += line.getHeight() + getTextEnv().getVerticalSpacing();
