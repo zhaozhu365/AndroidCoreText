@@ -2,6 +2,7 @@ package com.hyena.coretext;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Rect;
 import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -222,8 +223,12 @@ public class CYPageView extends View implements CYLayoutEventListener {
     }
 
     @Override
-    public void onInvalidate() {
-        postInvalidate();
+    public void onInvalidate(Rect rect) {
+        if (rect != null) {
+            postInvalidate(rect.left, rect.top, rect.right, rect.bottom);
+        } else {
+            postInvalidate();
+        }
     }
 
     private CYFocusEventListener mFocusEventListener = null;

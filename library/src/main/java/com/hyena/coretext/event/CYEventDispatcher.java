@@ -1,5 +1,7 @@
 package com.hyena.coretext.event;
 
+import android.graphics.Rect;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,12 +43,12 @@ public class CYEventDispatcher {
         }
     }
 
-    public void postInvalidate() {
+    public void postInvalidate(Rect rect) {
         if (mLayoutListeners == null || mLayoutListeners.isEmpty())
             return;
         for (int i = 0; i < mLayoutListeners.size(); i++) {
             CYLayoutEventListener listener = mLayoutListeners.get(i);
-            listener.onInvalidate();
+            listener.onInvalidate(rect);
         }
     }
 }

@@ -146,7 +146,7 @@ public class AudioBlock extends CYPlaceHolderBlock {
 
                     mIsPlaying = true;
                     mPlayingSongPath = song.getUrl();
-                    postInvalidate();
+                    postInvalidateThis();
                     break;
                 }
                 case StatusCode.STATUS_ERROR:
@@ -158,7 +158,7 @@ public class AudioBlock extends CYPlaceHolderBlock {
 
                     mIsPlaying = false;
                     mPlayingSongPath = "";
-                    postInvalidate();
+                    postInvalidateThis();
                     break;
                 }
             }
