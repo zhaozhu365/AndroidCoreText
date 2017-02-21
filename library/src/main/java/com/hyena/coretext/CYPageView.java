@@ -94,6 +94,17 @@ public class CYPageView extends View implements CYLayoutEventListener {
         return null;
     }
 
+    public void clearFocus() {
+        FOCUS_TAB_ID = -1;
+        if (mFocusEditable != null) {
+            mFocusEditable.setFocus(false);
+            notifyFocusChange(false, mFocusEditable);
+        }
+        mFocusEditable = null;
+        mFocusBlock = null;
+        postInvalidate();
+    }
+
     public void setText(int tabId, String text) {
         ICYEditable editable = findEditableByTabId(tabId);
         if (editable != null) {
@@ -135,13 +146,32 @@ public class CYPageView extends View implements CYLayoutEventListener {
                 if (mFocusBlock != null) {
                     mFocusBlock.onTouchEvent(action, x - mFocusBlock.getX(),
                             y - mFocusBlock.getLineY());
+                } else {
+                    setPressed(true);
+                    clearFocus();
                 }
                 break;
             }
-            case MotionEvent.ACTION_MOVE:
-            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_MOVE: {
+                if (mFocusBlock != null) {
+                    mFocusBlock.onTouchEvent(action, x - mFocusBlock.getX(),
+                            y - mFocusBlock.getLineY());
+                }
+                break;
+            }
+            case MotionEvent.ACTION_UP: {
+                if (mFocusBlock != null) {
+                    mFocusBlock.onTouchEvent(action, x - mFocusBlock.getX(),
+                            y - mFocusBlock.getLineY());
+                } else {
+                    setPressed(false);
+                    performClick();
+                }
+                break;
+            }
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_OUTSIDE: {
+                setPressed(false);
                 if (mFocusBlock != null) {
                     mFocusBlock.onTouchEvent(action, x - mFocusBlock.getX(),
                             y - mFocusBlock.getLineY());
@@ -238,6 +268,9 @@ public class CYPageView extends View implements CYLayoutEventListener {
     }
 
     private void notifyFocusChange(boolean hasFocus, ICYEditable editable) {
+        if (editable == null)
+            return;
+
         if (hasFocus) {
             this.mFocusEditable = editable;
         }

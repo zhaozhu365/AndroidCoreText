@@ -37,7 +37,7 @@ public class CYEditBlock extends CYPlaceHolderBlock implements ICYEditable {
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
-        mEditFace.onDraw(canvas, getBlockRect());
+        mEditFace.onDraw(canvas, getBlockRect(), getContentRect());
     }
 
     public CYEditFace getEditFace() {
