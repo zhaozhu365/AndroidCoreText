@@ -160,7 +160,6 @@ public class CYEditFace {
                 y = contentRect.top + getTextHeight(mTextPaint) - fontMetrics.bottom;
             } else if(align == TextEnv.Align.CENTER) {
                 y = contentRect.top + (contentRect.height() + getTextHeight(mTextPaint))/2 - fontMetrics.bottom;
-                canvas.drawLine(contentRect.left, y , contentRect.right, y, mTextPaint);
             } else {
                 y = contentRect.bottom - fontMetrics.bottom;
             }
