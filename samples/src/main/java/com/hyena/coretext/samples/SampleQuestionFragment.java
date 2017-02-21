@@ -67,7 +67,7 @@ public class SampleQuestionFragment extends Fragment {
 //                mQtvQuestion.clearFocus();
                 List<ICYEditable> list = mQtvQuestion.getEditableList();
                 ToastUtils.showToast(getContext(), "onClick!!! , editable size: " + list.size());
-                mQtvQuestion.setText(2, "A");
+                mQtvQuestion.setText(2, "p");
                 mQtvQuestion.setFocus(2);
             }
         });

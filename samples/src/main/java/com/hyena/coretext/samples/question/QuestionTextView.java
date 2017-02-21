@@ -60,6 +60,7 @@ public class QuestionTextView extends CYPageView {
                 .setPageWidth(width)
                 .setTextColor(0xff333333)
                 .setFontSize(UIUtils.dip2px(15))
+                .setTextAlign(TextEnv.Align.CENTER)
                 .setPageHeight(Integer.MAX_VALUE)
                 .setVerticalSpacing(UIUtils.dip2px(getContext(), 3));
     }
