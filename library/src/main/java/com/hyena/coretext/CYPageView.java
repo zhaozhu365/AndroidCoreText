@@ -148,7 +148,6 @@ public class CYPageView extends View implements CYLayoutEventListener {
                             y - mFocusBlock.getLineY());
                 } else {
                     setPressed(true);
-                    clearFocus();
                 }
                 break;
             }
