@@ -153,7 +153,17 @@ public class CYEditFace {
             canvas.save();
             canvas.clipRect(contentRect);
             Paint.FontMetrics fontMetrics = mTextPaint.getFontMetrics();
-            canvas.drawText(text, x, contentRect.bottom - fontMetrics.bottom, mTextPaint);
+
+            TextEnv.Align align = getTextEnv().getTextAlign();
+            float y;
+            if (align == TextEnv.Align.TOP) {
+                y = contentRect.top + getTextHeight(mTextPaint);
+            } else if(align == TextEnv.Align.CENTER) {
+                y = contentRect.top + (contentRect.height() + getTextHeight(mTextPaint)/2);
+            } else {
+                y = contentRect.bottom - fontMetrics.bottom;
+            }
+            canvas.drawText(text, x, y, mTextPaint);
             canvas.restore();
         }
     }
@@ -215,6 +225,9 @@ public class CYEditFace {
     }
 
     public void setFocus(boolean hasFocus) {
+        if (hasFocus && mEditable != null) {
+            CYPageView.FOCUS_TAB_ID = mEditable.getTabId();
+        }
         if (hasFocus()) {
             mHandler.removeMessages(ACTION_FLASH);
             Message next = mHandler.obtainMessage(ACTION_FLASH);
@@ -246,4 +259,7 @@ public class CYEditFace {
         mHandler.removeMessages(ACTION_FLASH);
     }
 
+    public int getTextHeight(Paint paint) {
+        return (int) (Math.ceil(paint.descent() - paint.ascent()) + 0.5f);
+    }
 }

@@ -222,13 +222,13 @@ public class CYPageView extends View implements CYLayoutEventListener {
 
             //make current focus active
             if (focusBlock instanceof ICYEditable) {
-                FOCUS_TAB_ID = ((ICYEditable) focusBlock).getTabId();
+//                FOCUS_TAB_ID = ((ICYEditable) focusBlock).getTabId();
                 notifyFocusChange(true, (ICYEditable) focusBlock);
             } else if (focusBlock instanceof ICYEditableGroup) {
                 ICYEditable editable = ((ICYEditableGroup) focusBlock).findEditable(x - focusBlock.getX(),
                         y - focusBlock.getLineY());
                 if (editable != null) {
-                    FOCUS_TAB_ID = editable.getTabId();
+//                    FOCUS_TAB_ID = editable.getTabId();
                     notifyFocusChange(true, editable);
                 }
             }
