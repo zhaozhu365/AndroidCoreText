@@ -135,10 +135,11 @@ public class CYPageView extends View implements CYLayoutEventListener {
     public void setFocus(int tabId) {
         ICYEditable editable = findEditableByTabId(tabId);
         if (editable != null) {
-            editable.setFocus(true);
             if (mFocusEditable != null) {
                 mFocusEditable.setFocus(false);
             }
+            editable.setFocus(true);
+            this.mFocusEditable = editable;
         }
     }
 
