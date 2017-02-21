@@ -16,6 +16,9 @@ import com.hyena.coretext.event.CYFocusEventListener;
 import com.hyena.coretext.event.CYLayoutEventListener;
 import com.hyena.coretext.utils.CYBlockUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by yangzc on 16/4/8.
  */
@@ -92,6 +95,14 @@ public class CYPageView extends View implements CYLayoutEventListener {
             return mPageBlock.findEditableByTabId(tabId);
         }
         return null;
+    }
+
+    public List<ICYEditable> getEditableList() {
+        List<ICYEditable> editableList = new ArrayList<ICYEditable>();
+        if (mPageBlock != null) {
+            mPageBlock.findAllEditable(editableList);
+        }
+        return editableList;
     }
 
     public void clearFocus() {
