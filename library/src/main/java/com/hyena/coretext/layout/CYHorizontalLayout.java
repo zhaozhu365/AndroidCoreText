@@ -114,7 +114,7 @@ public class CYHorizontalLayout extends CYLayout {
                 }
                 //wrap line
                 wrapLine();
-                break;
+                continue;
             } else {
                 if (line == null) {
                     line = new CYLineBlock(getTextEnv(), getParagraphStyle(styleParagraphStack));
