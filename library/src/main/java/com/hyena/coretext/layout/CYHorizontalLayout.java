@@ -190,10 +190,17 @@ public class CYHorizontalLayout extends CYLayout {
     }
 
     private void wrapLine() {
-        if (line == null || line.getChildren() == null || line.getChildren().isEmpty())
+        if (line == null)
             return;
 
-        y += line.getHeight() + getTextEnv().getVerticalSpacing();
+        int lineHeight = line.getHeight();
+        if (line.getChildren() == null || line.getChildren().isEmpty()) {
+            if (lines != null)
+                lines.remove(line);
+            lineHeight = 0;
+        }
+
+        y += lineHeight + getTextEnv().getVerticalSpacing();
         leftWidth = getTextEnv().getPageWidth();
         line = new CYLineBlock(getTextEnv(), getParagraphStyle(styleParagraphStack));
         lines.add(line);
