@@ -100,7 +100,7 @@ public class FillInAtom extends Atom {
 
             g2.save();
             g2.scale(mText.getMetrics().getSize() / mScale, mText.getMetrics().getSize() / mScale);
-            mEditFace.onDraw(g2, mBlockRect);
+            mEditFace.onDraw(g2, mBlockRect, mBlockRect);
             g2.restore();
         }
 

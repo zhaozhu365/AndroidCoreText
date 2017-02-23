@@ -17,6 +17,9 @@ import com.hyena.coretext.blocks.ICYEditable;
 import com.hyena.coretext.event.CYFocusEventListener;
 import com.hyena.coretext.samples.question.QuestionTextView;
 import com.hyena.framework.clientlog.LogUtil;
+import com.hyena.framework.utils.ToastUtils;
+
+import java.util.List;
 
 /**
  * Created by yangzc on 17/2/6.
@@ -58,8 +61,19 @@ public class SampleQuestionFragment extends Fragment {
                 }
             }
         });
+        mQtvQuestion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                mQtvQuestion.clearFocus();
+                List<ICYEditable> list = mQtvQuestion.getEditableList();
+                ToastUtils.showToast(getContext(), "onClick!!! , editable size: " + list.size());
+                mQtvQuestion.setText(2, "p");
+                mQtvQuestion.setFocus(2);
+            }
+        });
         mQtvQuestion.setTextSize(18);
         String question = "根据图片意思选择相符的句子#{\"type\":\"blank\",\"id\":1}##{\"type\":\"img\",\"id\"=1,\"size\":\"big_image\",\"src\":\"http://img1.3lian.com/2015/w8/28/d/66.jpg\"}#啊啊啊啊啊";
+        question = "#{\"type\":\"para_begin\",\"size\" : 30,\"align\": \"left\",\"color\":\"#D0D0D0\",\"margin\":8}#单词挖空#{\"type\":\"para_end\"}##{\"type\":\"para_begin\",\"size\" : 30,\"align\": \"mid\",\"color\":\"#000000\",\"margin\":8}#a#{\"type\":\"blank\",\"id\": 1,\"size\":\"letter\"}#p#{\"type\":\"blank\",\"id\": 2,\"size\":\"letter\"}#e#{\"type\":\"para_end\"}#";
         mQtvQuestion.setText(question);
     }
 

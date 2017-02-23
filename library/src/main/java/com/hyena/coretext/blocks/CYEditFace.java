@@ -39,7 +39,6 @@ public class CYEditFace {
     protected Paint mBackGroundPaint;
     protected Paint mDefaultTxtPaint;
 
-    private Rect mContentRect = new Rect();
     private String mDefaultText;
     private int paddingLeft, paddingTop, paddingRight, paddingBottom;
     private CYParagraphStyle mParagraphStyle;
@@ -101,26 +100,23 @@ public class CYEditFace {
         return mBackGroundPaint;
     }
 
-    public void onDraw(Canvas canvas, Rect blockRect) {
-        mContentRect.set(blockRect.left + paddingLeft, blockRect.top + paddingTop,
-                blockRect.right - paddingRight, blockRect.bottom - paddingBottom);
-
-        drawBorder(canvas, blockRect);
-        drawBackGround(canvas, blockRect);
-        drawFlash(canvas, mContentRect);
+    public void onDraw(Canvas canvas, Rect blockRect, Rect contentRect) {
+        drawBackGround(canvas, blockRect, contentRect);
+        drawBorder(canvas, blockRect, contentRect);
+        drawFlash(canvas, contentRect);
         String text = getText();
         if (TextUtils.isEmpty(text)) {
-            drawDefaultText(canvas, mContentRect);
+            drawDefaultText(canvas, contentRect);
         } else {
-            drawText(canvas, getText(), mContentRect);
+            drawText(canvas, getText(), contentRect);
         }
     }
 
-    protected void drawBorder(Canvas canvas, Rect blockRect) {
+    protected void drawBorder(Canvas canvas, Rect blockRect, Rect contentRect) {
         canvas.drawRect(blockRect, mBorderPaint);
     }
 
-    protected void drawBackGround(Canvas canvas, Rect blockRect) {
+    protected void drawBackGround(Canvas canvas, Rect blockRect, Rect contentRect) {
         if (!hasFocus()) {
             canvas.drawRect(blockRect, mBackGroundPaint);
         }
@@ -157,7 +153,17 @@ public class CYEditFace {
             canvas.save();
             canvas.clipRect(contentRect);
             Paint.FontMetrics fontMetrics = mTextPaint.getFontMetrics();
-            canvas.drawText(text, x, contentRect.bottom - fontMetrics.bottom, mTextPaint);
+
+            TextEnv.Align align = getTextEnv().getTextAlign();
+            float y;
+            if (align == TextEnv.Align.TOP) {
+                y = contentRect.top + getTextHeight(mTextPaint) - fontMetrics.bottom;
+            } else if(align == TextEnv.Align.CENTER) {
+                y = contentRect.top + (contentRect.height() + getTextHeight(mTextPaint))/2 - fontMetrics.bottom;
+            } else {
+                y = contentRect.bottom - fontMetrics.bottom;
+            }
+            canvas.drawText(text, x, y, mTextPaint);
             canvas.restore();
         }
     }
@@ -219,6 +225,9 @@ public class CYEditFace {
     }
 
     public void setFocus(boolean hasFocus) {
+        if (hasFocus && mEditable != null) {
+            CYPageView.FOCUS_TAB_ID = mEditable.getTabId();
+        }
         if (hasFocus()) {
             mHandler.removeMessages(ACTION_FLASH);
             Message next = mHandler.obtainMessage(ACTION_FLASH);
@@ -250,4 +259,7 @@ public class CYEditFace {
         mHandler.removeMessages(ACTION_FLASH);
     }
 
+    public int getTextHeight(Paint paint) {
+        return (int) (Math.ceil(paint.descent() - paint.ascent()) + 0.5f);
+    }
 }

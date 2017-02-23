@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import com.hyena.coretext.TextEnv;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Created by yangzc on 16/4/8.
@@ -18,6 +19,7 @@ public class CYTextBlock extends CYBlock {
     private String text;
     private Paint mPaint;
     private int mWidth, mHeight;
+    private boolean mIsWord = false;
 
     public CYTextBlock(TextEnv textEnv, String content){
         super(textEnv, content);
@@ -26,6 +28,8 @@ public class CYTextBlock extends CYBlock {
         mPaint.set(textEnv.getPaint());
         mPaint.setTextAlign(Paint.Align.CENTER);
         updateSize();
+        mIsWord = false;
+        parseSubBlocks();
     }
 
     public CYTextBlock(TextEnv textEnv, Paint paint, String content) {
@@ -35,6 +39,7 @@ public class CYTextBlock extends CYBlock {
             mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
         this.text = content;
+        this.mIsWord = true;
         updateSize();
     }
 
@@ -74,25 +79,24 @@ public class CYTextBlock extends CYBlock {
 
     @Override
     public List<CYBlock> getChildren() {
-        if (!TextUtils.isEmpty(text)) {
-            if (text.length() == 1) {
-                return null;
-            } else {
-                List<CYBlock> children = super.getChildren();
-                if (children == null || children.isEmpty()) {
-                    parseSubBlocks();
-                }
-                return children;
-            }
+        if (mIsWord) {
+            return null;
         }
-        return null;
+        return super.getChildren();
     }
 
     private void parseSubBlocks() {
         if (!TextUtils.isEmpty(text)) {
-            for (int i = 0; i < text.length(); i++) {
-                String word = text.substring(i, i + 1);
-                CYTextBlock block = new CYTextBlock(getTextEnv(), mPaint, word);
+            char ch[] = text.toCharArray();
+            for (int i = 0; i < ch.length; i++) {
+                StringBuffer buffer = new StringBuffer();
+                buffer.append(ch[i] + "");
+                while ((i + 1) < ch.length && isLetter(ch[i + 1])
+                        && !Character.isSpace(ch[i + 1])) {
+                    buffer.append(ch[i + 1] + "");
+                    i ++;
+                }
+                CYTextBlock block = new CYTextBlock(getTextEnv(), mPaint, buffer.toString());
                 addChild(block);
             }
         }
@@ -119,5 +123,12 @@ public class CYTextBlock extends CYBlock {
         Rect rect = getContentRect();
         Paint.FontMetrics fontMetrics = mPaint.getFontMetrics();
         canvas.drawText(text, rect.centerX(), rect.bottom - fontMetrics.bottom, mPaint);
+    }
+
+    public static boolean isLetter(char ch) {
+        if (('A' <= ch && ch <= 'Z') || ('a' <= ch && ch <= 'z') || ch == '-') {
+            return true;
+        }
+        return false;
     }
 }

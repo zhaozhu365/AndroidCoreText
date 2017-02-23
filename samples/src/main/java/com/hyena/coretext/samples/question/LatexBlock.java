@@ -10,6 +10,9 @@ import com.hyena.coretext.blocks.ICYEditableGroup;
 import com.hyena.coretext.samples.latex.FillInAtom;
 import com.hyena.framework.utils.UIUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import maximsblog.blogspot.com.jlatexmath.ExampleFormula;
 import maximsblog.blogspot.com.jlatexmath.core.Box;
 import maximsblog.blogspot.com.jlatexmath.core.Insets;
@@ -128,6 +131,28 @@ public class LatexBlock extends CYPlaceHolderBlock implements ICYEditableGroup {
             }
         }
         return null;
+    }
+
+    @Override
+    public List<ICYEditable> findAllEditable() {
+        List<ICYEditable> editables = new ArrayList<ICYEditable>();
+        findAllEditable(editables);
+        return editables;
+    }
+
+    private void findAllEditable(Box box, List<ICYEditable> editables) {
+        if (box != null) {
+            if (box instanceof ICYEditable) {
+                editables.add((ICYEditable) box);
+            } else {
+                if (box.getChildren() != null && !box.getChildren().isEmpty()) {
+                    for (int i = 0; i < box.getChildren().size(); i++) {
+                        Box child = box.getChildren().get(i);
+                        findAllEditable(child, editables);
+                    }
+                }
+            }
+        }
     }
 
     private ICYEditable findEditable(Box box, float x, float y) {

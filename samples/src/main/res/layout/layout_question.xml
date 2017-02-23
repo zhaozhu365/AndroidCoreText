@@ -153,7 +153,8 @@
         <com.hyena.coretext.samples.question.QuestionTextView
             android:id="@+id/qtv_question"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/btn_dialog"/>
     </ScrollView>
 
 </RelativeLayout>

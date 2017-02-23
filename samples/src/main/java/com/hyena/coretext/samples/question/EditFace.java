@@ -33,17 +33,17 @@ public class EditFace extends CYEditFace {
     }
 
     @Override
-    protected void drawBorder(Canvas canvas, Rect blockRect) {
+    protected void drawBorder(Canvas canvas, Rect blockRect, Rect contentRect) {
         if (!getTextEnv().isEditable())
             return;
         if ("choose".equals(mClass)) {
-            super.drawBorder(canvas, blockRect);
+            super.drawBorder(canvas, blockRect, contentRect);
         }
     }
 
     private RectF mRectF = new RectF();
     @Override
-    protected void drawBackGround(Canvas canvas, Rect blockRect) {
+    protected void drawBackGround(Canvas canvas, Rect blockRect, Rect contentRect) {
         if (!getTextEnv().isEditable())
             return;
 
