@@ -67,4 +67,16 @@ public class CYPageBlock extends CYBlock<CYLineBlock> {
         }
         return blocks;
     }
+
+    @Override
+    public void onMeasure() {
+        List<CYLineBlock> lines = getChildren();
+        if (lines != null) {
+            for (int i = 0; i < lines.size(); i++) {
+                CYLineBlock line = lines.get(i);
+                line.onMeasure();
+            }
+        }
+        super.onMeasure();
+    }
 }

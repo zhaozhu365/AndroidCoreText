@@ -173,6 +173,13 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable {
     }
 
     /**
+     * measure block size
+     */
+    public void onMeasure() {
+
+    }
+
+    /**
      * add child
      * @param child child block
      */

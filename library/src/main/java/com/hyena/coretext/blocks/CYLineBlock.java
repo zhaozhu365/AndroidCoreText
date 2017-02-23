@@ -104,6 +104,18 @@ public class CYLineBlock extends CYBlock<CYBlock> {
         }
     }
 
+    @Override
+    public void onMeasure() {
+        List<CYBlock> blocks = getChildren();
+        if (blocks != null && !blocks.isEmpty()) {
+            for (int i = 0; i < blocks.size(); i++) {
+                CYBlock block = blocks.get(i);
+                block.onMeasure();
+            }
+        }
+        super.onMeasure();
+    }
+
     private void measureLineHeight(){
         if (getChildren() != null) {
             mLineHeight = 0;

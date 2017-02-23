@@ -258,9 +258,15 @@ public class CYPageView extends View implements CYLayoutEventListener {
         }
     }
 
+    public void measure() {
+        if (mPageBlock != null) {
+            mPageBlock.onMeasure();
+        }
+    }
 
     @Override
     public void doLayout(boolean force) {
+        measure();
     }
 
     @Override

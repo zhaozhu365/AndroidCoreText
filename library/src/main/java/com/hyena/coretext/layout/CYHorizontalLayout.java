@@ -43,9 +43,20 @@ public class CYHorizontalLayout extends CYLayout {
         this.leftWidth = getTextEnv().getPageWidth();
         this.y = 0;
         line = null;
+        if (placeHolderBlocks == null)
+            placeHolderBlocks = new ArrayList<CYPlaceHolderBlock>();
         placeHolderBlocks.clear();
+
+        if (linePlaceHolderBlocks == null)
+            linePlaceHolderBlocks = new ArrayList<CYPlaceHolderBlock>();
         linePlaceHolderBlocks.clear();
+
+        if (styleParagraphStack == null)
+            styleParagraphStack = new Stack<CYParagraphStyle>();
         styleParagraphStack.clear();
+
+        if (lines == null)
+            lines = new ArrayList<CYLineBlock>();
         lines.clear();
     }
 
