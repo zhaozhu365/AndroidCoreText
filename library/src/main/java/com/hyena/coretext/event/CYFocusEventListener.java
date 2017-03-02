@@ -11,4 +11,6 @@ public interface CYFocusEventListener {
 
     public void onFocusChange(boolean focus, int tabId);
 
+    public void onClick(int tabId);
+
 }
