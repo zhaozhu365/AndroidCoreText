@@ -63,7 +63,7 @@ public class SampleQuestionFragment extends Fragment {
 
             @Override
             public void onClick(int tabId) {
-
+                LogUtil.v("yangzc", "onClick, tabId: " + tabId);
             }
         });
         mQtvQuestion.setOnClickListener(new View.OnClickListener() {
