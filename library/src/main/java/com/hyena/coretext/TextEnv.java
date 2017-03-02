@@ -150,4 +150,13 @@ public class TextEnv {
             mEditableValues.clear();
         }
     }
+
+    private boolean mDebug = false;
+    public void setDebug(boolean debug) {
+        this.mDebug = debug;
+    }
+
+    public boolean isDebug() {
+        return mDebug;
+    }
 }
