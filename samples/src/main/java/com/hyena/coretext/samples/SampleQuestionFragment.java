@@ -60,6 +60,11 @@ public class SampleQuestionFragment extends Fragment {
                     mFocusTabId = tabId;
                 }
             }
+
+            @Override
+            public void onClick(int tabId) {
+
+            }
         });
         mQtvQuestion.setOnClickListener(new View.OnClickListener() {
             @Override
