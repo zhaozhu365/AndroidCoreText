@@ -43,9 +43,20 @@ public class CYHorizontalLayout extends CYLayout {
         this.leftWidth = getTextEnv().getPageWidth();
         this.y = 0;
         line = null;
+        if (placeHolderBlocks == null)
+            placeHolderBlocks = new ArrayList<CYPlaceHolderBlock>();
         placeHolderBlocks.clear();
+
+        if (linePlaceHolderBlocks == null)
+            linePlaceHolderBlocks = new ArrayList<CYPlaceHolderBlock>();
         linePlaceHolderBlocks.clear();
+
+        if (styleParagraphStack == null)
+            styleParagraphStack = new Stack<CYParagraphStyle>();
         styleParagraphStack.clear();
+
+        if (lines == null)
+            lines = new ArrayList<CYLineBlock>();
         lines.clear();
     }
 
@@ -89,6 +100,9 @@ public class CYHorizontalLayout extends CYLayout {
         int pageWidth = getTextEnv().getPageWidth();
         for (int i = 0; i < blocks.size(); i++) {
             CYBlock itemBlock = blocks.get(i);
+            if (itemBlock != null) {
+                itemBlock.setParagraphStyle(getParagraphStyle(styleParagraphStack));
+            }
             if (itemBlock instanceof CYParagraphStartBlock) {
                 styleParagraphStack.push(((CYParagraphStartBlock) itemBlock).getStyle());
                 //wrap line
@@ -114,7 +128,7 @@ public class CYHorizontalLayout extends CYLayout {
                 }
                 //wrap line
                 wrapLine();
-                break;
+                continue;
             } else {
                 if (line == null) {
                     line = new CYLineBlock(getTextEnv(), getParagraphStyle(styleParagraphStack));
@@ -179,10 +193,17 @@ public class CYHorizontalLayout extends CYLayout {
     }
 
     private void wrapLine() {
-        if (line == null || line.getChildren() == null || line.getChildren().isEmpty())
+        if (line == null)
             return;
 
-        y += line.getHeight() + getTextEnv().getVerticalSpacing();
+        int lineHeight = line.getHeight();
+        if (line.getChildren() == null || line.getChildren().isEmpty()) {
+            if (lines != null)
+                lines.remove(line);
+            lineHeight = 0;
+        }
+
+        y += lineHeight + getTextEnv().getVerticalSpacing();
         leftWidth = getTextEnv().getPageWidth();
         line = new CYLineBlock(getTextEnv(), getParagraphStyle(styleParagraphStack));
         lines.add(line);

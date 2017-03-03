@@ -22,71 +22,106 @@ public class TextEnv {
         TOP, CENTER, BOTTOM
     }
 
-    private Context mContext;
-    private int mVerticalSpacing;
-    private int mPageWidth, mPageHeight;
-    private Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private boolean mEditable = true;
-    private Align mTextAlign = Align.BOTTOM;
+    private Context context;
+    private int fontSize = 50;
+    private int textColor = Color.BLACK;
+    private Typeface typeface;
+    private int verticalSpacing = 0;
+    private int pageWidth = 0;
+    private int pageHeight = 0;
+    private boolean editable = true;
+    private Align textAlign = Align.BOTTOM;
 
+    private Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private CYEventDispatcher mEventDispatcher = new CYEventDispatcher();
     private SparseArray<String> mEditableValues = new SparseArray<String>();
 
-    private TextEnv(Context context, SparseArray<String> editableValues) {
-        this.mContext = context;
-        this.mEditableValues = editableValues;
+    public TextEnv(Context context) {
+        this.context = context;
     }
 
     public Context getContext() {
-        return mContext;
+        return context;
     }
 
-    public void setPaint(Paint paint) {
-        this.paint = paint;
+    public int getFontSize() {
+        return fontSize;
     }
 
-    public Paint getPaint() {
-        return paint;
+    public TextEnv setFontSize(int fontSize) {
+        this.fontSize = fontSize;
+        mPaint.setTextSize(fontSize);
+        return this;
+    }
+
+    public int getTextColor() {
+        return textColor;
+    }
+
+    public TextEnv setTextColor(int textColor) {
+        this.textColor = textColor;
+        mPaint.setColor(textColor);
+        return this;
+    }
+
+    public Typeface getTypeface() {
+        return typeface;
+    }
+
+    public TextEnv setTypeface(Typeface typeface) {
+        this.typeface = typeface;
+        if (typeface != null)
+            mPaint.setTypeface(typeface);
+        return this;
     }
 
     public int getVerticalSpacing() {
-        return mVerticalSpacing;
+        return verticalSpacing;
     }
 
-    private void setVerticalSpacing(int spacing) {
-        this.mVerticalSpacing = spacing;
-    }
-
-    private void setPageWidth(int width) {
-        this.mPageWidth = width;
-    }
-
-    private void setPageHeight(int height) {
-        this.mPageHeight = height;
+    public TextEnv setVerticalSpacing(int verticalSpacing) {
+        this.verticalSpacing = verticalSpacing;
+        return this;
     }
 
     public int getPageWidth() {
-        return mPageWidth;
+        return pageWidth;
+    }
+
+    public TextEnv setPageWidth(int pageWidth) {
+        this.pageWidth = pageWidth;
+        return this;
     }
 
     public int getPageHeight() {
-        return mPageHeight;
+        return pageHeight;
     }
 
-    private void setEditable(boolean editable) {
-        this.mEditable = editable;
+    public TextEnv setPageHeight(int pageHeight) {
+        this.pageHeight = pageHeight;
+        return this;
     }
 
     public boolean isEditable() {
-        return mEditable;
+        return editable;
     }
 
-    private void setTextAlign(Align align) {
-        this.mTextAlign = align;
+    public TextEnv setEditable(boolean editable) {
+        this.editable = editable;
+        return this;
     }
 
     public Align getTextAlign() {
-        return mTextAlign;
+        return textAlign;
+    }
+
+    public TextEnv setTextAlign(Align textAlign) {
+        this.textAlign = textAlign;
+        return this;
+    }
+
+    public Paint getPaint() {
+        return mPaint;
     }
 
     public CYEventDispatcher getEventDispatcher() {
@@ -116,82 +151,12 @@ public class TextEnv {
         }
     }
 
-    public static class Builder {
+    private boolean mDebug = false;
+    public void setDebug(boolean debug) {
+        this.mDebug = debug;
+    }
 
-        private Context context;
-        private int fontSize = 50;
-        private int textColor = Color.BLACK;
-        private Typeface typeface;
-        private int verticalSpacing = 0;
-        private int pageWidth = 0;
-        private int pageHeight = 0;
-        private boolean editable = true;
-        private Align textAlign = Align.BOTTOM;
-
-        private SparseArray<String> mEditableValues = new SparseArray<String>();
-
-        public Builder(Context context) {
-            this.context = context;
-        }
-
-        public Builder setFontSize(int fontSize) {
-            this.fontSize = fontSize;
-            return this;
-        }
-
-        public Builder setTextColor(int color) {
-            this.textColor = color;
-            return this;
-        }
-
-        public Builder setTypeFace(Typeface typeface) {
-            this.typeface = typeface;
-            return this;
-        }
-
-        public Builder setVerticalSpacing(int spacing) {
-            this.verticalSpacing = spacing;
-            return this;
-        }
-
-        public Builder setPageWidth(int width) {
-            this.pageWidth = width;
-            return this;
-        }
-
-        public Builder setPageHeight(int height) {
-            this.pageHeight = height;
-            return this;
-        }
-
-        public Builder setEditable(boolean editable) {
-            this.editable = editable;
-            return this;
-        }
-
-        public Builder setTextAlign(Align align) {
-            this.textAlign = align;
-            return this;
-        }
-
-        public TextEnv build() {
-            Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            paint.setColor(textColor);
-            if (fontSize <= 0) {
-                fontSize = UIUtils.dip2px(18);
-            }
-            paint.setTextSize(fontSize);
-            if (typeface != null)
-                paint.setTypeface(typeface);
-
-            TextEnv textEnv = new TextEnv(context, mEditableValues);
-            textEnv.setPaint(paint);
-            textEnv.setVerticalSpacing(verticalSpacing);
-            textEnv.setPageWidth(pageWidth);
-            textEnv.setPageHeight(pageHeight);
-            textEnv.setEditable(editable);
-            textEnv.setTextAlign(textAlign);
-            return textEnv;
-        }
+    public boolean isDebug() {
+        return mDebug;
     }
 }

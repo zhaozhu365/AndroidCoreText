@@ -16,6 +16,9 @@ import com.hyena.coretext.event.CYFocusEventListener;
 import com.hyena.coretext.event.CYLayoutEventListener;
 import com.hyena.coretext.utils.CYBlockUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by yangzc on 16/4/8.
  */
@@ -94,6 +97,25 @@ public class CYPageView extends View implements CYLayoutEventListener {
         return null;
     }
 
+    public List<ICYEditable> getEditableList() {
+        List<ICYEditable> editableList = new ArrayList<ICYEditable>();
+        if (mPageBlock != null) {
+            mPageBlock.findAllEditable(editableList);
+        }
+        return editableList;
+    }
+
+    public void clearFocus() {
+        FOCUS_TAB_ID = -1;
+        if (mFocusEditable != null) {
+            mFocusEditable.setFocus(false);
+            notifyFocusChange(false, mFocusEditable);
+        }
+        mFocusEditable = null;
+        mFocusBlock = null;
+        postInvalidate();
+    }
+
     public void setText(int tabId, String text) {
         ICYEditable editable = findEditableByTabId(tabId);
         if (editable != null) {
@@ -113,16 +135,17 @@ public class CYPageView extends View implements CYLayoutEventListener {
     public void setFocus(int tabId) {
         ICYEditable editable = findEditableByTabId(tabId);
         if (editable != null) {
-            editable.setFocus(true);
             if (mFocusEditable != null) {
                 mFocusEditable.setFocus(false);
             }
+            editable.setFocus(true);
+            this.mFocusEditable = editable;
         }
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (mPageBlock == null)
+        if (mPageBlock == null || mTextEnv == null || !mTextEnv.isEditable())
             return super.onTouchEvent(event);
 
         int action = MotionEventCompat.getActionMasked(event);
@@ -135,13 +158,31 @@ public class CYPageView extends View implements CYLayoutEventListener {
                 if (mFocusBlock != null) {
                     mFocusBlock.onTouchEvent(action, x - mFocusBlock.getX(),
                             y - mFocusBlock.getLineY());
+                } else {
+                    setPressed(true);
                 }
                 break;
             }
-            case MotionEvent.ACTION_MOVE:
-            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_MOVE: {
+                if (mFocusBlock != null) {
+                    mFocusBlock.onTouchEvent(action, x - mFocusBlock.getX(),
+                            y - mFocusBlock.getLineY());
+                }
+                break;
+            }
+            case MotionEvent.ACTION_UP: {
+                if (mFocusBlock != null) {
+                    mFocusBlock.onTouchEvent(action, x - mFocusBlock.getX(),
+                            y - mFocusBlock.getLineY());
+                } else {
+                    setPressed(false);
+                    performClick();
+                }
+                break;
+            }
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_OUTSIDE: {
+                setPressed(false);
                 if (mFocusBlock != null) {
                     mFocusBlock.onTouchEvent(action, x - mFocusBlock.getX(),
                             y - mFocusBlock.getLineY());
@@ -166,7 +207,24 @@ public class CYPageView extends View implements CYLayoutEventListener {
 
         CYBlock focusBlock = CYBlockUtils.findBlockByPosition(mPageBlock, x, y);
         this.mFocusBlock = focusBlock;
-        if (focusBlock != null && focusBlock.isFocusable() && focusBlock != mFocusEditable) {
+
+        ICYEditable focusEditable = null;
+        if (focusBlock != null) {
+            if (focusBlock instanceof ICYEditable) {
+                focusEditable = (ICYEditable) focusBlock;
+            } else if (focusBlock instanceof ICYEditableGroup) {
+                ICYEditable editable = ((ICYEditableGroup) focusBlock).findEditable(x - focusBlock.getX(),
+                        y - focusBlock.getLineY());
+                if (editable != null) {
+                    focusEditable = editable;
+                }
+            }
+        }
+        if (focusEditable != null) {
+            notifyEditableClick(focusEditable);
+        }
+
+        if (focusEditable != null && focusEditable.isFocusable() && focusEditable != mFocusEditable) {
             //make last focus item to false
             if (mFocusEditable != null) {
                 mFocusEditable.setFocus(false);
@@ -178,19 +236,17 @@ public class CYPageView extends View implements CYLayoutEventListener {
                         notifyFocusChange(false, editable);
                 }
             }
+            notifyFocusChange(true, focusEditable);
 
-            //make current focus active
-            if (focusBlock instanceof ICYEditable) {
-                FOCUS_TAB_ID = ((ICYEditable) focusBlock).getTabId();
-                notifyFocusChange(true, (ICYEditable) focusBlock);
-            } else if (focusBlock instanceof ICYEditableGroup) {
-                ICYEditable editable = ((ICYEditableGroup) focusBlock).findEditable(x - focusBlock.getX(),
-                        y - focusBlock.getLineY());
-                if (editable != null) {
-                    FOCUS_TAB_ID = editable.getTabId();
-                    notifyFocusChange(true, editable);
-                }
-            }
+//            if (focusBlock instanceof ICYEditable) {
+//                notifyFocusChange(true, (ICYEditable) focusBlock);
+//            } else if (focusBlock instanceof ICYEditableGroup) {
+//                ICYEditable editable = ((ICYEditableGroup) focusBlock).findEditable(x - focusBlock.getX(),
+//                        y - focusBlock.getLineY());
+//                if (editable != null) {
+//                    notifyFocusChange(true, editable);
+//                }
+//            }
         }
     }
 
@@ -217,9 +273,15 @@ public class CYPageView extends View implements CYLayoutEventListener {
         }
     }
 
+    public void measure() {
+        if (mPageBlock != null) {
+            mPageBlock.onMeasure();
+        }
+    }
 
     @Override
     public void doLayout(boolean force) {
+        measure();
     }
 
     @Override
@@ -237,7 +299,16 @@ public class CYPageView extends View implements CYLayoutEventListener {
         this.mFocusEventListener = listener;
     }
 
+    private void notifyEditableClick(ICYEditable editable) {
+        if (mFocusEventListener != null && editable != null) {
+            mFocusEventListener.onClick(editable.getTabId());
+        }
+    }
+
     private void notifyFocusChange(boolean hasFocus, ICYEditable editable) {
+        if (editable == null)
+            return;
+
         if (hasFocus) {
             this.mFocusEditable = editable;
         }

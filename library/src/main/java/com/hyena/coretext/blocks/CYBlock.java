@@ -7,7 +7,6 @@ import android.graphics.Rect;
 import android.util.Log;
 
 import com.hyena.coretext.TextEnv;
-import com.hyena.coretext.event.CYEventDispatcher;
 import com.hyena.framework.utils.UIUtils;
 
 import java.util.ArrayList;
@@ -174,6 +173,13 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable {
     }
 
     /**
+     * measure block size
+     */
+    public void onMeasure() {
+
+    }
+
+    /**
      * add child
      * @param child child block
      */
@@ -263,6 +269,8 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable {
     }
 
     public boolean isDebug() {
+        if (mTextEnv != null)
+            return mTextEnv.isDebug();
         return false;
     }
 
@@ -319,9 +327,29 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable {
         } else {
             if (this instanceof CYEditBlock && ((CYEditBlock)this).getTabId() == tabId) {
                 return (ICYEditable) this;
+            } else if (this instanceof ICYEditableGroup) {
+                return this.findEditableByTabId(tabId);
             }
         }
         return null;
+    }
+
+    public void findAllEditable(List<ICYEditable> editables) {
+        List<T> children = getChildren();
+        if (children != null && !children.isEmpty()) {
+            for (int i = 0; i < children.size(); i++) {
+                T block = children.get(i);
+                block.findAllEditable(editables);
+            }
+        } else {
+            if (this instanceof CYEditBlock) {
+                editables.add((ICYEditable) this);
+            } else if (this instanceof ICYEditableGroup) {
+                List<ICYEditable> edits = ((ICYEditableGroup)this).findAllEditable();
+                if (edits != null)
+                    editables.addAll(edits);
+            }
+        }
     }
 
     public void setParagraphStyle(CYParagraphStyle style) {
