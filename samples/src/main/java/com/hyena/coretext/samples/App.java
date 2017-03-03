@@ -6,6 +6,8 @@ package com.hyena.coretext.samples;
 
 import android.os.Environment;
 
+import com.hyena.coretext.builder.CYBlockProvider;
+import com.hyena.coretext.samples.question.DefaultBlockBuilder;
 import com.hyena.framework.clientlog.LogUtil;
 import com.hyena.framework.clientlog.Logger;
 import com.hyena.framework.config.FrameworkConfig;
@@ -35,6 +37,7 @@ public class App extends BaseApp {
         NetworkProvider.getNetworkProvider().registNetworkSensor(new DefaultNetworkSensor());
         //注册应用系统服务
         ServiceProvider.getServiceProvider().registServiceManager(new ServiceManager());
+        CYBlockProvider.getBlockProvider().registerBlockBuilder(new DefaultBlockBuilder());
         //init latex
         AjLatexMath.init(this);
     }
