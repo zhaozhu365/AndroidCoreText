@@ -100,6 +100,9 @@ public class CYHorizontalLayout extends CYLayout {
         int pageWidth = getTextEnv().getPageWidth();
         for (int i = 0; i < blocks.size(); i++) {
             CYBlock itemBlock = blocks.get(i);
+            if (itemBlock != null) {
+                itemBlock.setParagraphStyle(getParagraphStyle(styleParagraphStack));
+            }
             if (itemBlock instanceof CYParagraphStartBlock) {
                 styleParagraphStack.push(((CYParagraphStartBlock) itemBlock).getStyle());
                 //wrap line

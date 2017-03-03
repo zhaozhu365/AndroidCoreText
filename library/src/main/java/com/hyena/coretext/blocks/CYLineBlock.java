@@ -40,21 +40,8 @@ public class CYLineBlock extends CYBlock<CYBlock> {
     @Override
     public void draw(Canvas canvas) {
         if (getChildren() != null) {
-            if (mParagraphStyle != null) {
-                canvas.save();
-                if (mParagraphStyle.getHorizontalAlign() == CYHorizontalAlign.LEFT) {
-                    canvas.translate(0, 0);
-                } else if(mParagraphStyle.getHorizontalAlign() == CYHorizontalAlign.CENTER) {
-                    canvas.translate((getTextEnv().getPageWidth() - getWidth())/2, 0);
-                } else {
-                    canvas.translate(getTextEnv().getPageWidth() - getWidth(), 0);
-                }
-            }
             for (int i = 0; i < getChildren().size(); i++) {
                 getChildren().get(i).draw(canvas);
-            }
-            if (mParagraphStyle != null) {
-                canvas.restore();
             }
         }
     }
@@ -86,9 +73,19 @@ public class CYLineBlock extends CYBlock<CYBlock> {
                     isInMonopolyRow = true;
                 }
             }
+            int appendX = 0;
+            if (mParagraphStyle != null) {
+                if(mParagraphStyle.getHorizontalAlign() == CYHorizontalAlign.CENTER) {
+                    appendX = (getTextEnv().getPageWidth() - getWidth())/2;
+                } else if (mParagraphStyle.getHorizontalAlign() == CYHorizontalAlign.RIGHT){
+                    appendX = getTextEnv().getPageWidth() - getWidth();
+                }
+            }
             for (int i = 0; i < getChildren().size(); i++) {
-                getChildren().get(i).setLineY(lineY);
-                getChildren().get(i).setIsInMonopolyRow(isInMonopolyRow);
+                CYBlock child = getChildren().get(i);
+                child.setLineY(lineY);
+                child.setIsInMonopolyRow(isInMonopolyRow);
+                child.setX(child.getX() + appendX);
             }
         }
     }
@@ -97,7 +94,6 @@ public class CYLineBlock extends CYBlock<CYBlock> {
     public void addChild(CYBlock child) {
         super.addChild(child);
         if (child != null) {
-            child.setParagraphStyle(mParagraphStyle);
             if (child.getHeight() > mMaxHeightInLine) {
                 mMaxHeightInLine = child.getHeight();
             }

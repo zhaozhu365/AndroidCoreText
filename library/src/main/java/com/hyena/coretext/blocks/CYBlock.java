@@ -269,6 +269,8 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable {
     }
 
     public boolean isDebug() {
+        if (mTextEnv != null)
+            return mTextEnv.isDebug();
         return false;
     }
 
