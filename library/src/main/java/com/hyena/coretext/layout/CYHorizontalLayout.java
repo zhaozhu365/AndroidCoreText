@@ -139,7 +139,7 @@ public class CYHorizontalLayout extends CYLayout {
                     if (((CYPlaceHolderBlock) itemBlock).getAlignStyle() == CYPlaceHolderBlock.AlignStyle.Style_MONOPOLY) {
                         //add line
                         wrapLine();
-                        itemBlock.setX((getTextEnv().getPageWidth() - itemBlock.getWidth()) / 2);
+                        itemBlock.setX(0);
                         itemBlock.setLineY(y);
                         line.addChild(itemBlock);
                         //add new line
