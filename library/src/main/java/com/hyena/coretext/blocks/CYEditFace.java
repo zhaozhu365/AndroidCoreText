@@ -39,6 +39,9 @@ public class CYEditFace {
     protected Paint mBackGroundPaint;
     protected Paint mDefaultTxtPaint;
 
+    protected Paint.FontMetrics mTextPaintMetrics;
+    protected Paint.FontMetrics mDefaultTextPaintMetrics;
+
     private String mDefaultText;
     private int paddingLeft, paddingTop, paddingRight, paddingBottom;
     private CYParagraphStyle mParagraphStyle;
@@ -54,8 +57,10 @@ public class CYEditFace {
         //文本画笔
         mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mTextPaint.set(mTextEnv.getPaint());
+        mTextPaintMetrics = mTextPaint.getFontMetrics();
         //默认文字画笔
         mDefaultTxtPaint = new Paint(mTextPaint);
+        mDefaultTextPaintMetrics = mDefaultTxtPaint.getFontMetrics();
         //闪动提示画笔
         mFlashPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mFlashPaint.setStrokeWidth(UIUtils.dip2px(mTextEnv.getContext(), 2));
@@ -152,16 +157,14 @@ public class CYEditFace {
             }
             canvas.save();
             canvas.clipRect(contentRect);
-            Paint.FontMetrics fontMetrics = mTextPaint.getFontMetrics();
-
             TextEnv.Align align = getTextEnv().getTextAlign();
             float y;
             if (align == TextEnv.Align.TOP) {
-                y = contentRect.top + getTextHeight(mTextPaint) - fontMetrics.bottom;
+                y = contentRect.top + getTextHeight(mTextPaint) - mTextPaintMetrics.bottom;
             } else if(align == TextEnv.Align.CENTER) {
-                y = contentRect.top + (contentRect.height() + getTextHeight(mTextPaint))/2 - fontMetrics.bottom;
+                y = contentRect.top + (contentRect.height() + getTextHeight(mTextPaint))/2 - mTextPaintMetrics.bottom;
             } else {
-                y = contentRect.bottom - fontMetrics.bottom;
+                y = contentRect.bottom - mTextPaintMetrics.bottom;
             }
             canvas.drawText(text, x, y, mTextPaint);
             canvas.restore();
@@ -180,8 +183,7 @@ public class CYEditFace {
             }
             canvas.save();
             canvas.clipRect(contentRect);
-            Paint.FontMetrics fontMetrics = mDefaultTxtPaint.getFontMetrics();
-            canvas.drawText(mDefaultText, x, contentRect.bottom - fontMetrics.bottom, mTextPaint);
+            canvas.drawText(mDefaultText, x, contentRect.bottom - mDefaultTextPaintMetrics.bottom, mTextPaint);
             canvas.restore();
         }
     }

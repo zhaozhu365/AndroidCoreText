@@ -3,8 +3,10 @@ package com.hyena.coretext;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.os.Build;
 import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -15,6 +17,7 @@ import com.hyena.coretext.blocks.ICYEditableGroup;
 import com.hyena.coretext.event.CYFocusEventListener;
 import com.hyena.coretext.event.CYLayoutEventListener;
 import com.hyena.coretext.utils.CYBlockUtils;
+import com.hyena.framework.utils.UIUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,30 +35,41 @@ public class CYPageView extends View implements CYLayoutEventListener {
 
     public CYPageView(Context context) {
         super(context);
+        init();
     }
 
     public CYPageView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init();
     }
 
     public CYPageView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        init();
+    }
+
+    private void init() {
+        setMinimumHeight(UIUtils.dip2px(100));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            setLayerType(LAYER_TYPE_HARDWARE, null);
+        }
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        long ts = System.currentTimeMillis();
         if (mPageBlock != null) {
             canvas.save();
             canvas.translate(mPageBlock.getPaddingLeft(), mPageBlock.getPaddingTop());
             mPageBlock.draw(canvas);
             canvas.restore();
         }
+        Log.v("yangzc", "draw cost: " + (System.currentTimeMillis() - ts));
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         setMeasuredDimension(getDefaultSize(getSuggestedMinimumWidth(), widthMeasureSpec)
                 , getMeasureHeight(heightMeasureSpec));
     }
@@ -73,7 +87,7 @@ public class CYPageView extends View implements CYLayoutEventListener {
                     return mPageBlock.getHeight();
             }
         }
-        return size;
+        return size <= 0 ? getSuggestedMinimumHeight() : size;
     }
 
     /**

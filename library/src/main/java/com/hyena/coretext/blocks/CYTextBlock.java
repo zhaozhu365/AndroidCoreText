@@ -9,7 +9,6 @@ import android.text.TextUtils;
 import com.hyena.coretext.TextEnv;
 
 import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * Created by yangzc on 16/4/8.
@@ -20,27 +19,34 @@ public class CYTextBlock extends CYBlock {
     private Paint mPaint;
     private int mWidth, mHeight;
     private boolean mIsWord = false;
+    Paint.FontMetrics mFontMetrics;
 
     public CYTextBlock(TextEnv textEnv, String content){
         super(textEnv, content);
         this.text = content;
-        mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mPaint = new Paint();
         mPaint.set(textEnv.getPaint());
-        mPaint.setTextAlign(Paint.Align.CENTER);
-        updateSize();
+        mPaint.setAntiAlias(false);
+//        mPaint.setTextAlign(Paint.Align.CENTER);
         mIsWord = false;
         parseSubBlocks();
     }
 
-    public CYTextBlock(TextEnv textEnv, Paint paint, String content) {
-        super(textEnv, content);
-        this.mPaint = paint;
-        if (mPaint == null)
-            mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-
-        this.text = content;
-        this.mIsWord = true;
-        updateSize();
+    private CYTextBlock buildChildBlock(TextEnv textEnv, Paint paint
+            , int width, int height, String content) {
+        try {
+            CYTextBlock textBlock = (CYTextBlock) clone();
+            textBlock.setTextEnv(textEnv);
+            textBlock.mPaint = paint;
+            textBlock.mWidth = width;
+            textBlock.mHeight = height;
+            textBlock.text = content;
+            textBlock.mIsWord = true;
+            return textBlock;
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override
@@ -49,14 +55,12 @@ public class CYTextBlock extends CYBlock {
         if (style != null) {
             mPaint.setTextSize(style.getTextSize());
             mPaint.setColor(style.getTextColor());
-            updateSize();
         }
     }
 
     public CYTextBlock setTextColor(int color) {
         if (mPaint != null && color > 0) {
             mPaint.setColor(color);
-            updateSize();
         }
         return this;
     }
@@ -64,7 +68,6 @@ public class CYTextBlock extends CYBlock {
     public CYTextBlock setTypeFace(Typeface typeface){
         if (mPaint != null && typeface != null) {
             mPaint.setTypeface(typeface);
-            updateSize();
         }
         return this;
     }
@@ -72,7 +75,6 @@ public class CYTextBlock extends CYBlock {
     public CYTextBlock setTextSize(int fontSize){
         if (mPaint != null && fontSize > 0) {
             mPaint.setTextSize(fontSize);
-            updateSize();
         }
         return this;
     }
@@ -88,16 +90,23 @@ public class CYTextBlock extends CYBlock {
     private void parseSubBlocks() {
         if (!TextUtils.isEmpty(text)) {
             char ch[] = text.toCharArray();
+            int blockHeight = getTextHeight(mPaint);
+            Paint.FontMetrics fontMetrics = mPaint.getFontMetrics();
             for (int i = 0; i < ch.length; i++) {
-                StringBuffer buffer = new StringBuffer();
-                buffer.append(ch[i] + "");
+                int wordStart = i, count = 1;
                 while ((i + 1) < ch.length && isLetter(ch[i + 1])
                         && !Character.isSpace(ch[i + 1])) {
-                    buffer.append(ch[i + 1] + "");
+                    count ++;
                     i ++;
                 }
-                CYTextBlock block = new CYTextBlock(getTextEnv(), mPaint, buffer.toString());
-                addChild(block);
+                String word = new String(ch, wordStart, count);
+                int blockWidth = (int) mPaint.measureText(word);
+                CYTextBlock block = buildChildBlock(getTextEnv(), mPaint,
+                        blockWidth, blockHeight, word);
+                if (block != null) {
+                    block.mFontMetrics = fontMetrics;
+                    addChild(block);
+                }
             }
         }
     }
@@ -112,17 +121,15 @@ public class CYTextBlock extends CYBlock {
         return mHeight;
     }
 
-    private void updateSize() {
-        this.mWidth = (int) mPaint.measureText(text);
-        this.mHeight = getTextHeight(mPaint);
-    }
-
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
-        Rect rect = getContentRect();
-        Paint.FontMetrics fontMetrics = mPaint.getFontMetrics();
-        canvas.drawText(text, rect.centerX(), rect.bottom - fontMetrics.bottom, mPaint);
+        if (mFontMetrics != null) {
+            Rect rect = getContentRect();
+            float x = rect.left;
+            float y = rect.bottom - mFontMetrics.bottom;
+            canvas.drawText(text, x, y, mPaint);
+        }
     }
 
     public static boolean isLetter(char ch) {

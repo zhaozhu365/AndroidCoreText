@@ -7,6 +7,7 @@ package com.hyena.coretext;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 
 import com.hyena.coretext.blocks.CYBlock;
@@ -59,26 +60,27 @@ public class CYSinglePageView extends CYPageView {
     }
 
     private void setText(String questionTxt) {
-        if (TextUtils.isEmpty(questionTxt)) {
-            this.mQuestionTxt = questionTxt;
-            if (blocks != null && !blocks.isEmpty()) {
-                for (int i = 0; i < blocks.size(); i++) {
-                    blocks.get(i).release();
-                }
-            }
-            blocks = null;
-            return;
-        }
-        String text = questionTxt.replaceAll("\\\\#", "labelsharp")
-                .replaceAll("\n", "").replaceAll("\r", "");
-        this.mQuestionTxt = text;
+        this.mQuestionTxt = questionTxt;
+    }
+
+    private void build() {
+        long ts = System.currentTimeMillis();
         if (blocks != null && !blocks.isEmpty()) {
-            for (int i = 0; i < blocks.size(); i++) {
-                blocks.get(i).release();
+            int blockCount = blocks.size();
+            for (int i = 0; i < blockCount; i++) {
+                CYBlock block = blocks.get(i);
+                block.release();
             }
         }
-        blocks = CYBlockProvider.getBlockProvider().build(mTextEnv, mQuestionTxt);
-        mEditableList = getEditableList();
+        if (!TextUtils.isEmpty(mQuestionTxt)) {
+            String text = mQuestionTxt.replaceAll("\\\\#", "labelsharp")
+                    .replaceAll("\n", "").replaceAll("\r", "");
+            blocks = CYBlockProvider.getBlockProvider().build(mTextEnv, text);
+            mEditableList = getEditableList();
+        } else {
+            blocks = null;
+        }
+        Log.v("yangzc", "build cost: " + (System.currentTimeMillis() - ts));
         doLayout(true);
     }
 
@@ -101,11 +103,11 @@ public class CYSinglePageView extends CYPageView {
     }
 
     private void reLayout(boolean force) {
+        long ts = System.currentTimeMillis();
         if (blocks == null || blocks.isEmpty()) {
             setPageBlock(mTextEnv, null);
             return;
         }
-
         if (mLayout == null || force) {
             mLayout = new CYHorizontalLayout(mTextEnv, blocks);
         }
@@ -117,14 +119,17 @@ public class CYSinglePageView extends CYPageView {
                 setPageBlock(mTextEnv, pageBlock);
             }
         }
+        Log.v("yangzc", "relayout cost: " + (System.currentTimeMillis() - ts));
     }
 
     @Override
     public void doLayout(boolean force) {
         super.doLayout(force);
-        reLayout(force);
-        requestLayout();
-        postInvalidate();
+        if (getWidth() > 0) {
+            reLayout(force);//TODO 可在非UI线程执行
+            requestLayout();
+            postInvalidate();
+        }
     }
 
     private Builder mBuilder = new Builder();
@@ -156,7 +161,7 @@ public class CYSinglePageView extends CYPageView {
         }
 
         public Builder setText(String questionTxt) {
-            this.mText = questionTxt;
+            CYSinglePageView.this.setText(questionTxt);
             return this;
         }
 
@@ -166,7 +171,7 @@ public class CYSinglePageView extends CYPageView {
         }
 
         public void build() {
-            CYSinglePageView.this.setText(mText);
+            CYSinglePageView.this.build();
         }
     }
 }

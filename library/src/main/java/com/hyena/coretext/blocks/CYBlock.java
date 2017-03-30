@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Created by yangzc on 16/4/8.
  */
-public abstract class CYBlock<T extends CYBlock> implements ICYFocusable {
+public abstract class CYBlock<T extends CYBlock> implements ICYFocusable, Cloneable {
 
     private static final String TAG = "CYBlock";
     //当前块横坐标
@@ -40,9 +40,11 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable {
     private boolean mFocusable = false;
     private CYParagraphStyle mParagraphStyle;
 
+    private static int DP_1 = UIUtils.dip2px(1);
+
     public CYBlock(TextEnv textEnv, String content) {
         this.mTextEnv = textEnv;
-        this.paddingBottom = UIUtils.dip2px(1);
+        this.paddingBottom = DP_1;
         if (isDebug()) {
             mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             mPaint.setColor(Color.BLACK);
@@ -52,6 +54,10 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable {
 
     public TextEnv getTextEnv() {
         return mTextEnv;
+    }
+
+    public void setTextEnv(TextEnv textEnv) {
+        this.mTextEnv = textEnv;
     }
 
     /**
@@ -146,11 +152,11 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable {
     public abstract int getContentHeight();
 
     public int getHeight() {
-        return getBlockRect().height();
+        return getContentHeight() + paddingTop + paddingBottom;
     }
 
     public int getWidth() {
-        return getBlockRect().width();
+        return getContentWidth() + paddingLeft + paddingRight;
     }
 
     /**
@@ -209,7 +215,7 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable {
         if (align == TextEnv.Align.TOP || !mIsInMonopolyRow) {
             top = lineY + paddingTop;
         } else if (align == TextEnv.Align.CENTER) {
-            top = lineY + (getLineHeight() - contentHeight)/2;
+            top = lineY + ((getLineHeight() - contentHeight) >> 1);
         } else {
             top = lineY + getLineHeight() - contentHeight - paddingBottom;
         }
@@ -230,7 +236,7 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable {
         if (align == TextEnv.Align.TOP || !mIsInMonopolyRow) {
             top = lineY;
         } else if(align == TextEnv.Align.CENTER) {
-            top = lineY + (getLineHeight() - contentHeight)/2 - paddingTop;
+            top = lineY + ((getLineHeight() - contentHeight) >> 1) - paddingTop;
         } else {
             top = lineY + getLineHeight() - contentHeight - paddingTop - paddingBottom;
         }

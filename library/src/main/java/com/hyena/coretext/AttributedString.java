@@ -1,6 +1,7 @@
 package com.hyena.coretext;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.hyena.coretext.blocks.CYBlock;
 import com.hyena.coretext.blocks.CYTextBlock;
@@ -63,6 +64,7 @@ public class AttributedString {
     }
 
     public List<CYBlock> buildBlocks() {
+        long ts = System.currentTimeMillis();
         List<CYBlock> blocks = new ArrayList<CYBlock>();
         if (mBlockSections == null) {
             BlockSection ghostSection = new BlockSection(0
@@ -95,7 +97,8 @@ public class AttributedString {
                 blocks.add(ghostSection.getOrNewBlock());
             }
         }
-        return blocks;
+        Log.v("yangzc", "buildBlocks cost: " + (System.currentTimeMillis() - ts));
+        return resetBlocks(blocks);
     }
 
     private class BlockSection {
@@ -140,5 +143,28 @@ public class AttributedString {
             }
             return null;
         }
+    }
+
+    /**
+     * 把所有TextBlock切成最小单元
+     * @param rawBlocks
+     * @return
+     */
+    private List<CYBlock> resetBlocks(List<CYBlock> rawBlocks) {
+        long ts = System.currentTimeMillis();
+        List<CYBlock> result = new ArrayList<CYBlock>();
+        if (rawBlocks != null) {
+            int blockCount = rawBlocks.size();
+            for (int i = 0; i < blockCount; i++) {
+                CYBlock block = rawBlocks.get(i);
+                if (block instanceof CYTextBlock && block.getChildren() != null) {
+                    result.addAll(block.getChildren());
+                } else {
+                    result.add(block);
+                }
+            }
+        }
+        Log.v("yangzc", "resetBlocks cost: " + (System.currentTimeMillis() - ts));
+        return result;
     }
 }

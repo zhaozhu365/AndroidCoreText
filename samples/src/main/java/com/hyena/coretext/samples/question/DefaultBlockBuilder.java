@@ -5,6 +5,7 @@
 package com.hyena.coretext.samples.question;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.hyena.coretext.AttributedString;
 import com.hyena.coretext.TextEnv;
@@ -61,7 +62,7 @@ public class DefaultBlockBuilder implements CYBlockProvider.CYBlockBuilder {
 
     protected <T extends CYBlock> T newBlock(TextEnv textEnv, String type, String data) {
         if ("blank".equals(type)) {
-            return (T) new BlankBlock(textEnv, data);
+//            return (T) new BlankBlock(textEnv, data);
         } else if("img".equals(type)) {
             return (T) new ImageBlock(textEnv, data);
         } else if("P".equals(type)) {
