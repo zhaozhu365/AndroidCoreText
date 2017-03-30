@@ -92,6 +92,7 @@ public class CYTextBlock extends CYBlock {
             char ch[] = text.toCharArray();
             int blockHeight = getTextHeight(mPaint);
             Paint.FontMetrics fontMetrics = mPaint.getFontMetrics();
+            TextEnv textEnv = getTextEnv();
             for (int i = 0; i < ch.length; i++) {
                 int wordStart = i, count = 1;
                 while ((i + 1) < ch.length && isLetter(ch[i + 1])
@@ -101,7 +102,7 @@ public class CYTextBlock extends CYBlock {
                 }
                 String word = new String(ch, wordStart, count);
                 int blockWidth = (int) mPaint.measureText(word);
-                CYTextBlock block = buildChildBlock(getTextEnv(), mPaint,
+                CYTextBlock block = buildChildBlock(textEnv, mPaint,
                         blockWidth, blockHeight, word);
                 if (block != null) {
                     block.mFontMetrics = fontMetrics;

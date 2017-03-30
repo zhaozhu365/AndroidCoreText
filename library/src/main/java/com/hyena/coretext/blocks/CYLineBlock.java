@@ -105,7 +105,8 @@ public class CYLineBlock extends CYBlock<CYBlock> {
 
     public void updateLineY(int lineY) {
         setLineY(lineY);
-        if (getChildren() != null) {
+        List<CYBlock> children = getChildren();
+        if (children != null) {
             int appendX = 0;
             if (mParagraphStyle != null) {
                 if(mParagraphStyle.getHorizontalAlign() == CYHorizontalAlign.CENTER) {
@@ -114,12 +115,14 @@ public class CYLineBlock extends CYBlock<CYBlock> {
                     appendX = getTextEnv().getPageWidth() - getWidth();
                 }
             }
-            for (int i = 0; i < getChildren().size(); i++) {
-                CYBlock child = getChildren().get(i);
+            int lineHeight = getLineHeight();
+            int childCount = children.size();
+            for (int i = 0; i < childCount; i++) {
+                CYBlock child = children.get(i);
                 child.setIsInMonopolyRow(isInMonopolyRow);
                 child.setX(child.getX() + appendX);
                 child.setLineY(lineY);
-                child.setLineHeight(getLineHeight());
+                child.setLineHeight(lineHeight);
             }
         }
     }

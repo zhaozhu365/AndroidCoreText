@@ -33,6 +33,8 @@ public class CYPageView extends View implements CYLayoutEventListener {
     private ICYEditable mFocusEditable;
     private TextEnv mTextEnv;
 
+    private static int DP_100 = UIUtils.dip2px(100);
+
     public CYPageView(Context context) {
         super(context);
         init();
@@ -49,7 +51,7 @@ public class CYPageView extends View implements CYLayoutEventListener {
     }
 
     private void init() {
-        setMinimumHeight(UIUtils.dip2px(100));
+        setMinimumHeight(DP_100);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             setLayerType(LAYER_TYPE_HARDWARE, null);
         }

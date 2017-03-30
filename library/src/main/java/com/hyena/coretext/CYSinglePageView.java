@@ -8,7 +8,6 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.MotionEvent;
 
 import com.hyena.coretext.blocks.CYBlock;
 import com.hyena.coretext.blocks.CYPageBlock;
@@ -31,6 +30,8 @@ public class CYSinglePageView extends CYPageView {
     private List<ICYEditable> mEditableList;
 
     private List<CYBlock> blocks;
+    private static int DP_3 = UIUtils.dip2px(3);
+    private static int DP_20 = UIUtils.dip2px(20);
 
     public CYSinglePageView(Context context) {
         super(context);
@@ -52,10 +53,10 @@ public class CYSinglePageView extends CYPageView {
         mTextEnv = new TextEnv(getContext())
                 .setPageWidth(width)
                 .setTextColor(0xff333333)
-                .setFontSize(UIUtils.dip2px(20))
+                .setFontSize(DP_20)
                 .setTextAlign(TextEnv.Align.CENTER)
                 .setPageHeight(Integer.MAX_VALUE)
-                .setVerticalSpacing(UIUtils.dip2px(getContext(), 3));
+                .setVerticalSpacing(DP_3);
         mTextEnv.getEventDispatcher().addLayoutEventListener(this);
     }
 
@@ -73,10 +74,9 @@ public class CYSinglePageView extends CYPageView {
             }
         }
         if (!TextUtils.isEmpty(mQuestionTxt)) {
-            String text = mQuestionTxt.replaceAll("\\\\#", "labelsharp")
-                    .replaceAll("\n", "").replaceAll("\r", "");
+            String text = mQuestionTxt.replaceAll("\r|\n", "").replaceAll("\\\\#", "labelsharp");
             blocks = CYBlockProvider.getBlockProvider().build(mTextEnv, text);
-            mEditableList = getEditableList();
+            mEditableList = null;
         } else {
             blocks = null;
         }
@@ -85,6 +85,9 @@ public class CYSinglePageView extends CYPageView {
     }
 
     public List<ICYEditable> getEditables() {
+        if (mEditableList == null) {
+            mEditableList = getEditableList();
+        }
         return mEditableList;
     }
 
@@ -93,13 +96,6 @@ public class CYSinglePageView extends CYPageView {
         super.onSizeChanged(w, h, oldw, oldh);
         mTextEnv.setPageWidth(w);
         doLayout(true);
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        if (mTextEnv != null && !mTextEnv.isEditable())
-            return super.onTouchEvent(event);
-        return super.onTouchEvent(event);
     }
 
     private void reLayout(boolean force) {
@@ -128,7 +124,7 @@ public class CYSinglePageView extends CYPageView {
         if (getWidth() > 0) {
             reLayout(force);//TODO 可在非UI线程执行
             requestLayout();
-            postInvalidate();
+//            postInvalidate();
         }
     }
 
