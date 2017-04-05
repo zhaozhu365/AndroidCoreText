@@ -35,9 +35,7 @@ public class CYHorizontalLayout extends CYLayout {
     public CYHorizontalLayout(TextEnv textEnv, List<CYBlock> blocks) {
         super(textEnv);
         this.leftWidth = textEnv.getPageWidth();
-//        this.mBlocks = resetBlocks(blocks);
         this.mBlocks = blocks;
-//        ts = 0;
     }
 
     private void reset() {
