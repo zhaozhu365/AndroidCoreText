@@ -138,6 +138,7 @@ public class QuestionListFragment extends Fragment {
                     "#{\"type\":\"blank\",\"id\":1}#" +
 //                    "#{\"type\":\"img\",\"id\"=1,\"size\":\"big_image\",\"src\":\"http://img1.3lian.com/2015/w8/28/d/66.jpg?aa=bb\"}#" +
                     "啊啊啊啊啊";
+
             viewHolder.mQtvQuestion.getBuilder().setText(question).build();
 //            ICYEditable editable = viewHolder.mQtvQuestion.findEditableByTabId(1);
 //            if (editable != null) {

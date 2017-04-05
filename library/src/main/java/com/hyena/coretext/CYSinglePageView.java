@@ -7,7 +7,6 @@ package com.hyena.coretext;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 
 import com.hyena.coretext.blocks.CYBlock;
 import com.hyena.coretext.blocks.CYPageBlock;
@@ -16,6 +15,7 @@ import com.hyena.coretext.builder.CYBlockProvider;
 import com.hyena.coretext.layout.CYHorizontalLayout;
 import com.hyena.coretext.layout.CYLayout;
 import com.hyena.framework.utils.UIUtils;
+import com.hyena.framework.utils.UiThreadHandler;
 
 import java.util.List;
 
@@ -49,9 +49,8 @@ public class CYSinglePageView extends CYPageView {
     }
 
     private void init() {
-        int width = getContext().getResources().getDisplayMetrics().widthPixels;
         mTextEnv = new TextEnv(getContext())
-                .setPageWidth(width)
+                .setPageWidth(0)
                 .setTextColor(0xff333333)
                 .setFontSize(DP_20)
                 .setTextAlign(TextEnv.Align.CENTER)
@@ -65,7 +64,7 @@ public class CYSinglePageView extends CYPageView {
     }
 
     private void build() {
-        long ts = System.currentTimeMillis();
+//        long ts = System.currentTimeMillis();
         if (blocks != null && !blocks.isEmpty()) {
             int blockCount = blocks.size();
             for (int i = 0; i < blockCount; i++) {
@@ -80,7 +79,7 @@ public class CYSinglePageView extends CYPageView {
         } else {
             blocks = null;
         }
-        Log.v("yangzc", "build cost: " + (System.currentTimeMillis() - ts));
+//        Log.v("yangzc", "build cost: " + (System.currentTimeMillis() - ts));
         doLayout(true);
     }
 
@@ -99,7 +98,6 @@ public class CYSinglePageView extends CYPageView {
     }
 
     private void reLayout(boolean force) {
-        long ts = System.currentTimeMillis();
         if (blocks == null || blocks.isEmpty()) {
             setPageBlock(mTextEnv, null);
             return;
@@ -115,17 +113,26 @@ public class CYSinglePageView extends CYPageView {
                 setPageBlock(mTextEnv, pageBlock);
             }
         }
-        Log.v("yangzc", "relayout cost: " + (System.currentTimeMillis() - ts));
     }
 
     @Override
     public void doLayout(boolean force) {
         super.doLayout(force);
-        if (getWidth() > 0) {
+        if (mTextEnv.getPageWidth() > 0) {
             reLayout(force);//TODO 可在非UI线程执行
-            requestLayout();
-//            postInvalidate();
+            UiThreadHandler.postOnceDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    requestLayout();
+                    invalidate();
+                }
+            }, 10);
         }
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
     private Builder mBuilder = new Builder();

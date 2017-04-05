@@ -70,6 +70,9 @@ public class CYHorizontalLayout extends CYLayout {
         if (lines != null) {
             for (int i = 0; i < lines.size(); i++) {
                 CYLineBlock line = lines.get(i);
+                if (line.getChildren() == null || line.getChildren().isEmpty())
+                    continue;
+
                 int maxBlockHeight = line.getMaxBlockHeightInLine();
                 if (y + maxBlockHeight > getTextEnv().getPageHeight()) {
                     page = new CYPageBlock(getTextEnv());

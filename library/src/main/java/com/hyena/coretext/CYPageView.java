@@ -2,8 +2,8 @@ package com.hyena.coretext;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Rect;
-import android.os.Build;
 import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -51,45 +51,47 @@ public class CYPageView extends View implements CYLayoutEventListener {
     }
 
     private void init() {
-        setMinimumHeight(DP_100);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            setLayerType(LAYER_TYPE_HARDWARE, null);
-        }
+//        setBackgroundColor(Color.RED);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        long ts = System.currentTimeMillis();
         if (mPageBlock != null) {
             canvas.save();
             canvas.translate(mPageBlock.getPaddingLeft(), mPageBlock.getPaddingTop());
             mPageBlock.draw(canvas);
             canvas.restore();
         }
-        Log.v("yangzc", "draw cost: " + (System.currentTimeMillis() - ts));
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+//        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         setMeasuredDimension(getDefaultSize(getSuggestedMinimumWidth(), widthMeasureSpec)
                 , getMeasureHeight(heightMeasureSpec));
     }
 
     private int getMeasureHeight(int heightSpec) {
-        int mode = MeasureSpec.getMode(heightSpec);
-        int size = MeasureSpec.getSize(heightSpec);
-        switch (mode) {
-            case MeasureSpec.EXACTLY: {
-                return size;
-            }
+        Log.v("yangzc", "getMeasureHeight");
+        int result = 0;
+        int specMode = MeasureSpec.getMode(heightSpec);
+        int specSize = MeasureSpec.getSize(heightSpec);
+
+        switch (specMode) {
             case MeasureSpec.UNSPECIFIED:
-            case MeasureSpec.AT_MOST: {
-                if (mPageBlock != null)
-                    return mPageBlock.getHeight();
-            }
+                if (mPageBlock != null) {
+                    result = mPageBlock.getHeight();
+                } else {
+                    result = 0;
+                }
+                break;
+            case MeasureSpec.AT_MOST:
+            case MeasureSpec.EXACTLY:
+                result = specSize;
+                break;
         }
-        return size <= 0 ? getSuggestedMinimumHeight() : size;
+        return result;
     }
 
     /**
@@ -99,6 +101,7 @@ public class CYPageView extends View implements CYLayoutEventListener {
     public void setPageBlock(TextEnv textEnv, CYPageBlock pageBlock) {
         mTextEnv = textEnv;
         this.mPageBlock = pageBlock;
+        Log.v("yangzc", "setPageBlock");
     }
 
     /**
@@ -161,18 +164,19 @@ public class CYPageView extends View implements CYLayoutEventListener {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (mPageBlock == null || mTextEnv == null || !mTextEnv.isEditable())
+        if (mPageBlock == null || mTextEnv == null)
             return super.onTouchEvent(event);
 
         int action = MotionEventCompat.getActionMasked(event);
         int x = (int) event.getX() - mPageBlock.getPaddingLeft();
         int y = (int) event.getY() - mPageBlock.getPaddingTop();
+        boolean handle = false;
         switch (action) {
             case MotionEvent.ACTION_DOWN: {
                 onTouchDown(event);
 
                 if (mFocusBlock != null) {
-                    mFocusBlock.onTouchEvent(action, x - mFocusBlock.getX(),
+                    handle = mFocusBlock.onTouchEvent(action, x - mFocusBlock.getX(),
                             y - mFocusBlock.getLineY());
                 } else {
                     setPressed(true);
@@ -181,14 +185,14 @@ public class CYPageView extends View implements CYLayoutEventListener {
             }
             case MotionEvent.ACTION_MOVE: {
                 if (mFocusBlock != null) {
-                    mFocusBlock.onTouchEvent(action, x - mFocusBlock.getX(),
+                    handle = mFocusBlock.onTouchEvent(action, x - mFocusBlock.getX(),
                             y - mFocusBlock.getLineY());
                 }
                 break;
             }
             case MotionEvent.ACTION_UP: {
                 if (mFocusBlock != null) {
-                    mFocusBlock.onTouchEvent(action, x - mFocusBlock.getX(),
+                    handle = mFocusBlock.onTouchEvent(action, x - mFocusBlock.getX(),
                             y - mFocusBlock.getLineY());
                 } else {
                     setPressed(false);
@@ -200,12 +204,14 @@ public class CYPageView extends View implements CYLayoutEventListener {
             case MotionEvent.ACTION_OUTSIDE: {
                 setPressed(false);
                 if (mFocusBlock != null) {
-                    mFocusBlock.onTouchEvent(action, x - mFocusBlock.getX(),
+                    handle = mFocusBlock.onTouchEvent(action, x - mFocusBlock.getX(),
                             y - mFocusBlock.getLineY());
                 }
                 break;
             }
         }
+        if (!handle)
+            return super.onTouchEvent(event);
         return true;
     }
 

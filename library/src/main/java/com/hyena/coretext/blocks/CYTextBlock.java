@@ -16,8 +16,8 @@ import java.util.List;
 public class CYTextBlock extends CYBlock {
 
     private int start;
-    private int end;
-    private String text;
+    private int count;
+    private char chs[];
 
     private Paint mPaint;
     private int mWidth, mHeight;
@@ -26,9 +26,11 @@ public class CYTextBlock extends CYBlock {
 
     public CYTextBlock(TextEnv textEnv, String content){
         super(textEnv, content);
-        this.text = content;
+        if (TextUtils.isEmpty(content))
+            content = "";
+        this.chs = content.toCharArray();
         this.start = 0;
-        this.end = content.length() - 1;
+        this.count = chs.length;
 
         mPaint = new Paint();
         mPaint.set(textEnv.getPaint());
@@ -38,17 +40,17 @@ public class CYTextBlock extends CYBlock {
     }
 
     private CYTextBlock buildChildBlock(TextEnv textEnv, Paint paint
-            , int width, int height, String content, int start, int end) {
+            , int width, int height, char[] chs, int start, int count) {
         try {
             CYTextBlock textBlock = (CYTextBlock) clone();
             textBlock.setTextEnv(textEnv);
             textBlock.mPaint = paint;
             textBlock.mWidth = width;
             textBlock.mHeight = height;
-            textBlock.text = content;
+            textBlock.chs = chs;
             textBlock.mIsWord = true;
             textBlock.start= start;
-            textBlock.end = end;
+            textBlock.count = count;
             return textBlock;
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
@@ -95,19 +97,20 @@ public class CYTextBlock extends CYBlock {
     }
 
     private void parseSubBlocks() {
-        if (!TextUtils.isEmpty(text)) {
-            char ch[] = text.toCharArray();
+        if (chs.length > 0) {
             int blockHeight = getTextHeight(mPaint);
             Paint.FontMetrics fontMetrics = mPaint.getFontMetrics();
             TextEnv textEnv = getTextEnv();
-            for (int i = 0; i < ch.length; i++) {
-                int wordStart = i;
-                while (isLetter(ch[i]) && !Character.isSpace(ch[i])) {
+            for (int i = 0; i < chs.length; i++) {
+                int wordStart = i, count = 1;
+                while ((i + 1) < chs.length && isLetter(chs[i + 1])
+                        && !Character.isSpace(chs[i + 1])) {
+                    count ++;
                     i ++;
                 }
-                int blockWidth = (int) mPaint.measureText(text, wordStart, i + 1);
+                int blockWidth = (int) mPaint.measureText(chs, wordStart, count);
                 CYTextBlock block = buildChildBlock(textEnv, mPaint,
-                        blockWidth, blockHeight, text, wordStart, i + 1);
+                        blockWidth, blockHeight, chs, wordStart, count);
                 if (block != null) {
                     block.mFontMetrics = fontMetrics;
                     addChild(block);
@@ -133,7 +136,7 @@ public class CYTextBlock extends CYBlock {
             Rect rect = getContentRect();
             float x = rect.left;
             float y = rect.bottom - mFontMetrics.bottom;
-            canvas.drawText(text, start, end, x, y, mPaint);
+            canvas.drawText(chs, start, count, x, y, mPaint);
         }
     }
 
