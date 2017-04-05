@@ -7,6 +7,7 @@ package com.hyena.coretext;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 
 import com.hyena.coretext.blocks.CYBlock;
 import com.hyena.coretext.blocks.CYPageBlock;
@@ -15,7 +16,6 @@ import com.hyena.coretext.builder.CYBlockProvider;
 import com.hyena.coretext.layout.CYHorizontalLayout;
 import com.hyena.coretext.layout.CYLayout;
 import com.hyena.framework.utils.UIUtils;
-import com.hyena.framework.utils.UiThreadHandler;
 
 import java.util.List;
 
@@ -30,8 +30,6 @@ public class CYSinglePageView extends CYPageView {
     private List<ICYEditable> mEditableList;
 
     private List<CYBlock> blocks;
-    private static int DP_3 = UIUtils.dip2px(3);
-    private static int DP_20 = UIUtils.dip2px(20);
 
     public CYSinglePageView(Context context) {
         super(context);
@@ -49,44 +47,42 @@ public class CYSinglePageView extends CYPageView {
     }
 
     private void init() {
+        int width = getContext().getResources().getDisplayMetrics().widthPixels;
         mTextEnv = new TextEnv(getContext())
-                .setPageWidth(0)
+                .setPageWidth(width)
                 .setTextColor(0xff333333)
-                .setFontSize(DP_20)
+                .setFontSize(UIUtils.dip2px(20))
                 .setTextAlign(TextEnv.Align.CENTER)
                 .setPageHeight(Integer.MAX_VALUE)
-                .setVerticalSpacing(DP_3);
+                .setVerticalSpacing(UIUtils.dip2px(getContext(), 3));
         mTextEnv.getEventDispatcher().addLayoutEventListener(this);
     }
 
     private void setText(String questionTxt) {
-        this.mQuestionTxt = questionTxt;
-    }
-
-    private void build() {
-//        long ts = System.currentTimeMillis();
+        if (TextUtils.isEmpty(questionTxt)) {
+            this.mQuestionTxt = questionTxt;
+            if (blocks != null && !blocks.isEmpty()) {
+                for (int i = 0; i < blocks.size(); i++) {
+                    blocks.get(i).release();
+                }
+            }
+            blocks = null;
+            return;
+        }
+        String text = questionTxt.replaceAll("\\\\#", "labelsharp")
+                .replaceAll("\n", "").replaceAll("\r", "");
+        this.mQuestionTxt = text;
         if (blocks != null && !blocks.isEmpty()) {
-            int blockCount = blocks.size();
-            for (int i = 0; i < blockCount; i++) {
-                CYBlock block = blocks.get(i);
-                block.release();
+            for (int i = 0; i < blocks.size(); i++) {
+                blocks.get(i).release();
             }
         }
-        if (!TextUtils.isEmpty(mQuestionTxt)) {
-            String text = mQuestionTxt.replaceAll("\r|\n", "").replaceAll("\\\\#", "labelsharp");
-            blocks = CYBlockProvider.getBlockProvider().build(mTextEnv, text);
-            mEditableList = null;
-        } else {
-            blocks = null;
-        }
-//        Log.v("yangzc", "build cost: " + (System.currentTimeMillis() - ts));
+        blocks = CYBlockProvider.getBlockProvider().build(mTextEnv, mQuestionTxt);
+        mEditableList = getEditableList();
         doLayout(true);
     }
 
     public List<ICYEditable> getEditables() {
-        if (mEditableList == null) {
-            mEditableList = getEditableList();
-        }
         return mEditableList;
     }
 
@@ -97,11 +93,19 @@ public class CYSinglePageView extends CYPageView {
         doLayout(true);
     }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (mTextEnv != null && !mTextEnv.isEditable())
+            return super.onTouchEvent(event);
+        return super.onTouchEvent(event);
+    }
+
     private void reLayout(boolean force) {
         if (blocks == null || blocks.isEmpty()) {
             setPageBlock(mTextEnv, null);
             return;
         }
+
         if (mLayout == null || force) {
             mLayout = new CYHorizontalLayout(mTextEnv, blocks);
         }
@@ -118,21 +122,9 @@ public class CYSinglePageView extends CYPageView {
     @Override
     public void doLayout(boolean force) {
         super.doLayout(force);
-        if (mTextEnv.getPageWidth() > 0) {
-            reLayout(force);//TODO 可在非UI线程执行
-            UiThreadHandler.postOnceDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    requestLayout();
-                    invalidate();
-                }
-            }, 10);
-        }
-    }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        reLayout(force);
+        requestLayout();
+        postInvalidate();
     }
 
     private Builder mBuilder = new Builder();
@@ -164,7 +156,7 @@ public class CYSinglePageView extends CYPageView {
         }
 
         public Builder setText(String questionTxt) {
-            CYSinglePageView.this.setText(questionTxt);
+            this.mText = questionTxt;
             return this;
         }
 
@@ -174,7 +166,7 @@ public class CYSinglePageView extends CYPageView {
         }
 
         public void build() {
-            CYSinglePageView.this.build();
+            CYSinglePageView.this.setText(mText);
         }
     }
 }

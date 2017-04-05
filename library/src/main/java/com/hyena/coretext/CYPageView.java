@@ -2,11 +2,9 @@ package com.hyena.coretext;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Rect;
 import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -17,7 +15,6 @@ import com.hyena.coretext.blocks.ICYEditableGroup;
 import com.hyena.coretext.event.CYFocusEventListener;
 import com.hyena.coretext.event.CYLayoutEventListener;
 import com.hyena.coretext.utils.CYBlockUtils;
-import com.hyena.framework.utils.UIUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,8 +29,6 @@ public class CYPageView extends View implements CYLayoutEventListener {
     private CYBlock mFocusBlock;
     private ICYEditable mFocusEditable;
     private TextEnv mTextEnv;
-
-    private static int DP_100 = UIUtils.dip2px(100);
 
     public CYPageView(Context context) {
         super(context);
@@ -67,31 +62,25 @@ public class CYPageView extends View implements CYLayoutEventListener {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-//        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         setMeasuredDimension(getDefaultSize(getSuggestedMinimumWidth(), widthMeasureSpec)
                 , getMeasureHeight(heightMeasureSpec));
     }
 
     private int getMeasureHeight(int heightSpec) {
-        Log.v("yangzc", "getMeasureHeight");
-        int result = 0;
-        int specMode = MeasureSpec.getMode(heightSpec);
-        int specSize = MeasureSpec.getSize(heightSpec);
-
-        switch (specMode) {
+        int mode = MeasureSpec.getMode(heightSpec);
+        int size = MeasureSpec.getSize(heightSpec);
+        switch (mode) {
+            case MeasureSpec.EXACTLY: {
+                return size;
+            }
             case MeasureSpec.UNSPECIFIED:
-                if (mPageBlock != null) {
-                    result = mPageBlock.getHeight();
-                } else {
-                    result = 0;
-                }
-                break;
-            case MeasureSpec.AT_MOST:
-            case MeasureSpec.EXACTLY:
-                result = specSize;
-                break;
+            case MeasureSpec.AT_MOST: {
+                if (mPageBlock != null)
+                    return mPageBlock.getHeight();
+            }
         }
-        return result;
+        return size;
     }
 
     /**
@@ -101,7 +90,6 @@ public class CYPageView extends View implements CYLayoutEventListener {
     public void setPageBlock(TextEnv textEnv, CYPageBlock pageBlock) {
         mTextEnv = textEnv;
         this.mPageBlock = pageBlock;
-        Log.v("yangzc", "setPageBlock");
     }
 
     /**
