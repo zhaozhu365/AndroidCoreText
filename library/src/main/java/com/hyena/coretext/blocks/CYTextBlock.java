@@ -32,9 +32,8 @@ public class CYTextBlock extends CYBlock {
         this.start = 0;
         this.count = chs.length;
 
-        mPaint = new Paint();
+        mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaint.set(textEnv.getPaint());
-        mPaint.setAntiAlias(false);
         mIsWord = false;
         parseSubBlocks();
     }

@@ -4,6 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 
 import com.hyena.coretext.TextEnv;
+import com.hyena.coretext.utils.EditableValue;
 import com.hyena.framework.utils.UIUtils;
 
 /**
@@ -55,17 +56,26 @@ public class CYEditBlock extends CYPlaceHolderBlock implements ICYEditable {
 
     @Override
     public String getText() {
-        return mEditFace.getText();
+        EditableValue value = getTextEnv().getEditableValue(getTabId());
+        return value == null ? null : value.getValue();
     }
 
     @Override
     public void setText(String text) {
+        getTextEnv().setEditableValue(getTabId(), text);
         mEditFace.setText(text);
+        requestLayout();
     }
 
     @Override
     public void setTextColor(int color) {
-        getEditFace().getTextPaint().setColor(color);
+        EditableValue value = getTextEnv().getEditableValue(getTabId());
+        if (value == null) {
+            value = new EditableValue();
+            getTextEnv().setEditableValue(getTabId(), value);
+        }
+        value.setColor(color);
+        mEditFace.setTextColor(color);
         postInvalidateThis();
     }
 

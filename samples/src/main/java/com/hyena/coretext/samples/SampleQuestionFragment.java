@@ -38,18 +38,18 @@ public class SampleQuestionFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        view.findViewById(R.id.latex_keyboard_1).setOnClickListener(mClickListener);
-        view.findViewById(R.id.latex_keyboard_2).setOnClickListener(mClickListener);
-        view.findViewById(R.id.latex_keyboard_3).setOnClickListener(mClickListener);
-        view.findViewById(R.id.latex_keyboard_4).setOnClickListener(mClickListener);
-        view.findViewById(R.id.latex_keyboard_5).setOnClickListener(mClickListener);
-        view.findViewById(R.id.latex_keyboard_6).setOnClickListener(mClickListener);
-        view.findViewById(R.id.latex_keyboard_7).setOnClickListener(mClickListener);
-        view.findViewById(R.id.latex_keyboard_8).setOnClickListener(mClickListener);
-        view.findViewById(R.id.latex_keyboard_9).setOnClickListener(mClickListener);
-        view.findViewById(R.id.latex_keyboard_star).setOnClickListener(mClickListener);
-        view.findViewById(R.id.latex_keyboard_del).setOnClickListener(mClickListener);
-        view.findViewById(R.id.latex_keyboard_w).setOnClickListener(mClickListener);
+//        view.findViewById(R.id.latex_keyboard_1).setOnClickListener(mClickListener);
+//        view.findViewById(R.id.latex_keyboard_2).setOnClickListener(mClickListener);
+//        view.findViewById(R.id.latex_keyboard_3).setOnClickListener(mClickListener);
+//        view.findViewById(R.id.latex_keyboard_4).setOnClickListener(mClickListener);
+//        view.findViewById(R.id.latex_keyboard_5).setOnClickListener(mClickListener);
+//        view.findViewById(R.id.latex_keyboard_6).setOnClickListener(mClickListener);
+//        view.findViewById(R.id.latex_keyboard_7).setOnClickListener(mClickListener);
+//        view.findViewById(R.id.latex_keyboard_8).setOnClickListener(mClickListener);
+//        view.findViewById(R.id.latex_keyboard_9).setOnClickListener(mClickListener);
+//        view.findViewById(R.id.latex_keyboard_star).setOnClickListener(mClickListener);
+//        view.findViewById(R.id.latex_keyboard_del).setOnClickListener(mClickListener);
+//        view.findViewById(R.id.latex_keyboard_w).setOnClickListener(mClickListener);
 
         mQtvQuestion = (QuestionTextView) view.findViewById(R.id.qtv_question);
         mQtvQuestion.setFocusEventListener(new CYFocusEventListener() {

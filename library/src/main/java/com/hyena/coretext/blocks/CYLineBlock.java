@@ -17,6 +17,7 @@ public class CYLineBlock extends CYBlock<CYBlock> {
     private boolean isInMonopolyRow;
     private CYParagraphStyle mParagraphStyle;
     private int mMaxHeightInLine = 0;
+    private boolean isValid = false;
 
     private static final int DP_20 = UIUtils.dip2px(20);
 
@@ -55,8 +56,16 @@ public class CYLineBlock extends CYBlock<CYBlock> {
     }
 
     @Override
+    public boolean isValid() {
+        return isValid;
+    }
+
+    @Override
     public void addChild(CYBlock child) {
         super.addChild(child);
+        if (!child.isValid())
+            return;
+
         int width = child.getWidth();
         int height = child.getHeight();
 
@@ -84,6 +93,7 @@ public class CYLineBlock extends CYBlock<CYBlock> {
         }
 
         this.mWidth += width;
+        this.isValid = true;
     }
 
     @Override

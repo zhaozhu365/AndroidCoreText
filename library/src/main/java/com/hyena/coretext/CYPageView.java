@@ -60,29 +60,6 @@ public class CYPageView extends View implements CYLayoutEventListener {
         }
     }
 
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        setMeasuredDimension(getDefaultSize(getSuggestedMinimumWidth(), widthMeasureSpec)
-                , getMeasureHeight(heightMeasureSpec));
-    }
-
-    private int getMeasureHeight(int heightSpec) {
-        int mode = MeasureSpec.getMode(heightSpec);
-        int size = MeasureSpec.getSize(heightSpec);
-        switch (mode) {
-            case MeasureSpec.EXACTLY: {
-                return size;
-            }
-            case MeasureSpec.UNSPECIFIED:
-            case MeasureSpec.AT_MOST: {
-                if (mPageBlock != null)
-                    return mPageBlock.getHeight();
-            }
-        }
-        return size;
-    }
-
     /**
      * set blocks items
      * @param pageBlock page
@@ -90,6 +67,10 @@ public class CYPageView extends View implements CYLayoutEventListener {
     public void setPageBlock(TextEnv textEnv, CYPageBlock pageBlock) {
         mTextEnv = textEnv;
         this.mPageBlock = pageBlock;
+    }
+
+    public CYPageBlock getPageBlock() {
+        return mPageBlock;
     }
 
     /**
@@ -128,8 +109,9 @@ public class CYPageView extends View implements CYLayoutEventListener {
         if (editable != null) {
             editable.setText(text);
         }
-
     }
+
+
 
     public String getText(int tabId) {
         ICYEditable editable = findEditableByTabId(tabId);

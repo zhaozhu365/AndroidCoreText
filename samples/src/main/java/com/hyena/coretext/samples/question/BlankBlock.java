@@ -51,6 +51,7 @@ public class BlankBlock extends CYEditBlock {
             e.printStackTrace();
         }
         updateSize();
+        getEditFace().postInit();
     }
 
     @Override

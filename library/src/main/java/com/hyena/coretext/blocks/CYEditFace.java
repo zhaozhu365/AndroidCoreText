@@ -15,6 +15,7 @@ import android.text.TextUtils;
 
 import com.hyena.coretext.CYPageView;
 import com.hyena.coretext.TextEnv;
+import com.hyena.coretext.utils.EditableValue;
 import com.hyena.framework.utils.UIUtils;
 
 /**
@@ -80,6 +81,13 @@ public class CYEditFace {
                 handleMessageImpl(msg);
             }
         };
+    }
+
+    public void postInit() {
+        EditableValue value = mTextEnv.getEditableValue(mEditable.getTabId());
+        if (value != null && value.getColor() != -1) {
+            mTextPaint.setColor(value.getColor());
+        }
     }
 
     public void setPadding(int left, int top, int right, int bottom) {
@@ -205,18 +213,18 @@ public class CYEditFace {
     }
 
     public String getText() {
-        if (mTextEnv == null || mEditable == null)
-            return null;
-        return mTextEnv.getEditableValue(mEditable.getTabId());
+        if (mEditable != null)
+            return mEditable.getText();
+        return null;
     }
 
     public void setText(String text) {
-        if (mTextEnv == null || mEditable == null)
-            return;
-        mTextEnv.setEditableValue(mEditable.getTabId(), text);
-        if (mTextEnv != null) {
-//            mTextEnv.getEventDispatcher().postInvalidate();
-            mTextEnv.getEventDispatcher().requestLayout();
+
+    }
+
+    public void setTextColor(int color) {
+        if (mTextPaint != null) {
+            mTextPaint.setColor(color);
         }
     }
 
