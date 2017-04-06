@@ -109,8 +109,9 @@ public class CYPageView extends View implements CYLayoutEventListener {
         if (editable != null) {
             editable.setText(text);
         }
-
     }
+
+
 
     public String getText(int tabId) {
         ICYEditable editable = findEditableByTabId(tabId);

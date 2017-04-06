@@ -11,7 +11,7 @@ import android.graphics.Typeface;
 import android.util.SparseArray;
 
 import com.hyena.coretext.event.CYEventDispatcher;
-import com.hyena.framework.utils.UIUtils;
+import com.hyena.coretext.utils.EditableValue;
 
 /**
  * Created by yangzc on 17/1/20.
@@ -34,7 +34,7 @@ public class TextEnv {
 
     private Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private CYEventDispatcher mEventDispatcher = new CYEventDispatcher();
-    private SparseArray<String> mEditableValues = new SparseArray<String>();
+    private SparseArray<EditableValue> mEditableValues = new SparseArray<EditableValue>();
 
     public TextEnv(Context context) {
         this.context = context;
@@ -129,19 +129,28 @@ public class TextEnv {
     }
 
     public void setEditableValue(int tabId, String value) {
+        EditableValue editableValue = getEditableValue(tabId);
+        if (editableValue == null) {
+            editableValue = new EditableValue();
+            setEditableValue(tabId, editableValue);
+        }
+        editableValue.setValue(value);
+    }
+
+    public void setEditableValue(int tabId, EditableValue value) {
         if (mEditableValues == null)
             return;
         mEditableValues.put(tabId, value);
     }
 
-    public String getEditableValue(int tabId) {
+    public EditableValue getEditableValue(int tabId) {
         if (mEditableValues != null) {
             return mEditableValues.get(tabId);
         }
         return null;
     }
 
-    public SparseArray<String> getEditableValues() {
+    public SparseArray<EditableValue> getEditableValues() {
         return mEditableValues;
     }
 

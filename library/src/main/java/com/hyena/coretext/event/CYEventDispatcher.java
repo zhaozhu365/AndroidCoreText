@@ -30,7 +30,7 @@ public class CYEventDispatcher {
     }
 
     public void requestLayout() {
-        requestLayout(false);
+        requestLayout(true);
     }
 
     public void requestLayout(boolean force) {
