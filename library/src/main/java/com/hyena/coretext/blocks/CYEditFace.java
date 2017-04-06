@@ -58,10 +58,6 @@ public class CYEditFace {
         //文本画笔
         mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mTextPaint.set(mTextEnv.getPaint());
-        EditableValue value = mTextEnv.getEditableValue(mEditable.getTabId());
-        if (value != null && value.getColor() != -1) {
-            mTextPaint.setColor(value.getColor());
-        }
         mTextPaintMetrics = mTextPaint.getFontMetrics();
         //默认文字画笔
         mDefaultTxtPaint = new Paint(mTextPaint);
@@ -85,6 +81,13 @@ public class CYEditFace {
                 handleMessageImpl(msg);
             }
         };
+    }
+
+    public void postInit() {
+        EditableValue value = mTextEnv.getEditableValue(mEditable.getTabId());
+        if (value != null && value.getColor() != -1) {
+            mTextPaint.setColor(value.getColor());
+        }
     }
 
     public void setPadding(int left, int top, int right, int bottom) {
