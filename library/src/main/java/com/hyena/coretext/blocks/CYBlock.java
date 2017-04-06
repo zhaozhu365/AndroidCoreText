@@ -379,4 +379,8 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable, Clonea
     public int getTextHeight(Paint paint) {
         return (int) (Math.ceil(paint.descent() - paint.ascent()) + 0.5f);
     }
+
+    public boolean isValid() {
+        return true;
+    }
 }

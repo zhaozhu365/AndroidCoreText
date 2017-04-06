@@ -70,7 +70,8 @@ public class CYHorizontalLayout extends CYLayout {
         if (lines != null) {
             for (int i = 0; i < lines.size(); i++) {
                 CYLineBlock line = lines.get(i);
-                if (line.getChildren() == null || line.getChildren().isEmpty())
+                if (line.getChildren() == null || line.getChildren().isEmpty()
+                        || !line.isValid())
                     continue;
 
                 int maxBlockHeight = line.getMaxBlockHeightInLine();
