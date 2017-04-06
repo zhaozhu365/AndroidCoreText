@@ -1,6 +1,7 @@
 package com.hyena.coretext.samples;
 
 import android.os.Bundle;
+import android.os.Debug;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 
@@ -20,6 +21,7 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Debug.startMethodTracing();
         setContentView(R.layout.activity_main);
         MacroInfo.Commands.put("fillin", new MacroInfo(2) {
             @Override
@@ -29,8 +31,8 @@ public class MainActivity extends FragmentActivity {
             }
         });
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//        transaction.replace(R.id.main_container, new QuestionListFragment());
-        transaction.replace(R.id.main_container, new SampleQuestionFragment());
+        transaction.replace(R.id.main_container, new QuestionListFragment());
+//        transaction.replace(R.id.main_container, new SampleQuestionFragment());
         transaction.commit();
     }
 

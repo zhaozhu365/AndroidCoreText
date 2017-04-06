@@ -7,11 +7,10 @@ import com.hyena.coretext.blocks.CYBlock;
 import com.hyena.coretext.blocks.CYBreakLineBlock;
 import com.hyena.coretext.blocks.CYLineBlock;
 import com.hyena.coretext.blocks.CYPageBlock;
-import com.hyena.coretext.blocks.CYPlaceHolderBlock;
-import com.hyena.coretext.blocks.CYParagraphStyle;
 import com.hyena.coretext.blocks.CYParagraphEndBlock;
 import com.hyena.coretext.blocks.CYParagraphStartBlock;
-import com.hyena.coretext.blocks.CYTextBlock;
+import com.hyena.coretext.blocks.CYParagraphStyle;
+import com.hyena.coretext.blocks.CYPlaceHolderBlock;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +35,7 @@ public class CYHorizontalLayout extends CYLayout {
     public CYHorizontalLayout(TextEnv textEnv, List<CYBlock> blocks) {
         super(textEnv);
         this.leftWidth = textEnv.getPageWidth();
-        this.mBlocks = resetBlocks(blocks);
+        this.mBlocks = blocks;
     }
 
     private void reset() {
@@ -65,11 +64,15 @@ public class CYHorizontalLayout extends CYLayout {
         reset();
 
         List<CYLineBlock> lines = parseLines(mBlocks);
+
         CYPageBlock page = new CYPageBlock(getTextEnv());
         int y = 0;
         if (lines != null) {
             for (int i = 0; i < lines.size(); i++) {
                 CYLineBlock line = lines.get(i);
+                if (line.getChildren() == null || line.getChildren().isEmpty())
+                    continue;
+
                 int maxBlockHeight = line.getMaxBlockHeightInLine();
                 if (y + maxBlockHeight > getTextEnv().getPageHeight()) {
                     page = new CYPageBlock(getTextEnv());
@@ -98,7 +101,8 @@ public class CYHorizontalLayout extends CYLayout {
 
     private List<CYLineBlock> parseLines(List<CYBlock> blocks) {
         int pageWidth = getTextEnv().getPageWidth();
-        for (int i = 0; i < blocks.size(); i++) {
+        int blockCount = blocks.size();
+        for (int i = 0; i < blockCount; i++) {
             CYBlock itemBlock = blocks.get(i);
             if (itemBlock != null) {
                 itemBlock.setParagraphStyle(getParagraphStyle(styleParagraphStack));
@@ -139,7 +143,7 @@ public class CYHorizontalLayout extends CYLayout {
                     if (((CYPlaceHolderBlock) itemBlock).getAlignStyle() == CYPlaceHolderBlock.AlignStyle.Style_MONOPOLY) {
                         //add line
                         wrapLine();
-                        itemBlock.setX((getTextEnv().getPageWidth() - itemBlock.getWidth()) / 2);
+                        itemBlock.setX(0);
                         itemBlock.setLineY(y);
                         line.addChild(itemBlock);
                         //add new line
@@ -152,55 +156,47 @@ public class CYHorizontalLayout extends CYLayout {
                     placeHolderBlocks.add((CYPlaceHolderBlock) itemBlock);
                 }
                 CYPlaceHolderBlock hitCell;
-                if (itemBlock.getWidth() < leftWidth) {
-                    while ((hitCell = getHitCell(linePlaceHolderBlocks, pageWidth - leftWidth, y,
-                            itemBlock)) != null) {
+                int blockWidth = itemBlock.getWidth();
+                //修正位置
+                if (blockWidth < leftWidth) {
+                    hitCell = getHitCell(linePlaceHolderBlocks, pageWidth - leftWidth, y, itemBlock);
+                    while (hitCell != null) {
                         leftWidth = pageWidth - hitCell.getWidth() - hitCell.getX();
+                        hitCell = getHitCell(linePlaceHolderBlocks, pageWidth - leftWidth, y, itemBlock);
                     }
-
-                    while (leftWidth != pageWidth && leftWidth < itemBlock.getWidth()) {
-                        //wrap
-                        wrapLine();
-                        while ((hitCell = getHitCell(linePlaceHolderBlocks, pageWidth - leftWidth, y,
-                                itemBlock)) != null) {
-                            leftWidth = pageWidth - hitCell.getWidth() - hitCell.getX();
-                        }
-                    }
-                    itemBlock.setX(getTextEnv().getPageWidth() - leftWidth);
-                    itemBlock.setLineY(y);
-                    leftWidth -= itemBlock.getWidth();
-                    line.addChild(itemBlock);
-                } else {
-                    while (leftWidth != pageWidth && leftWidth < itemBlock.getWidth()) {
-                        //wrap
-                        wrapLine();
-                        while ((hitCell = getHitCell(linePlaceHolderBlocks, pageWidth - leftWidth, y,
-                                itemBlock)) != null) {
-                            leftWidth = pageWidth - hitCell.getWidth() - hitCell.getX();
-                        }
-                    }
-                    itemBlock.setX(pageWidth - leftWidth);
-                    itemBlock.setLineY(y);
-                    leftWidth -= itemBlock.getWidth();
-                    line.addChild(itemBlock);
                 }
+                //如果剩余位置不充足 则换行
+                while (leftWidth != pageWidth && leftWidth < blockWidth) {
+                    //wrap
+                    wrapLine();
+                    hitCell = getHitCell(linePlaceHolderBlocks, pageWidth - leftWidth, y, itemBlock);
+                    while (hitCell != null) {
+                        leftWidth = pageWidth - hitCell.getWidth() - hitCell.getX();
+                        hitCell = getHitCell(linePlaceHolderBlocks, pageWidth - leftWidth, y, itemBlock);
+                    }
+                }
+                itemBlock.setX(pageWidth - leftWidth);
+                itemBlock.setLineY(y);
+                leftWidth -= blockWidth;
+                line.addChild(itemBlock);
             }
-        }
-        if (line != null) {
-            line.measure();
         }
         return lines;
     }
 
+//    private static int ts = 0;
     private void wrapLine() {
         if (line == null)
             return;
 
-        int lineHeight = line.getHeight();
+        int lineHeight = 0;
         if (line.getChildren() == null || line.getChildren().isEmpty()) {
             if (lines != null)
                 lines.remove(line);
-            lineHeight = 0;
+        } else {
+//            long start = System.currentTimeMillis();
+            lineHeight = line.getHeight();
+//            ts += (System.currentTimeMillis() - start);
         }
 
         y += lineHeight + getTextEnv().getVerticalSpacing();
@@ -208,33 +204,39 @@ public class CYHorizontalLayout extends CYLayout {
         line = new CYLineBlock(getTextEnv(), getParagraphStyle(styleParagraphStack));
         lines.add(line);
         linePlaceHolderBlocks = getLinePlaceHolderBlocks(y);
+//        LogUtil.v("yangzc", "new line block cost: " + ts);
     }
 
     private List<CYPlaceHolderBlock> getLinePlaceHolderBlocks(int y) {
-
         if (placeHolderBlocks == null || placeHolderBlocks.isEmpty()) {
             return null;
         }
         List<CYPlaceHolderBlock> linePlaceHolderBlocks = new ArrayList<CYPlaceHolderBlock>();
-        for (int i = 0; i < placeHolderBlocks.size(); i++) {
+        int count = placeHolderBlocks.size();
+        for (int i = 0; i < count; i++) {
             CYPlaceHolderBlock block = placeHolderBlocks.get(i);
-            if (y >= block.getLineY() && y <= block.getLineY() + block.getContentHeight()) {
+            int top = block.getLineY();
+            int bottom = top + block.getHeight();
+            if (y >= top && y <= bottom) {
                 linePlaceHolderBlocks.add(block);
             }
         }
         return linePlaceHolderBlocks;
     }
 
+    private Rect mTemp1Rect = new Rect();
+    private Rect mTemp2Rect = new Rect();
     private CYPlaceHolderBlock getHitCell(List<CYPlaceHolderBlock> linePlaceHolderBlocks
             , int x, int y, CYBlock block) {
         if (linePlaceHolderBlocks == null || linePlaceHolderBlocks.isEmpty())
             return null;
-        for (int i = 0; i < linePlaceHolderBlocks.size(); i++) {
+        mTemp1Rect.set(x, y, x + block.getWidth(), y + block.getHeight());
+        int count = linePlaceHolderBlocks.size();
+        for (int i = 0; i < count; i++) {
             CYPlaceHolderBlock cell = linePlaceHolderBlocks.get(i);
-
-            if (cell != block && new Rect(cell.getX(), cell.getLineY(), cell.getX() + cell.getWidth(),
-                    cell.getLineY() + cell.getContentHeight()).intersect(new Rect(x, y,
-                    x + block.getWidth(), y + block.getHeight()))) {
+            mTemp2Rect.set(cell.getX(), cell.getLineY(),
+                    cell.getX() + cell.getWidth(), cell.getLineY() + cell.getHeight());
+            if (cell != block && mTemp2Rect.intersect(mTemp1Rect)) {
                 return cell;
             }
 
@@ -248,18 +250,4 @@ public class CYHorizontalLayout extends CYLayout {
         return styleStack.peek();
     }
 
-    private List<CYBlock> resetBlocks(List<CYBlock> rawBlocks) {
-        List<CYBlock> result = new ArrayList<CYBlock>();
-        if (rawBlocks != null) {
-            for (int i = 0; i < rawBlocks.size(); i++) {
-                CYBlock block = rawBlocks.get(i);
-                if (block instanceof CYTextBlock && block.getChildren() != null) {
-                    result.addAll(block.getChildren());
-                } else {
-                    result.add(block);
-                }
-            }
-        }
-        return result;
-    }
 }

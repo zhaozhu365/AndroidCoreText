@@ -22,6 +22,8 @@ public class BlankBlock extends CYEditBlock {
     private String mClass = "choose";
     private String size;
     private int mWidth, mHeight;
+    private static int DP_2 = UIUtils.dip2px(2);
+    private static int DP_3 = UIUtils.dip2px(3);
 
     public BlankBlock(TextEnv textEnv, String content) {
         super(textEnv, content);
@@ -29,7 +31,7 @@ public class BlankBlock extends CYEditBlock {
     }
 
     private void init(String content) {
-        setPadding(UIUtils.dip2px(3), UIUtils.dip2px(2), UIUtils.dip2px(3), UIUtils.dip2px(2));
+        setPadding(DP_3, DP_2, DP_3, DP_2);
         try {
             JSONObject json = new JSONObject(content);
             setTabId(json.optInt("id"));
@@ -38,8 +40,9 @@ public class BlankBlock extends CYEditBlock {
             this.mClass = json.optString("class");//choose fillin
             if (getTextEnv().isEditable()) {
                 if ("line".equals(size)) {
-                    getEditFace().getTextPaint().setTextSize(UIUtils.dip2px(20));
-                    getEditFace().getDefaultTextPaint().setTextSize(UIUtils.dip2px(20));
+                    int dp20 = DP_2 * 10;
+                    getEditFace().getTextPaint().setTextSize(dp20);
+                    getEditFace().getDefaultTextPaint().setTextSize(dp20);
                     setAlignStyle(AlignStyle.Style_MONOPOLY);
                 }
             }
@@ -64,7 +67,7 @@ public class BlankBlock extends CYEditBlock {
         if (!getTextEnv().isEditable()) {
             int width = (int) getTextEnv().getPaint()
                     .measureText(getEditFace().getText());
-            this.mWidth = width + UIUtils.dip2px(10);
+            this.mWidth = width + DP_2 * 5;
             this.mHeight = textHeight;
         } else {
             if ("letter".equals(size)) {

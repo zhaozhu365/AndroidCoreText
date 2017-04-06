@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,19 +64,87 @@ public class QuestionListFragment extends Fragment {
                 convertView.setTag(viewHolder);
 
                 viewHolder.mQtvQuestion = (QuestionTextView) convertView.findViewById(R.id.qtv_question);
-                viewHolder.mQtvQuestion.setEditable(false);
+                viewHolder.mQtvQuestion.getBuilder().setEditable(false);
 
             } else {
                 viewHolder = (ViewHolder) convertView.getTag();
             }
 //            String question = "第" + position + "题：根据图片意思选择相符的句子#{\"type\":\"blank\",\"id\":1}##{\"type\":\"img\",\"id\"=1,\"size\":\"big_image\",\"src\":\"http://img1.3lian.com/2015/w8/28/d/66.jpg?aa=bb\"}#啊啊啊啊啊";
-            String question = "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing#{\"type\":\"blank\",\"id\":1}##{\"type\":\"img\",\"id\"=1,\"size\":\"big_image\",\"src\":\"http://img1.3lian.com/2015/w8/28/d/66.jpg?aa=bb\"}#啊啊啊啊啊";
-            viewHolder.mQtvQuestion.setText(question);
-            ICYEditable editable = viewHolder.mQtvQuestion.findEditableByTabId(1);
-            if (editable != null) {
-                editable.setText("第" + position + "题答案");
-                editable.setTextColor(Color.RED);
-            }
+            String question = "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing " +
+                    "What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+//                    "第" + position + "题：What are you doing What are you doing.... What are you doing What are you doing What are you doing What are you doing What are you doing" +
+                    "#{\"type\":\"blank\",\"id\":1}#" +
+//                    "#{\"type\":\"img\",\"id\"=1,\"size\":\"big_image\",\"src\":\"http://img1.3lian.com/2015/w8/28/d/66.jpg?aa=bb\"}#" +
+                    "啊啊啊啊啊";
+
+            viewHolder.mQtvQuestion.getBuilder().setText(question).build();
+//            ICYEditable editable = viewHolder.mQtvQuestion.findEditableByTabId(1);
+//            if (editable != null) {
+//                editable.setText("第" + position + "题答案");
+//                editable.setTextColor(Color.RED);
+//            }
             return convertView;
         }
 

@@ -1,7 +1,6 @@
 package com.hyena.coretext.blocks;
 
 import android.graphics.Canvas;
-import android.graphics.Paint;
 
 import com.hyena.coretext.TextEnv;
 
@@ -13,45 +12,43 @@ import java.util.List;
  */
 public class CYPageBlock extends CYBlock<CYLineBlock> {
 
+    private int mWidth, mHeight;
     public CYPageBlock(TextEnv textEnv) {
         super(textEnv, "");
     }
 
     @Override
     public int getContentWidth() {
-        List<CYBlock> blocks = getBlocks();
-        int maxX = 0;
-        if (blocks != null && !blocks.isEmpty()) {
-            for (int i = 0; i < blocks.size(); i++) {
-                CYBlock block = blocks.get(i);
-                if ((block.getX() + block.getWidth()) > maxX) {
-                    maxX = block.getX() + block.getWidth();
-                }
-            }
-        }
-        return maxX;
+        return mWidth;
     }
 
     @Override
     public int getContentHeight() {
-        List<CYBlock> blocks = getBlocks();
-        int maxY = 0;
-        if (blocks != null && !blocks.isEmpty()) {
-            for (int i = 0; i < blocks.size(); i++) {
-                CYBlock block = blocks.get(i);
-                if ((block.getLineY() + block.getHeight()) > maxY) {
-                    maxY = block.getLineY() + block.getHeight();
-                }
-            }
+        return mHeight;
+    }
+
+    @Override
+    public void addChild(CYLineBlock child) {
+        super.addChild(child);
+        int width = child.getWidth();
+        int height = child.getHeight();
+        int lineY = child.getLineY();
+        if (width > mWidth) {
+            mWidth = width;
         }
-        return maxY;
+        if (lineY + height > mHeight) {
+            mHeight = lineY + height;
+        }
     }
 
     @Override
     public void draw(Canvas canvas) {
-        if (getChildren() != null) {
-            for (int i = 0; i < getChildren().size(); i++) {
-                getChildren().get(i).draw(canvas);
+        List<CYLineBlock> children = getChildren();
+        if (children != null) {
+            int count = children.size();
+            for (int i = 0; i < count; i++) {
+                CYLineBlock lineBlock = children.get(i);
+                lineBlock.draw(canvas);
             }
         }
     }
@@ -60,7 +57,8 @@ public class CYPageBlock extends CYBlock<CYLineBlock> {
         List<CYBlock> blocks = new ArrayList<CYBlock>();
         List<CYLineBlock> lines = getChildren();
         if (lines != null) {
-            for (int i = 0; i < lines.size(); i++) {
+            int lineCount = lines.size();
+            for (int i = 0; i < lineCount; i++) {
                 CYLineBlock line = lines.get(i);
                 blocks.addAll(line.getChildren());
             }
@@ -72,7 +70,8 @@ public class CYPageBlock extends CYBlock<CYLineBlock> {
     public void onMeasure() {
         List<CYLineBlock> lines = getChildren();
         if (lines != null) {
-            for (int i = 0; i < lines.size(); i++) {
+            int lineCount = lines.size();
+            for (int i = 0; i < lineCount; i++) {
                 CYLineBlock line = lines.get(i);
                 line.onMeasure();
             }

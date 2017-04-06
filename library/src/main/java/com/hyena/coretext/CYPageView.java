@@ -32,14 +32,21 @@ public class CYPageView extends View implements CYLayoutEventListener {
 
     public CYPageView(Context context) {
         super(context);
+        init();
     }
 
     public CYPageView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init();
     }
 
     public CYPageView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        init();
+    }
+
+    private void init() {
+//        setBackgroundColor(Color.RED);
     }
 
     @Override
@@ -145,18 +152,19 @@ public class CYPageView extends View implements CYLayoutEventListener {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (mPageBlock == null || mTextEnv == null || !mTextEnv.isEditable())
+        if (mPageBlock == null || mTextEnv == null)
             return super.onTouchEvent(event);
 
         int action = MotionEventCompat.getActionMasked(event);
         int x = (int) event.getX() - mPageBlock.getPaddingLeft();
         int y = (int) event.getY() - mPageBlock.getPaddingTop();
+        boolean handle = false;
         switch (action) {
             case MotionEvent.ACTION_DOWN: {
                 onTouchDown(event);
 
                 if (mFocusBlock != null) {
-                    mFocusBlock.onTouchEvent(action, x - mFocusBlock.getX(),
+                    handle = mFocusBlock.onTouchEvent(action, x - mFocusBlock.getX(),
                             y - mFocusBlock.getLineY());
                 } else {
                     setPressed(true);
@@ -165,14 +173,14 @@ public class CYPageView extends View implements CYLayoutEventListener {
             }
             case MotionEvent.ACTION_MOVE: {
                 if (mFocusBlock != null) {
-                    mFocusBlock.onTouchEvent(action, x - mFocusBlock.getX(),
+                    handle = mFocusBlock.onTouchEvent(action, x - mFocusBlock.getX(),
                             y - mFocusBlock.getLineY());
                 }
                 break;
             }
             case MotionEvent.ACTION_UP: {
                 if (mFocusBlock != null) {
-                    mFocusBlock.onTouchEvent(action, x - mFocusBlock.getX(),
+                    handle = mFocusBlock.onTouchEvent(action, x - mFocusBlock.getX(),
                             y - mFocusBlock.getLineY());
                 } else {
                     setPressed(false);
@@ -184,12 +192,14 @@ public class CYPageView extends View implements CYLayoutEventListener {
             case MotionEvent.ACTION_OUTSIDE: {
                 setPressed(false);
                 if (mFocusBlock != null) {
-                    mFocusBlock.onTouchEvent(action, x - mFocusBlock.getX(),
+                    handle = mFocusBlock.onTouchEvent(action, x - mFocusBlock.getX(),
                             y - mFocusBlock.getLineY());
                 }
                 break;
             }
         }
+        if (!handle)
+            return super.onTouchEvent(event);
         return true;
     }
 

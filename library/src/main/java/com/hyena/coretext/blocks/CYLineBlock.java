@@ -3,6 +3,7 @@ package com.hyena.coretext.blocks;
 import android.graphics.Canvas;
 
 import com.hyena.coretext.TextEnv;
+import com.hyena.framework.clientlog.LogUtil;
 import com.hyena.framework.utils.UIUtils;
 
 import java.util.List;
@@ -12,9 +13,13 @@ import java.util.List;
  */
 public class CYLineBlock extends CYBlock<CYBlock> {
 
-    private int mLineHeight;
+    private int mWidth, mHeight;
+    private boolean isInMonopolyRow;
     private CYParagraphStyle mParagraphStyle;
     private int mMaxHeightInLine = 0;
+
+    private static final int DP_20 = UIUtils.dip2px(20);
+
     public CYLineBlock(TextEnv textEnv, CYParagraphStyle style) {
         super(textEnv, "");
         this.mParagraphStyle = style;
@@ -22,70 +27,29 @@ public class CYLineBlock extends CYBlock<CYBlock> {
 
     @Override
     public int getContentWidth() {
-        List<CYBlock> blocks = getChildren();
-        int width = 0;
-        if (blocks != null && !blocks.isEmpty()) {
-            for (int i = 0; i < blocks.size(); i++) {
-                width += blocks.get(i).getWidth();
-            }
-        }
-        return width;
+        return mWidth;
     }
 
     @Override
     public int getContentHeight() {
-        return getLineHeight();
-    }
-
-    @Override
-    public void draw(Canvas canvas) {
-        if (getChildren() != null) {
-            for (int i = 0; i < getChildren().size(); i++) {
-                getChildren().get(i).draw(canvas);
-            }
-        }
+        if (mHeight <= 0)
+            mHeight = DP_20;
+        return mHeight;
     }
 
     @Override
     public int getLineHeight() {
-        if (mLineHeight <= 0) {
-            measure();
-        }
-        if (mLineHeight <= 0) {
-            mLineHeight = UIUtils.dip2px(20);
-        }
-        return mLineHeight;
+        return getContentHeight();
     }
 
-    public void measure() {
-        measureLineHeight();
-        syncBlocksHeight();
-    }
-
-    public void updateLineY(int lineY) {
-        if (getChildren() != null) {
-            boolean isInMonopolyRow = false;
-            for (int i = 0; i < getChildren().size(); i++) {
-                CYBlock child = getChildren().get(i);
-                if (child instanceof CYPlaceHolderBlock
-                        && ((((CYPlaceHolderBlock)child).getAlignStyle() == CYPlaceHolderBlock.AlignStyle.Style_Normal)
-                        || ((CYPlaceHolderBlock)child).getAlignStyle() == CYPlaceHolderBlock.AlignStyle.Style_MONOPOLY)) {
-                    isInMonopolyRow = true;
-                }
-            }
-            int appendX = 0;
-            if (mParagraphStyle != null) {
-                if(mParagraphStyle.getHorizontalAlign() == CYHorizontalAlign.CENTER) {
-                    appendX = (getTextEnv().getPageWidth() - getWidth())/2;
-                } else if (mParagraphStyle.getHorizontalAlign() == CYHorizontalAlign.RIGHT){
-                    appendX = getTextEnv().getPageWidth() - getWidth();
-                }
-            }
-            for (int i = 0; i < getChildren().size(); i++) {
-                CYBlock child = getChildren().get(i);
-                child.setLineY(lineY);
-                child.setIsInMonopolyRow(isInMonopolyRow);
-                child.setX(child.getX() + appendX);
+    @Override
+    public void draw(Canvas canvas) {
+        List<CYBlock> children = getChildren();
+        if (children != null) {
+            int count = children.size();
+            for (int i = 0; i < count; i++) {
+                CYBlock block = children.get(i);
+                block.draw(canvas);
             }
         }
     }
@@ -93,18 +57,41 @@ public class CYLineBlock extends CYBlock<CYBlock> {
     @Override
     public void addChild(CYBlock child) {
         super.addChild(child);
-        if (child != null) {
-            if (child.getHeight() > mMaxHeightInLine) {
-                mMaxHeightInLine = child.getHeight();
+        int width = child.getWidth();
+        int height = child.getHeight();
+
+        /*
+            如果某一行中存在环绕效果和非环绕效果并存的情况,则该行忽略环绕效果，但不影响下一行展现
+         */
+        boolean isInMonoMode = false;
+        if (child instanceof CYPlaceHolderBlock
+                && ((((CYPlaceHolderBlock)child).getAlignStyle() == CYPlaceHolderBlock.AlignStyle.Style_Normal)
+                || ((CYPlaceHolderBlock)child).getAlignStyle() == CYPlaceHolderBlock.AlignStyle.Style_MONOPOLY)) {
+            isInMonopolyRow = true;
+            isInMonoMode = true;
+        }
+
+        //更新行高
+        if (child instanceof CYTextBlock || isInMonoMode) {
+            if (height > mHeight) {
+                this.mHeight = height;
             }
         }
+
+        //更新行中最大高度
+        if (height > mMaxHeightInLine) {
+            mMaxHeightInLine = height;
+        }
+
+        this.mWidth += width;
     }
 
     @Override
     public void onMeasure() {
         List<CYBlock> blocks = getChildren();
         if (blocks != null && !blocks.isEmpty()) {
-            for (int i = 0; i < blocks.size(); i++) {
+            int count = blocks.size();
+            for (int i = 0; i < count; i++) {
                 CYBlock block = blocks.get(i);
                 block.onMeasure();
             }
@@ -112,34 +99,30 @@ public class CYLineBlock extends CYBlock<CYBlock> {
         super.onMeasure();
     }
 
-    private void measureLineHeight(){
-        if (getChildren() != null) {
-            mLineHeight = 0;
-            for (int i = 0; i < getChildren().size(); i++) {
-                CYBlock block = getChildren().get(i);
-                if (block instanceof CYTextBlock || (block instanceof CYPlaceHolderBlock
-                        && (((CYPlaceHolderBlock)block).getAlignStyle() == CYPlaceHolderBlock.AlignStyle.Style_Normal)
-                        || ((CYPlaceHolderBlock)block).getAlignStyle() == CYPlaceHolderBlock.AlignStyle.Style_MONOPOLY)) {
-                    if (block.getHeight() > mLineHeight) {
-                        mLineHeight = block.getHeight();
-                    }
-                }
-            }
-            if (mLineHeight <= 0) {
-                mLineHeight = getMaxBlockHeightInLine();
-            }
-        }
-    }
-
-    public int getMaxBlockHeightInLine(){
+    public int getMaxBlockHeightInLine() {
         return mMaxHeightInLine;
     }
 
-    private void syncBlocksHeight(){
-        if (getChildren() != null) {
-            for (int i = 0; i < getChildren().size(); i++) {
-                CYBlock block = getChildren().get(i);
-                block.setLineHeight(mLineHeight);
+    public void updateLineY(int lineY) {
+        setLineY(lineY);
+        List<CYBlock> children = getChildren();
+        if (children != null) {
+            int appendX = 0;
+            if (mParagraphStyle != null) {
+                if(mParagraphStyle.getHorizontalAlign() == CYHorizontalAlign.CENTER) {
+                    appendX = (getTextEnv().getPageWidth() - getWidth()) >> 1;
+                } else if (mParagraphStyle.getHorizontalAlign() == CYHorizontalAlign.RIGHT){
+                    appendX = getTextEnv().getPageWidth() - getWidth();
+                }
+            }
+            int lineHeight = getLineHeight();
+            int childCount = children.size();
+            for (int i = 0; i < childCount; i++) {
+                CYBlock child = children.get(i);
+                child.setIsInMonopolyRow(isInMonopolyRow);
+                child.setX(child.getX() + appendX);
+                child.setLineY(lineY);
+                child.setLineHeight(lineHeight);
             }
         }
     }
