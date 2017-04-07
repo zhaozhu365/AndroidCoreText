@@ -67,7 +67,6 @@ public class CYImageBlock extends CYPlaceHolderBlock {
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
-        LogUtil.v("yangzc", "drawBitmap: " + (mBitmap == null));
         if (mBitmap != null && !mBitmap.isRecycled()) {
             canvas.drawBitmap(mBitmap, null, getContentRect(), mPaint);
         } else {
