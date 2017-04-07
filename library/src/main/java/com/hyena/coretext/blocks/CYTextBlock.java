@@ -63,6 +63,7 @@ public class CYTextBlock extends CYBlock {
         if (style != null) {
             mPaint.setTextSize(style.getTextSize());
             mPaint.setColor(style.getTextColor());
+            this.mWidth = (int) mPaint.measureText(chs, start, count);
         }
     }
 
@@ -83,6 +84,7 @@ public class CYTextBlock extends CYBlock {
     public CYTextBlock setTextSize(int fontSize){
         if (mPaint != null && fontSize > 0) {
             mPaint.setTextSize(fontSize);
+            this.mWidth = (int) mPaint.measureText(chs, start, count);
         }
         return this;
     }
