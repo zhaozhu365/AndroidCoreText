@@ -4,10 +4,14 @@
 
 package com.hyena.coretext.blocks;
 
+import com.hyena.coretext.TextEnv;
+
 /**
  * Created by yangzc on 17/2/13.
  */
 public class CYParagraphStyle {
+
+    private String mStyleId;
 
     private CYHorizontalAlign mHorizontalAlign = CYHorizontalAlign.LEFT;
 
@@ -16,6 +20,20 @@ public class CYParagraphStyle {
     private int mTextSize;//base 640
 
     private int mMarginTop, mMarginBottom;
+
+    private TextEnv mTextEnv;
+
+    public CYParagraphStyle(TextEnv textEnv) {
+        this.mTextEnv = textEnv;
+    }
+
+    public void setStyleId(String styleId) {
+        this.mStyleId = styleId;
+    }
+
+    public String getStyleId() {
+        return mStyleId;
+    }
 
     public void setHorizontalAlign(CYHorizontalAlign align) {
         this.mHorizontalAlign = align;
@@ -56,4 +74,5 @@ public class CYParagraphStyle {
     public int getMarginBottom() {
         return mMarginBottom;
     }
+
 }

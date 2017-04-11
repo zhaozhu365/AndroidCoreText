@@ -31,6 +31,7 @@ public class TextEnv {
     private int pageHeight = 0;
     private boolean editable = true;
     private Align textAlign = Align.BOTTOM;
+    private float mFontScale = 1.0f;
 
     private Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private CYEventDispatcher mEventDispatcher = new CYEventDispatcher();
@@ -52,6 +53,15 @@ public class TextEnv {
         this.fontSize = fontSize;
         mPaint.setTextSize(fontSize);
         return this;
+    }
+
+    public TextEnv setFontScale(float scale) {
+        this.mFontScale = scale;
+        return this;
+    }
+
+    public float getFontScale() {
+        return mFontScale;
     }
 
     public int getTextColor() {
