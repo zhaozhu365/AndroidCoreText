@@ -36,6 +36,7 @@ public class TextEnv {
     private Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private CYEventDispatcher mEventDispatcher = new CYEventDispatcher();
     private SparseArray<EditableValue> mEditableValues = new SparseArray<EditableValue>();
+    private String mTag = "";
 
     public TextEnv(Context context) {
         this.context = context;
@@ -53,6 +54,14 @@ public class TextEnv {
         this.fontSize = fontSize;
         mPaint.setTextSize(fontSize);
         return this;
+    }
+
+    public void setTag(String tag) {
+        this.mTag = tag;
+    }
+
+    public String getTag() {
+        return mTag;
     }
 
     public TextEnv setFontScale(float scale) {

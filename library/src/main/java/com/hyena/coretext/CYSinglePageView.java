@@ -44,15 +44,19 @@ public class CYSinglePageView extends CYPageView {
     }
 
     private void init() {
+        mTextEnv = buildDefaultTextEnv(getContext());
+        mTextEnv.getEventDispatcher().addLayoutEventListener(this);
+    }
+
+    public TextEnv buildDefaultTextEnv(Context context) {
         int width = getResources().getDisplayMetrics().widthPixels;
-        mTextEnv = new TextEnv(getContext())
+        return new TextEnv(context)
                 .setPageWidth(width)
                 .setTextColor(0xff333333)
                 .setFontSize(UIUtils.dip2px(20))
                 .setTextAlign(TextEnv.Align.CENTER)
                 .setPageHeight(Integer.MAX_VALUE)
                 .setVerticalSpacing(UIUtils.dip2px(getContext(), 3));
-        mTextEnv.getEventDispatcher().addLayoutEventListener(this);
     }
 
     private void setText(String questionTxt) {

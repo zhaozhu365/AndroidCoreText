@@ -105,9 +105,6 @@ public class CYHorizontalLayout extends CYLayout {
         int blockCount = blocks.size();
         for (int i = 0; i < blockCount; i++) {
             CYBlock itemBlock = blocks.get(i);
-            if (itemBlock != null) {
-                itemBlock.setParagraphStyle(getParagraphStyle(styleParagraphStack));
-            }
             if (itemBlock instanceof CYParagraphStartBlock) {
                 styleParagraphStack.push(((CYParagraphStartBlock) itemBlock).getStyle());
                 //wrap line
@@ -138,6 +135,9 @@ public class CYHorizontalLayout extends CYLayout {
                 if (line == null) {
                     line = new CYLineBlock(getTextEnv(), getParagraphStyle(styleParagraphStack));
                     lines.add(line);
+                }
+                if (itemBlock != null) {
+                    itemBlock.setParagraphStyle(getParagraphStyle(styleParagraphStack));
                 }
 
                 if (itemBlock instanceof CYPlaceHolderBlock) {

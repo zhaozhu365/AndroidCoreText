@@ -61,9 +61,12 @@ public class CYTextBlock extends CYBlock {
     public void setParagraphStyle(CYParagraphStyle style) {
         super.setParagraphStyle(style);
         if (style != null) {
-            mPaint.setTextSize(style.getTextSize());
             mPaint.setColor(style.getTextColor());
             this.mWidth = (int) mPaint.measureText(chs, start, count);
+            if (mPaint.getTextSize() != style.getTextSize()) {
+                mPaint.setTextSize(style.getTextSize());
+                this.mHeight = getTextHeight(mPaint);
+            }
         }
     }
 
@@ -138,6 +141,14 @@ public class CYTextBlock extends CYBlock {
             float x = rect.left;
             float y = rect.bottom - mFontMetrics.bottom;
             canvas.drawText(chs, start, count, x, y, mPaint);
+
+            CYParagraphStyle paragraphStyle = getParagraphStyle();
+            if (paragraphStyle != null) {
+                String style = paragraphStyle.getStyle();
+                if ("under_line".equals(style)) {
+                    canvas.drawLine(x, rect.bottom, x + rect.width(), rect.bottom, mPaint);
+                }
+            }
         }
     }
 

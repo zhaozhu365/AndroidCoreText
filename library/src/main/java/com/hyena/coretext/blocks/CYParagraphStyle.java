@@ -21,6 +21,8 @@ public class CYParagraphStyle {
 
     private int mMarginTop, mMarginBottom;
 
+    private String mStyle;
+
     private TextEnv mTextEnv;
 
     public CYParagraphStyle(TextEnv textEnv) {
@@ -33,6 +35,14 @@ public class CYParagraphStyle {
 
     public String getStyleId() {
         return mStyleId;
+    }
+
+    public void setStyle(String style) {
+        this.mStyle = style;
+    }
+
+    public String getStyle(){
+        return mStyle;
     }
 
     public void setHorizontalAlign(CYHorizontalAlign align) {
