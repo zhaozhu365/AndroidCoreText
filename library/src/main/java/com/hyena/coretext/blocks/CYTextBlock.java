@@ -20,7 +20,8 @@ public class CYTextBlock extends CYBlock {
     private char chs[];
 
     private Paint mPaint;
-    private int mWidth, mHeight;
+    private int mWidth;
+    private Value<Integer> mHeight = new Value<Integer>(0);
     private boolean mIsWord = false;
     Paint.FontMetrics mFontMetrics;
 
@@ -39,7 +40,7 @@ public class CYTextBlock extends CYBlock {
     }
 
     private CYTextBlock buildChildBlock(TextEnv textEnv, Paint paint
-            , int width, int height, char[] chs, int start, int count) {
+            , int width, Value<Integer> height, char[] chs, int start, int count) {
         try {
             CYTextBlock textBlock = (CYTextBlock) clone();
             textBlock.setTextEnv(textEnv);
@@ -65,7 +66,7 @@ public class CYTextBlock extends CYBlock {
             this.mWidth = (int) mPaint.measureText(chs, start, count);
             if (mPaint.getTextSize() != style.getTextSize()) {
                 mPaint.setTextSize(style.getTextSize());
-                this.mHeight = getTextHeight(mPaint);
+                this.mHeight.setValue(getTextHeight(mPaint));
             }
         }
     }
@@ -102,7 +103,7 @@ public class CYTextBlock extends CYBlock {
 
     private void parseSubBlocks() {
         if (chs.length > 0) {
-            int blockHeight = getTextHeight(mPaint);
+            Value blockHeight = new Value<Integer>(getTextHeight(mPaint));
             Paint.FontMetrics fontMetrics = mPaint.getFontMetrics();
             TextEnv textEnv = getTextEnv();
             for (int i = 0; i < chs.length; i++) {
@@ -130,7 +131,7 @@ public class CYTextBlock extends CYBlock {
 
     @Override
     public int getContentHeight() {
-        return mHeight;
+        return mHeight.getValue();
     }
 
     @Override
@@ -157,5 +158,18 @@ public class CYTextBlock extends CYBlock {
             return true;
         }
         return false;
+    }
+
+    class Value<T> {
+        private T mValue;
+        public Value(T value) {
+            this.mValue = value;
+        }
+        public void setValue(T value) {
+            this.mValue = value;
+        }
+        public T getValue() {
+            return mValue;
+        }
     }
 }

@@ -77,7 +77,7 @@ public class SampleRichTextFragment extends Fragment {
         if (pages != null && pages.size() > 0) {
             CYPageBlock pageBlock = pages.get(0);
             pageBlock.setPadding(20, 20, 20, 20);
-            mCyPvPageView.setPageBlock(textEnv, pageBlock);
+            mCyPvPageView.setPageBlock(pageBlock);
         }
         return view;
     }

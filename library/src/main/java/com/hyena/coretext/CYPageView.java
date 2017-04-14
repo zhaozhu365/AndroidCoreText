@@ -15,6 +15,7 @@ import com.hyena.coretext.blocks.ICYEditableGroup;
 import com.hyena.coretext.event.CYFocusEventListener;
 import com.hyena.coretext.event.CYLayoutEventListener;
 import com.hyena.coretext.utils.CYBlockUtils;
+import com.hyena.framework.utils.UIUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +47,12 @@ public class CYPageView extends View implements CYLayoutEventListener {
     }
 
     private void init() {
-//        setBackgroundColor(Color.RED);
+        mTextEnv = buildDefaultTextEnv(getContext());
+        mTextEnv.getEventDispatcher().addLayoutEventListener(this);
+    }
+
+    public TextEnv getTextEnv() {
+        return mTextEnv;
     }
 
     @Override
@@ -64,8 +70,7 @@ public class CYPageView extends View implements CYLayoutEventListener {
      * set blocks items
      * @param pageBlock page
      */
-    public void setPageBlock(TextEnv textEnv, CYPageBlock pageBlock) {
-        mTextEnv = textEnv;
+    public void setPageBlock(CYPageBlock pageBlock) {
         this.mPageBlock = pageBlock;
     }
 
@@ -245,6 +250,9 @@ public class CYPageView extends View implements CYLayoutEventListener {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
+        if (mTextEnv != null) {
+            mTextEnv.getEventDispatcher().addLayoutEventListener(this);
+        }
     }
 
     @Override
@@ -263,6 +271,17 @@ public class CYPageView extends View implements CYLayoutEventListener {
         if (mPageBlock != null) {
             mPageBlock.release();
         }
+    }
+
+    public TextEnv buildDefaultTextEnv(Context context) {
+        int width = getResources().getDisplayMetrics().widthPixels;
+        return new TextEnv(context)
+                .setPageWidth(width)
+                .setTextColor(0xff333333)
+                .setFontSize(UIUtils.dip2px(20))
+                .setTextAlign(TextEnv.Align.CENTER)
+                .setPageHeight(Integer.MAX_VALUE)
+                .setVerticalSpacing(UIUtils.dip2px(getContext(), 3));
     }
 
     public void measure() {

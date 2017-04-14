@@ -22,7 +22,6 @@ import java.util.List;
  */
 public class CYSinglePageView extends CYPageView {
 
-    private TextEnv mTextEnv;
     private String mQuestionTxt;
     private List<ICYEditable> mEditableList;
 
@@ -30,33 +29,14 @@ public class CYSinglePageView extends CYPageView {
 
     public CYSinglePageView(Context context) {
         super(context);
-        init();
     }
 
     public CYSinglePageView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init();
     }
 
     public CYSinglePageView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
-    }
-
-    private void init() {
-        mTextEnv = buildDefaultTextEnv(getContext());
-        mTextEnv.getEventDispatcher().addLayoutEventListener(this);
-    }
-
-    public TextEnv buildDefaultTextEnv(Context context) {
-        int width = getResources().getDisplayMetrics().widthPixels;
-        return new TextEnv(context)
-                .setPageWidth(width)
-                .setTextColor(0xff333333)
-                .setFontSize(UIUtils.dip2px(20))
-                .setTextAlign(TextEnv.Align.CENTER)
-                .setPageHeight(Integer.MAX_VALUE)
-                .setVerticalSpacing(UIUtils.dip2px(getContext(), 3));
     }
 
     private void setText(String questionTxt) {
@@ -80,7 +60,7 @@ public class CYSinglePageView extends CYPageView {
                 blocks.get(i).release();
             }
         }
-        blocks = CYBlockProvider.getBlockProvider().build(mTextEnv, text);
+        blocks = CYBlockProvider.getBlockProvider().build(getTextEnv(), text);
         mEditableList = getEditableList();
         doLayout(true);
     }
@@ -93,13 +73,13 @@ public class CYSinglePageView extends CYPageView {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int width = getDefaultSize(getSuggestedMinimumWidth(), widthMeasureSpec);
         if (width > 0) {
-            if (getPageBlock() != null && mTextEnv.getPageWidth() == width) {
+            if (getPageBlock() != null && getTextEnv().getPageWidth() == width) {
                 setMeasuredDimension(width, getPageBlock().getHeight());
             } else {
-                mTextEnv.setPageWidth(width);
+                getTextEnv().setPageWidth(width);
                 //measure
                 CYPageBlock pageBlock = parsePageBlock();
-                setPageBlock(mTextEnv, pageBlock);
+                setPageBlock(pageBlock);
                 setMeasuredDimension(width, pageBlock == null ? 0 : pageBlock.getHeight());
             }
         } else {
@@ -112,14 +92,14 @@ public class CYSinglePageView extends CYPageView {
         super.doLayout(force);
         if (force) {
             CYPageBlock pageBlock = parsePageBlock();
-            setPageBlock(mTextEnv, pageBlock);
+            setPageBlock(pageBlock);
         }
         requestLayout();
     }
 
     private CYPageBlock parsePageBlock() {
         if (blocks != null && !blocks.isEmpty()) {
-            CYHorizontalLayout layout = new CYHorizontalLayout(mTextEnv, blocks);
+            CYHorizontalLayout layout = new CYHorizontalLayout(getTextEnv(), blocks);
             List<CYPageBlock> pages = layout.parse();
             if (pages != null && pages.size() > 0) {
                 CYPageBlock pageBlock = pages.get(0);
@@ -132,10 +112,6 @@ public class CYSinglePageView extends CYPageView {
 
     private Builder mBuilder = new Builder();
 
-    public TextEnv getTextEnv() {
-        return mTextEnv;
-    }
-
     public Builder getBuilder() {
         return mBuilder;
     }
@@ -144,17 +120,17 @@ public class CYSinglePageView extends CYPageView {
 
         private String mText;
         public Builder setEditable(boolean editable) {
-            mTextEnv.setEditable(editable);
+            getTextEnv().setEditable(editable);
             return this;
         }
 
         public Builder setTextColor(int textColor) {
-            mTextEnv.setTextColor(textColor);
+            getTextEnv().setTextColor(textColor);
             return this;
         }
 
         public Builder setTextSize(int dp) {
-            mTextEnv.setFontSize(UIUtils.dip2px(getContext(), dp));
+            getTextEnv().setFontSize(UIUtils.dip2px(getContext(), dp));
             return this;
         }
 
@@ -164,7 +140,7 @@ public class CYSinglePageView extends CYPageView {
         }
 
         public Builder setDebug(boolean debug) {
-            mTextEnv.setDebug(debug);
+            getTextEnv().setDebug(debug);
             return this;
         }
 
