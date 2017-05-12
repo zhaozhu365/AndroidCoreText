@@ -63,11 +63,9 @@ public class CYTextBlock extends CYBlock {
         super.setParagraphStyle(style);
         if (style != null) {
             mPaint.setColor(style.getTextColor());
+            mPaint.setTextSize(style.getTextSize());
             this.mWidth = (int) mPaint.measureText(chs, start, count);
-            if (mPaint.getTextSize() != style.getTextSize()) {
-                mPaint.setTextSize(style.getTextSize());
-                this.mHeight.setValue(getTextHeight(mPaint));
-            }
+            this.mHeight.setValue(getTextHeight(mPaint));
         }
     }
 

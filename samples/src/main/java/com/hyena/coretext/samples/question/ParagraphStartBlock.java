@@ -39,7 +39,6 @@ public class ParagraphStartBlock extends CYParagraphStartBlock {
             } else {
                 getStyle().setHorizontalAlign(CYHorizontalAlign.RIGHT);
             }
-            getStyle().setStyle("under_line");
         } catch (JSONException e) {
             e.printStackTrace();
         }
