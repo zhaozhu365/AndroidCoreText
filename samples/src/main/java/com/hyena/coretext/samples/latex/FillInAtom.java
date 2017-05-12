@@ -5,6 +5,8 @@
 package com.hyena.coretext.samples.latex;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 
@@ -12,6 +14,7 @@ import com.hyena.coretext.TextEnv;
 import com.hyena.coretext.blocks.CYEditFace;
 import com.hyena.coretext.blocks.ICYEditable;
 import com.hyena.coretext.samples.question.EditFace;
+import com.hyena.coretext.utils.EditableValue;
 import com.hyena.framework.utils.UIUtils;
 
 import maximsblog.blogspot.com.jlatexmath.core.Atom;
@@ -91,16 +94,18 @@ public class FillInAtom extends Atom {
 
         private Rect mBlockRect = new Rect();
         private RectF mVisibleRect = new RectF();
+        private Paint mPaint = new Paint();
 
         @Override
         public void draw(Canvas g2, float x, float y) {
             mVisibleRect.set(x, y - getHeight(), x + getWidth(), y);
             mBlockRect.set((int)(x * mScale + 0.5), (int)((y - getHeight()) * mScale + 0.5)
                     , (int)((x + getWidth()) * mScale + 0.5), (int)(y * mScale + 0.5));
-
             g2.save();
             g2.scale(mText.getMetrics().getSize() / mScale, mText.getMetrics().getSize() / mScale);
             mEditFace.onDraw(g2, mBlockRect, mBlockRect);
+//            mPaint.setColor(Color.BLUE);
+//            g2.drawRect(mBlockRect, mPaint);
             g2.restore();
         }
 
@@ -145,21 +150,26 @@ public class FillInAtom extends Atom {
 
         @Override
         public String getText() {
-            if (mEditFace != null)
-                return mEditFace.getText();
-            return "";
+            EditableValue value = mTextEnv.getEditableValue(getTabId());
+            return value == null ? null : value.getValue();
         }
 
         @Override
         public void setText(String text) {
-            if (mEditFace != null)
-                mEditFace.setText(text);
+            mTextEnv.setEditableValue(getTabId(), text);
+            mEditFace.setText(text);
         }
 
         @Override
         public void setTextColor(int color) {
-            if (mEditFace != null)
-                mEditFace.getTextPaint().setColor(color);
+            EditableValue value = mTextEnv.getEditableValue(getTabId());
+            if (value == null) {
+                value = new EditableValue();
+                mTextEnv.setEditableValue(getTabId(), value);
+            }
+            value.setColor(color);
+            mEditFace.setTextColor(color);
+            mTextEnv.getEventDispatcher().postInvalidate(null);
 
         }
 

@@ -73,6 +73,8 @@ public class DefaultBlockBuilder implements CYBlockProvider.CYBlockBuilder {
             return (T) new CYParagraphEndBlock(textEnv, data);
         } else if ("audio".equals(type)) {
             return (T) new AudioBlock(textEnv, data);
+        } else if ("latex".equals(type)) {
+            return (T) new LatexBlock(textEnv, data);
         }
         return null;
     }

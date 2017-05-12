@@ -72,8 +72,8 @@ public class SampleQuestionFragment extends Fragment {
 //                mQtvQuestion.clearFocus();
                 List<ICYEditable> list = mQtvQuestion.getEditableList();
                 ToastUtils.showToast(getContext(), "onClick!!! , editable size: " + list.size());
-                mQtvQuestion.setText(2, "p");
-                mQtvQuestion.setFocus(2);
+//                mQtvQuestion.setText(2, "p");
+//                mQtvQuestion.setFocus(2);
             }
         });
         mQtvQuestion.getBuilder().setTextSize(18);
@@ -83,7 +83,11 @@ public class SampleQuestionFragment extends Fragment {
                 "根据录音选择正确的翻译" +
                 "#{\"type\":\"para_end\"}##{\"type\":\"para_begin\",\"size\" : 30,\"align\": \"mid\",\"color\":\"#000000\",\"margin\":8}#" +
                 "#{\"type\":\"audio\",\"src\":\"http://7xohdn.com2.z0.glb.qiniucdn.com/tingli/15590285.mp3\"}#" +
-                "\r\n#{\"type\":\"blank\",\"id\": 1,\"size\":\"line\"}#\r\n#{\"type\":\"para_end\"}#";
+                "\r\n#{\"type\":\"blank\",\"id\": 1,\"size\":\"line\"}#\r\n#{\"type\":\"para_end\"}#" +
+                "" +
+                "#{\"type\":\"latex\",\"content\":\"\\\\frac{7}{5}\"}#";
+
+//        question = "#{\"type\":\"latex\",\"content\":\"\\\\frac{7}{5}\"}#";
         mQtvQuestion.getBuilder().setText(question);
         mQtvQuestion.getBuilder().build();
     }

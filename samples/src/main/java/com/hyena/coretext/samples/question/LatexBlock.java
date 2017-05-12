@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import maximsblog.blogspot.com.jlatexmath.ExampleFormula;
+import maximsblog.blogspot.com.jlatexmath.core.AjLatexMath;
 import maximsblog.blogspot.com.jlatexmath.core.Box;
 import maximsblog.blogspot.com.jlatexmath.core.Insets;
 import maximsblog.blogspot.com.jlatexmath.core.TeXConstants;
@@ -43,8 +44,8 @@ public class LatexBlock extends CYPlaceHolderBlock implements ICYEditableGroup {
                 .setSize(UIUtils.px2dip(getTextEnv().getPaint().getTextSize()))
                 .setWidth(TeXConstants.UNIT_PIXEL, getTextEnv().getPageWidth(), TeXConstants.ALIGN_LEFT)
                 .setIsMaxWidth(true)//非精准宽度
-//                .setInterLineSpacing(TeXConstants.UNIT_PIXEL,AjLatexMath.getLeading(UIUtils
-//                        .px2dip(getTextEnv().getPaint().getTextSize())))
+                .setInterLineSpacing(TeXConstants.UNIT_PIXEL, AjLatexMath.getLeading(UIUtils
+                        .px2dip(getTextEnv().getPaint().getTextSize())))
                 .setTag(getTextEnv());
 
         setFormula(ExampleFormula.mExample8);
@@ -135,9 +136,9 @@ public class LatexBlock extends CYPlaceHolderBlock implements ICYEditableGroup {
 
     @Override
     public List<ICYEditable> findAllEditable() {
-        List<ICYEditable> editables = new ArrayList<ICYEditable>();
-        findAllEditable(editables);
-        return editables;
+        List<ICYEditable> editable = new ArrayList<ICYEditable>();
+        findAllEditable(mTexIcon.getBox(), editable);
+        return editable;
     }
 
     private void findAllEditable(Box box, List<ICYEditable> editables) {
