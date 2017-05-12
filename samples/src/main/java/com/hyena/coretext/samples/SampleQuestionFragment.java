@@ -85,7 +85,8 @@ public class SampleQuestionFragment extends Fragment {
                 "#{\"type\":\"audio\",\"src\":\"http://7xohdn.com2.z0.glb.qiniucdn.com/tingli/15590285.mp3\"}#" +
                 "\r\n#{\"type\":\"blank\",\"id\": 1,\"size\":\"line\"}#\r\n#{\"type\":\"para_end\"}#" +
                 "" +
-                "#{\"type\":\"latex\",\"content\":\"\\\\frac{7}{5}\"}#";
+                "#{\"type\":\"latex\",\"content\":\"\\\\frac{7}{5}\"}#" +
+                "";
 
 //        question = "#{\"type\":\"latex\",\"content\":\"\\\\frac{7}{5}\"}#";
         mQtvQuestion.getBuilder().setText(question);
