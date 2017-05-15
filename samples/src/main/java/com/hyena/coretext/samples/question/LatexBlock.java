@@ -54,8 +54,8 @@ public class LatexBlock extends CYPlaceHolderBlock implements ICYEditableGroup {
                         .px2dip(getTextEnv().getPaint().getTextSize())))
                 .setTag(getTextEnv());
 
-//        setFormula(latex);
-        setFormula(ExampleFormula.mExample8);
+        setFormula(latex);
+//        setFormula(ExampleFormula.mExample8);
     }
 
     public void setFormula(String latex){
