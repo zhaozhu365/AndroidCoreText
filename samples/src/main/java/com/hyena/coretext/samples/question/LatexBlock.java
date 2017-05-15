@@ -10,13 +10,14 @@ import com.hyena.coretext.blocks.ICYEditableGroup;
 import com.hyena.coretext.samples.latex.FillInAtom;
 import com.hyena.framework.utils.UIUtils;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import maximsblog.blogspot.com.jlatexmath.ExampleFormula;
 import maximsblog.blogspot.com.jlatexmath.core.AjLatexMath;
 import maximsblog.blogspot.com.jlatexmath.core.Box;
-import maximsblog.blogspot.com.jlatexmath.core.Insets;
 import maximsblog.blogspot.com.jlatexmath.core.TeXConstants;
 import maximsblog.blogspot.com.jlatexmath.core.TeXFormula;
 import maximsblog.blogspot.com.jlatexmath.core.TeXIcon;
@@ -33,10 +34,15 @@ public class LatexBlock extends CYPlaceHolderBlock implements ICYEditableGroup {
 
     public LatexBlock(TextEnv textEnv, String content) {
         super(textEnv, content);
-        init();
+        try {
+            JSONObject jsonObject = new JSONObject(content);
+            init(jsonObject.optString("content"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    private void init() {
+    private void init(String latex) {
         setFocusable(true);
         mTexFormula = new TeXFormula();
         mBuilder = mTexFormula.new TeXIconBuilder()
@@ -48,6 +54,7 @@ public class LatexBlock extends CYPlaceHolderBlock implements ICYEditableGroup {
                         .px2dip(getTextEnv().getPaint().getTextSize())))
                 .setTag(getTextEnv());
 
+//        setFormula(latex);
         setFormula(ExampleFormula.mExample8);
     }
 
@@ -55,8 +62,6 @@ public class LatexBlock extends CYPlaceHolderBlock implements ICYEditableGroup {
         this.mLatex = latex;
         mTexFormula.setLaTeX(latex);
         mTexIcon = mBuilder.build();
-        mTexIcon.setInsets(new Insets(5, 5, 5, 5));
-
         requestLayout();
     }
 
@@ -67,14 +72,14 @@ public class LatexBlock extends CYPlaceHolderBlock implements ICYEditableGroup {
     @Override
     public int getContentWidth() {
         if (mTexIcon != null)
-            return (int) mTexIcon.getTrueIconWidth();
+            return Math.round(mTexIcon.getTrueIconWidth());
         return super.getContentWidth();
     }
 
     @Override
     public int getContentHeight() {
         if (mTexIcon != null) {
-            return (int) mTexIcon.getTrueIconHeight();
+            return Math.round(mTexIcon.getTrueIconHeight());
         }
         return super.getContentHeight();
     }

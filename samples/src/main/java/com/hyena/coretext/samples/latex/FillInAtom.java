@@ -5,10 +5,9 @@
 package com.hyena.coretext.samples.latex;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.Typeface;
 
 import com.hyena.coretext.TextEnv;
 import com.hyena.coretext.blocks.CYEditFace;
@@ -19,6 +18,7 @@ import com.hyena.framework.utils.UIUtils;
 
 import maximsblog.blogspot.com.jlatexmath.core.Atom;
 import maximsblog.blogspot.com.jlatexmath.core.Box;
+import maximsblog.blogspot.com.jlatexmath.core.FontInfo;
 import maximsblog.blogspot.com.jlatexmath.core.ScaleBox;
 import maximsblog.blogspot.com.jlatexmath.core.TeXEnvironment;
 import maximsblog.blogspot.com.jlatexmath.core.TeXFont;
@@ -94,7 +94,6 @@ public class FillInAtom extends Atom {
 
         private Rect mBlockRect = new Rect();
         private RectF mVisibleRect = new RectF();
-        private Paint mPaint = new Paint();
 
         @Override
         public void draw(Canvas g2, float x, float y) {
@@ -104,8 +103,6 @@ public class FillInAtom extends Atom {
             g2.save();
             g2.scale(mText.getMetrics().getSize() / mScale, mText.getMetrics().getSize() / mScale);
             mEditFace.onDraw(g2, mBlockRect, mBlockRect);
-//            mPaint.setColor(Color.BLUE);
-//            g2.drawRect(mBlockRect, mPaint);
             g2.restore();
         }
 
