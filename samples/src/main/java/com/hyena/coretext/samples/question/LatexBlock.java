@@ -2,6 +2,7 @@ package com.hyena.coretext.samples.question;
 
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.text.TextUtils;
 
 import com.hyena.coretext.TextEnv;
 import com.hyena.coretext.blocks.CYPlaceHolderBlock;
@@ -10,12 +11,14 @@ import com.hyena.coretext.blocks.ICYEditableGroup;
 import com.hyena.coretext.samples.latex.FillInAtom;
 import com.hyena.framework.utils.UIUtils;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import maximsblog.blogspot.com.jlatexmath.ExampleFormula;
 import maximsblog.blogspot.com.jlatexmath.core.AjLatexMath;
 import maximsblog.blogspot.com.jlatexmath.core.Box;
 import maximsblog.blogspot.com.jlatexmath.core.TeXConstants;
@@ -54,8 +57,26 @@ public class LatexBlock extends CYPlaceHolderBlock implements ICYEditableGroup {
                         .px2dip(getTextEnv().getPaint().getTextSize())))
                 .setTag(getTextEnv());
 
+        latex = latex.replaceAll("labelsharp", "#");
+        Pattern pattern = Pattern.compile("#\\{(.*?)\\}#");
+        Matcher matcher = pattern.matcher(latex);
+        while (matcher.find()) {
+            String data = matcher.group(1);
+            try {
+                JSONObject jsonFillIn = new JSONObject("{" + data + "}");
+                String type = jsonFillIn.optString("type");
+                if (TextUtils.equals(type, "blank")) {
+                    String id = jsonFillIn.optString("id");
+//                String size = jsonFillIn.optString("size");//永远express
+                    String clazz = jsonFillIn.optString("class");
+                    String replaceStr = "\\\\fillin{" + id + "}{" + clazz + "}{}";
+                    latex = matcher.replaceAll(replaceStr);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
         setFormula(latex);
-//        setFormula(ExampleFormula.mExample8);
     }
 
     public void setFormula(String latex){

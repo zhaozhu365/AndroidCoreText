@@ -31,11 +31,13 @@ import maximsblog.blogspot.com.jlatexmath.core.Text;
 public class FillInAtom extends Atom {
     private String mIndex;
     private String mText;
+    private String mClazz;
     private String textStyle;
 
-    public FillInAtom(String index, String text) {
+    public FillInAtom(String index, String clazz, String text) {
         this.mIndex = index;
         this.mText = text;
+        this.mClazz = clazz;
     }
 
     @Override
@@ -48,7 +50,7 @@ public class FillInAtom extends Atom {
         }
         boolean smallCap = env.getSmallCap();
         Text ch = getString(env.getTeXFont(), env.getStyle(), smallCap);
-        Box box = new FillInBox((TextEnv) env.getTag(), Integer.valueOf(mIndex), ch);
+        Box box = new FillInBox((TextEnv) env.getTag(), Integer.valueOf(mIndex), mClazz, ch);
         if (smallCap && Character.isLowerCase('0')) {
             // We have a small capital
             box = new ScaleBox(box, 0.8f, 0.8f);
@@ -72,7 +74,7 @@ public class FillInAtom extends Atom {
         private CYEditFace mEditFace;
         private float mScale = 1.0f;
 
-        public FillInBox(TextEnv textEnv, int tabId, Text text) {
+        public FillInBox(TextEnv textEnv, int tabId, String clazz, Text text) {
             super();
             this.mTextEnv = textEnv;
             this.mTabId = Integer.valueOf(tabId);
@@ -82,12 +84,12 @@ public class FillInAtom extends Atom {
             this.mScale = UIUtils.px2dip(textEnv.getContext(), textEnv.getPaint().getTextSize())
                     * textEnv.getContext().getResources().getDisplayMetrics()
                     .scaledDensity / TeXFormula.PIXELS_PER_POINT;
-            double height = Math.ceil(mEditFace.getTextPaint().descent() - mEditFace.getTextPaint().ascent());
-
+//            double height = Math.ceil(mEditFace.getTextPaint().descent() - mEditFace.getTextPaint().ascent());
+//            float finalHeight = (float) ((height + UIUtils.dip2px(4)) /mScale);
             setWidth(UIUtils.dip2px(50 + 6)/ mScale);
-            setHeight((float) ((height + UIUtils.dip2px(4)) /mScale));
+            setHeight((-mEditFace.getTextPaint().ascent()  + UIUtils.dip2px(2))/mScale);
+            setDepth((mEditFace.getTextPaint().descent() + UIUtils.dip2px(2))/mScale);
             mEditFace.setPadding(UIUtils.dip2px(3), UIUtils.dip2px(2), UIUtils.dip2px(3), UIUtils.dip2px(2));
-            setDepth(text.getDepth());
             this.mTabId = tabId;
             mTextEnv.setEditableValue(tabId, text.getText());
         }
@@ -99,7 +101,7 @@ public class FillInAtom extends Atom {
         public void draw(Canvas g2, float x, float y) {
             mVisibleRect.set(x, y - getHeight(), x + getWidth(), y);
             mBlockRect.set((int)(x * mScale + 0.5), (int)((y - getHeight()) * mScale + 0.5)
-                    , (int)((x + getWidth()) * mScale + 0.5), (int)(y * mScale + 0.5));
+                    , (int)((x + getWidth()) * mScale + 0.5), (int)((y + getDepth()) * mScale + 0.5));
             g2.save();
             g2.scale(mText.getMetrics().getSize() / mScale, mText.getMetrics().getSize() / mScale);
             mEditFace.onDraw(g2, mBlockRect, mBlockRect);
@@ -155,6 +157,11 @@ public class FillInAtom extends Atom {
         public void setText(String text) {
             mTextEnv.setEditableValue(getTabId(), text);
             mEditFace.setText(text);
+        }
+
+        @Override
+        public float getHeight() {
+            return super.getHeight();
         }
 
         @Override
