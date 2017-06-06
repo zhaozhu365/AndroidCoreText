@@ -8,6 +8,7 @@ import android.text.TextUtils;
 
 import com.hyena.coretext.TextEnv;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -101,6 +102,7 @@ public class CYTextBlock extends CYBlock {
 
     private void parseSubBlocks() {
         if (chs.length > 0) {
+            setChildren(new ArrayList(chs.length));
             Value blockHeight = new Value<Integer>(getTextHeight(mPaint));
             Paint.FontMetrics fontMetrics = mPaint.getFontMetrics();
             TextEnv textEnv = getTextEnv();
@@ -129,7 +131,7 @@ public class CYTextBlock extends CYBlock {
 
     @Override
     public int getContentHeight() {
-        return mHeight.getValue();
+        return mHeight.getValue().intValue();
     }
 
     @Override

@@ -196,6 +196,14 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable, Clonea
     }
 
     /**
+     * set children
+     * @param children child blocks
+     */
+    public void setChildren(List<T> children) {
+        this.mChildren = children;
+    }
+
+    /**
      * @return child of block
      */
     public List<T> getChildren() {

@@ -62,15 +62,16 @@ public class LatexBlock extends CYPlaceHolderBlock implements ICYEditableGroup {
             fontSize = getParagraphStyle().getTextSize();
             color = getParagraphStyle().getTextColor();
         }
+        fontSize = UIUtils.px2dip(fontSize);
+
         AjLatexMath.getPaint().setColor(color);
         mBuilder = mTexFormula.new TeXIconBuilder()
                 .setStyle(TeXConstants.STYLE_DISPLAY)
-                .setSize(UIUtils.px2dip(fontSize))
+                .setSize(fontSize)
                 .setFGColor(color)
                 .setWidth(TeXConstants.UNIT_PIXEL, getTextEnv().getPageWidth(), TeXConstants.ALIGN_LEFT)
                 .setIsMaxWidth(true)//非精准宽度
-                .setInterLineSpacing(TeXConstants.UNIT_PIXEL, AjLatexMath.getLeading(UIUtils
-                        .px2dip(getTextEnv().getPaint().getTextSize())))
+                .setInterLineSpacing(TeXConstants.UNIT_PIXEL, AjLatexMath.getLeading(fontSize))
                 .setTag(getTextEnv());
 
         latex = latex.replaceAll("labelsharp", "#");
@@ -86,7 +87,7 @@ public class LatexBlock extends CYPlaceHolderBlock implements ICYEditableGroup {
 //                String size = jsonFillIn.optString("size");//永远express
                     String clazz = jsonFillIn.optString("class");
                     String replaceStr = "\\\\fillin{" + id + "}{" + clazz + "}{10}";
-                    latex = matcher.replaceAll(replaceStr);
+                    latex = matcher.replaceFirst(replaceStr);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

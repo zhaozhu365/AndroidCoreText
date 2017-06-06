@@ -7,7 +7,6 @@ package com.hyena.coretext.samples.latex;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.Typeface;
 
 import com.hyena.coretext.TextEnv;
 import com.hyena.coretext.blocks.CYEditFace;
@@ -18,7 +17,6 @@ import com.hyena.framework.utils.UIUtils;
 
 import maximsblog.blogspot.com.jlatexmath.core.Atom;
 import maximsblog.blogspot.com.jlatexmath.core.Box;
-import maximsblog.blogspot.com.jlatexmath.core.FontInfo;
 import maximsblog.blogspot.com.jlatexmath.core.ScaleBox;
 import maximsblog.blogspot.com.jlatexmath.core.TeXEnvironment;
 import maximsblog.blogspot.com.jlatexmath.core.TeXFont;
@@ -74,6 +72,11 @@ public class FillInAtom extends Atom {
         private CYEditFace mEditFace;
         private float mScale = 1.0f;
 
+        private static final int DP_1 = UIUtils.dip2px(1);
+        private static final int DP_2 = UIUtils.dip2px(2);
+        private static final int DP_3 = UIUtils.dip2px(3);
+        private static final int DP_56 = UIUtils.dip2px(56);
+
         public FillInBox(TextEnv textEnv, int tabId, String clazz, Text text) {
             super();
             this.mTextEnv = textEnv;
@@ -86,10 +89,10 @@ public class FillInAtom extends Atom {
                     .scaledDensity / TeXFormula.PIXELS_PER_POINT;
 //            double height = Math.ceil(mEditFace.getTextPaint().descent() - mEditFace.getTextPaint().ascent());
 //            float finalHeight = (float) ((height + UIUtils.dip2px(4)) /mScale);
-            setWidth(UIUtils.dip2px(50 + 6)/ mScale);
-            setHeight((-mEditFace.getTextPaint().ascent()  + UIUtils.dip2px(1))/mScale);
-            setDepth((mEditFace.getTextPaint().descent() + UIUtils.dip2px(1))/mScale);
-            mEditFace.setPadding(UIUtils.dip2px(3), UIUtils.dip2px(2), UIUtils.dip2px(3), UIUtils.dip2px(2));
+            setWidth(DP_56/ mScale);
+            setHeight((-mEditFace.getTextPaint().ascent()  + DP_1)/mScale);
+            setDepth((mEditFace.getTextPaint().descent() + DP_1)/mScale);
+            mEditFace.setPadding(DP_3, DP_2, DP_3, DP_2);
             this.mTabId = tabId;
             mTextEnv.setEditableValue(tabId, text.getText());
         }

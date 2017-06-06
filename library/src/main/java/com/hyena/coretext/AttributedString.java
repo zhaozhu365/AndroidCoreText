@@ -10,6 +10,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -105,6 +106,7 @@ public class AttributedString {
         public int endIndex;
         public Class<? extends CYBlock> blockClz;
 
+        private HashMap<Class, Constructor> constructorCache = new HashMap<>();
         private CYBlock mBlock;
 
         public BlockSection(int startIndex, int endIndex, Class<? extends CYBlock> blockClz) {
@@ -125,7 +127,11 @@ public class AttributedString {
 
             if (blockClz != null) {
                 try {
-                    Constructor<? extends  CYBlock> constructor = blockClz.getConstructor(TextEnv.class, String.class);
+                    Constructor<? extends  CYBlock> constructor = constructorCache.get(blockClz);
+                    if (constructor == null) {
+                        constructor = blockClz.getConstructor(TextEnv.class, String.class);
+                        constructorCache.put(blockClz, constructor);
+                    }
                     String content = mText.substring(startIndex, endIndex);
                     content = content.replaceAll("labelsharp", "#");
                     mBlock = constructor.newInstance(mTextEnv, content);
