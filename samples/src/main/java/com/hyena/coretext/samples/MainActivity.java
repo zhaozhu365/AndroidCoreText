@@ -30,7 +30,7 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Debug.startMethodTracing();
+//        Debug.startMethodTracing();
         setContentView(R.layout.activity_main);
         MacroInfo.Commands.put("fillin", new MacroInfo(3) {
             @Override

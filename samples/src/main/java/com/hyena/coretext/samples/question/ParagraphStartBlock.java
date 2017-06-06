@@ -28,7 +28,7 @@ public class ParagraphStartBlock extends CYParagraphStartBlock {
     private void init(String content) {
         try {
             JSONObject json = new JSONObject(content);
-            getStyle().setTextSize(100);
+            getStyle().setTextSize(50);
             getStyle().setTextColor(Color.BLUE);
             getStyle().setMarginBottom(json.optInt("margin"));
             String align = json.optString("align");
