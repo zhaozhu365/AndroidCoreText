@@ -5,6 +5,7 @@ import android.graphics.Rect;
 import android.text.TextUtils;
 
 import com.hyena.coretext.TextEnv;
+import com.hyena.coretext.blocks.CYParagraphStyle;
 import com.hyena.coretext.blocks.CYPlaceHolderBlock;
 import com.hyena.coretext.blocks.ICYEditable;
 import com.hyena.coretext.blocks.ICYEditableGroup;
@@ -35,10 +36,17 @@ public class LatexBlock extends CYPlaceHolderBlock implements ICYEditableGroup {
     private TeXFormula.TeXIconBuilder mBuilder;
     private String mLatex;
 
+    private String mContent;
     public LatexBlock(TextEnv textEnv, String content) {
         super(textEnv, content);
+        this.mContent = content;
+    }
+
+    @Override
+    public void setParagraphStyle(CYParagraphStyle style) {
+        super.setParagraphStyle(style);
         try {
-            JSONObject jsonObject = new JSONObject(content);
+            JSONObject jsonObject = new JSONObject(mContent);
             init(jsonObject.optString("content"));
         } catch (Exception e) {
             e.printStackTrace();
@@ -48,9 +56,16 @@ public class LatexBlock extends CYPlaceHolderBlock implements ICYEditableGroup {
     private void init(String latex) {
         setFocusable(true);
         mTexFormula = new TeXFormula();
+        float fontSize = getTextEnv().getPaint().getTextSize();
+        int color = getTextEnv().getPaint().getColor();
+        if (getParagraphStyle() != null) {
+            fontSize = getParagraphStyle().getTextSize();
+            color = getParagraphStyle().getTextColor();
+        }
         mBuilder = mTexFormula.new TeXIconBuilder()
                 .setStyle(TeXConstants.STYLE_DISPLAY)
-                .setSize(UIUtils.px2dip(getTextEnv().getPaint().getTextSize()))
+                .setSize(UIUtils.px2dip(fontSize))
+                .setFGColor(color)
                 .setWidth(TeXConstants.UNIT_PIXEL, getTextEnv().getPageWidth(), TeXConstants.ALIGN_LEFT)
                 .setIsMaxWidth(true)//非精准宽度
                 .setInterLineSpacing(TeXConstants.UNIT_PIXEL, AjLatexMath.getLeading(UIUtils
@@ -69,7 +84,7 @@ public class LatexBlock extends CYPlaceHolderBlock implements ICYEditableGroup {
                     String id = jsonFillIn.optString("id");
 //                String size = jsonFillIn.optString("size");//永远express
                     String clazz = jsonFillIn.optString("class");
-                    String replaceStr = "\\\\fillin{" + id + "}{" + clazz + "}{}";
+                    String replaceStr = "\\\\fillin{" + id + "}{" + clazz + "}{10}";
                     latex = matcher.replaceAll(replaceStr);
                 }
             } catch (JSONException e) {
@@ -83,7 +98,6 @@ public class LatexBlock extends CYPlaceHolderBlock implements ICYEditableGroup {
         this.mLatex = latex;
         mTexFormula.setLaTeX(latex);
         mTexIcon = mBuilder.build();
-        requestLayout();
     }
 
     public String getLatex() {

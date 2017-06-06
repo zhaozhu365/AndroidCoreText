@@ -110,6 +110,7 @@ public class PreviewQuestionFragment extends Fragment {
                             baos.write(buf, 0, len);
                         }
                         String result = baos.toString("utf-8");
+//                        return "#{\"type\":\"para_begin\",\"style\":\"math_text\"}# #{\"type\":\"latex\",\"content\":\"\\\\frac{8+1}{3+\\#{\\\"type\\\":\\\"blank\\\",\\\"id\\\":\\\"1\\\",\\\"size\\\":\\\"express\\\",\\\"class\\\":\\\"fillin\\\"}\\#\"}#=2#{\"type\":\"para_end\"}#";
                         return result;
                     }
                 } catch (MalformedURLException e) {

@@ -87,8 +87,8 @@ public class FillInAtom extends Atom {
 //            double height = Math.ceil(mEditFace.getTextPaint().descent() - mEditFace.getTextPaint().ascent());
 //            float finalHeight = (float) ((height + UIUtils.dip2px(4)) /mScale);
             setWidth(UIUtils.dip2px(50 + 6)/ mScale);
-            setHeight((-mEditFace.getTextPaint().ascent()  + UIUtils.dip2px(2))/mScale);
-            setDepth((mEditFace.getTextPaint().descent() + UIUtils.dip2px(2))/mScale);
+            setHeight((-mEditFace.getTextPaint().ascent()  + UIUtils.dip2px(1))/mScale);
+            setDepth((mEditFace.getTextPaint().descent() + UIUtils.dip2px(1))/mScale);
             mEditFace.setPadding(UIUtils.dip2px(3), UIUtils.dip2px(2), UIUtils.dip2px(3), UIUtils.dip2px(2));
             this.mTabId = tabId;
             mTextEnv.setEditableValue(tabId, text.getText());
