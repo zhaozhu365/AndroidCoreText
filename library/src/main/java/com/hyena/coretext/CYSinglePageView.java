@@ -14,6 +14,7 @@ import com.hyena.coretext.blocks.ICYEditable;
 import com.hyena.coretext.builder.CYBlockProvider;
 import com.hyena.coretext.layout.CYHorizontalLayout;
 import com.hyena.framework.utils.UIUtils;
+import com.hyena.framework.utils.UiThreadHandler;
 
 import java.util.List;
 
@@ -94,8 +95,13 @@ public class CYSinglePageView extends CYPageView {
             CYPageBlock pageBlock = parsePageBlock();
             setPageBlock(pageBlock);
         }
-        requestLayout();
-        postInvalidate();
+        UiThreadHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                requestLayout();
+                postInvalidate();
+            }
+        });
     }
 
     private CYPageBlock parsePageBlock() {

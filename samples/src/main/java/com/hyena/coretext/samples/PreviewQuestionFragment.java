@@ -102,7 +102,7 @@ public class PreviewQuestionFragment extends Fragment {
             onConnected();
             return;
         }
-        mWebSocket = new WebSocketClient(new URI("ws://192.168.30.78:8080/testWeb/fetch-question-socket")) {
+        mWebSocket = new WebSocketClient(new URI("ws://192.168.10.154:8080/testWeb/fetch-question-socket")) {
             @Override
             public void onOpen(ServerHandshake serverHandshake) {
                 Log.v("WebSocket", "onOpen");
@@ -112,12 +112,13 @@ public class PreviewQuestionFragment extends Fragment {
             @Override
             public void onMessage(final String s) {
                 Log.v("WebSocket", "msg: " + s);
-                UiThreadHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        setText(s);
-                    }
-                });
+//                UiThreadHandler.post(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        setText(s);
+//                    }
+//                });
+                setText(s);
             }
 
             @Override
@@ -157,8 +158,17 @@ public class PreviewQuestionFragment extends Fragment {
     private void setText(String text) {
         if (!TextUtils.isEmpty(text) && !text.equals(mLastText)) {
             this.mLastText = text;
+            long ts = System.currentTimeMillis();
             mPreviewQuestion.getBuilder().setTextSize(18)
                     .setText(text).build();
+            final long cost = System.currentTimeMillis() - ts;
+            UiThreadHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    ToastUtils.showShortToast(getContext(), "展现富文本时间消耗【" + cost + "】毫秒");
+                    mStatus.setText("已连接，解析富文本消耗" + cost + "毫秒");
+                }
+            });
         }
     }
 }
