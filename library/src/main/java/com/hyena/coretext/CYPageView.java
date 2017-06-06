@@ -15,7 +15,7 @@ import com.hyena.coretext.blocks.ICYEditableGroup;
 import com.hyena.coretext.event.CYFocusEventListener;
 import com.hyena.coretext.event.CYLayoutEventListener;
 import com.hyena.coretext.utils.CYBlockUtils;
-import com.hyena.framework.utils.UIUtils;
+import com.hyena.coretext.utils.Const;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -278,10 +278,10 @@ public class CYPageView extends View implements CYLayoutEventListener {
         return new TextEnv(context)
                 .setPageWidth(width)
                 .setTextColor(0xff333333)
-                .setFontSize(UIUtils.dip2px(20))
+                .setFontSize(Const.DP_1 * 20)
                 .setTextAlign(TextEnv.Align.CENTER)
                 .setPageHeight(Integer.MAX_VALUE)
-                .setVerticalSpacing(UIUtils.dip2px(getContext(), 3));
+                .setVerticalSpacing(Const.DP_1 * 3);
     }
 
     public void measure() {

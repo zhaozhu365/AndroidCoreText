@@ -4,8 +4,8 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 
 import com.hyena.coretext.TextEnv;
+import com.hyena.coretext.utils.Const;
 import com.hyena.coretext.utils.EditableValue;
-import com.hyena.framework.utils.UIUtils;
 
 /**
  * Created by yangzc on 16/4/12.
@@ -23,7 +23,7 @@ public class CYEditBlock extends CYPlaceHolderBlock implements ICYEditable {
     private void init(){
         Paint paint = getTextEnv().getPaint();
         int height = (int) (Math.ceil(paint.descent() - paint.ascent()) + 0.5f);
-        setWidth(UIUtils.dip2px(80));
+        setWidth(Const.DP_1 * 80);
         setHeight(height);
         setFocusable(true);
         mEditFace = createEditFace(getTextEnv(), this);

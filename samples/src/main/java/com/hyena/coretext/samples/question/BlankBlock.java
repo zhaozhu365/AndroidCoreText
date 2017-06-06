@@ -8,7 +8,7 @@ import com.hyena.coretext.TextEnv;
 import com.hyena.coretext.blocks.CYEditBlock;
 import com.hyena.coretext.blocks.CYEditFace;
 import com.hyena.coretext.blocks.ICYEditable;
-import com.hyena.framework.utils.UIUtils;
+import com.hyena.coretext.utils.Const;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,8 +22,8 @@ public class BlankBlock extends CYEditBlock {
     private String mClass = "choose";
     private String size;
     private int mWidth, mHeight;
-    private static int DP_2 = UIUtils.dip2px(2);
-    private static int DP_3 = UIUtils.dip2px(3);
+    private static int DP_2 = Const.DP_1 * 2;
+    private static int DP_3 = Const.DP_1 * 3;
 
     public BlankBlock(TextEnv textEnv, String content) {
         super(textEnv, content);
@@ -72,16 +72,16 @@ public class BlankBlock extends CYEditBlock {
             this.mHeight = textHeight;
         } else {
             if ("letter".equals(size)) {
-                this.mWidth = UIUtils.dip2px(30);
-                this.mHeight = UIUtils.dip2px(50);
+                this.mWidth = Const.DP_1 * 30;
+                this.mHeight = Const.DP_1 * 50;
             } else if ("line".equals(size)) {
-                this.mWidth = UIUtils.dip2px(265);
+                this.mWidth = Const.DP_1 * 265;
                 this.mHeight = getTextHeight(getEditFace().getTextPaint());
             } else if ("express".equals(size)) {
-                this.mWidth = UIUtils.dip2px(50);
+                this.mWidth = Const.DP_1 * 50;
                 this.mHeight = textHeight;
             } else {
-                this.mWidth = UIUtils.dip2px(50);
+                this.mWidth = Const.DP_1 * 50;
                 this.mHeight = textHeight;
             }
         }

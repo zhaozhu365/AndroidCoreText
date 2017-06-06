@@ -5,7 +5,6 @@
 package com.hyena.coretext.samples.question;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.text.TextUtils;
@@ -14,12 +13,12 @@ import android.view.MotionEvent;
 import com.hyena.coretext.TextEnv;
 import com.hyena.coretext.blocks.CYPlaceHolderBlock;
 import com.hyena.coretext.samples.R;
+import com.hyena.coretext.utils.Const;
 import com.hyena.framework.audio.StatusCode;
 import com.hyena.framework.audio.bean.Song;
 import com.hyena.framework.servcie.audio.PlayerBusService;
 import com.hyena.framework.servcie.audio.listener.PlayStatusChangeListener;
 import com.hyena.framework.utils.ImageFetcher;
-import com.hyena.framework.utils.UIUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -54,8 +53,8 @@ public class AudioBlock extends CYPlaceHolderBlock {
         mPauseBitmap = ImageFetcher.getImageFetcher().loadImageSync("drawable://" + R.drawable.sound_pause);
 //        mPlayBitmap = BitmapFactory.decodeResource(getTextEnv().getContext().getResources(), R.drawable.sound_play);
 //        mPauseBitmap = BitmapFactory.decodeResource(getTextEnv().getContext().getResources(), R.drawable.sound_pause);
-        setWidth(UIUtils.dip2px(90));
-        setHeight(UIUtils.dip2px(43) + getPaddingTop() + getPaddingBottom());
+        setWidth(Const.DP_1 * 90);
+        setHeight(Const.DP_1 * 43 + getPaddingTop() + getPaddingBottom());
 
         try {
             JSONObject json = new JSONObject(content);

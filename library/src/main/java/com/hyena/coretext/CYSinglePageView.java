@@ -13,7 +13,7 @@ import com.hyena.coretext.blocks.CYPageBlock;
 import com.hyena.coretext.blocks.ICYEditable;
 import com.hyena.coretext.builder.CYBlockProvider;
 import com.hyena.coretext.layout.CYHorizontalLayout;
-import com.hyena.framework.utils.UIUtils;
+import com.hyena.coretext.utils.Const;
 import com.hyena.framework.utils.UiThreadHandler;
 
 import java.util.List;
@@ -137,7 +137,7 @@ public class CYSinglePageView extends CYPageView {
         }
 
         public Builder setTextSize(int dp) {
-            getTextEnv().setFontSize(UIUtils.dip2px(getContext(), dp));
+            getTextEnv().setFontSize(Const.DP_1 * dp);
             return this;
         }
 

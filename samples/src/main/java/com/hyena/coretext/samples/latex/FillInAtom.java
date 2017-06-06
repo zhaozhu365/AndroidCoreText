@@ -12,6 +12,7 @@ import com.hyena.coretext.TextEnv;
 import com.hyena.coretext.blocks.CYEditFace;
 import com.hyena.coretext.blocks.ICYEditable;
 import com.hyena.coretext.samples.question.EditFace;
+import com.hyena.coretext.utils.Const;
 import com.hyena.coretext.utils.EditableValue;
 import com.hyena.framework.utils.UIUtils;
 
@@ -72,10 +73,10 @@ public class FillInAtom extends Atom {
         private CYEditFace mEditFace;
         private float mScale = 1.0f;
 
-        private static final int DP_1 = UIUtils.dip2px(1);
-        private static final int DP_2 = UIUtils.dip2px(2);
-        private static final int DP_3 = UIUtils.dip2px(3);
-        private static final int DP_56 = UIUtils.dip2px(56);
+        private static final int DP_1 = Const.DP_1;
+        private static final int DP_2 = Const.DP_1 * 2;
+        private static final int DP_3 = Const.DP_1 * 3;
+        private static final int DP_56 = Const.DP_1 * 56;
 
         public FillInBox(TextEnv textEnv, int tabId, String clazz, Text text) {
             super();

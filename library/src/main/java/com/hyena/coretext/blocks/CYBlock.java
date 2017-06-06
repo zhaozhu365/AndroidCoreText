@@ -7,7 +7,7 @@ import android.graphics.Rect;
 import android.util.Log;
 
 import com.hyena.coretext.TextEnv;
-import com.hyena.framework.utils.UIUtils;
+import com.hyena.coretext.utils.Const;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +40,7 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable, Clonea
     private boolean mFocusable = false;
     private CYParagraphStyle mParagraphStyle;
 
-    private static int DP_1 = UIUtils.dip2px(1);
+    private static int DP_1 = Const.DP_1;
 
     public CYBlock(TextEnv textEnv, String content) {
         this.mTextEnv = textEnv;

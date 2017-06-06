@@ -8,8 +8,8 @@ import android.content.Context;
 
 import com.hyena.coretext.TextEnv;
 import com.hyena.coretext.blocks.CYImageBlock;
+import com.hyena.coretext.utils.Const;
 import com.hyena.framework.clientlog.LogUtil;
-import com.hyena.framework.utils.UIUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,11 +38,11 @@ public class ImageBlock extends CYImageBlock {
                 setWidth((int) mScreenWidth);
                 setHeight((int) (mScreenWidth / 2));
             } else if ("small_img".equals(size)) {
-                setWidth(UIUtils.dip2px(37));
-                setHeight(UIUtils.dip2px(37));
+                setWidth(Const.DP_1 * 37);
+                setHeight(Const.DP_1 * 37);
             } else {
-                setWidth(UIUtils.dip2px(60));
-                setHeight(UIUtils.dip2px(60));
+                setWidth(Const.DP_1 * 60);
+                setHeight(Const.DP_1 * 60);
             }
             setResUrl(url);
         } catch (JSONException e) {

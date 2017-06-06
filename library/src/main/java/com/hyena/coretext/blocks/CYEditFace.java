@@ -15,8 +15,8 @@ import android.text.TextUtils;
 
 import com.hyena.coretext.CYPageView;
 import com.hyena.coretext.TextEnv;
+import com.hyena.coretext.utils.Const;
 import com.hyena.coretext.utils.EditableValue;
-import com.hyena.framework.utils.UIUtils;
 
 /**
  * Created by yangzc on 17/2/9.
@@ -64,7 +64,7 @@ public class CYEditFace {
         mDefaultTextPaintMetrics = mDefaultTxtPaint.getFontMetrics();
         //闪动提示画笔
         mFlashPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mFlashPaint.setStrokeWidth(UIUtils.dip2px(mTextEnv.getContext(), 2));
+        mFlashPaint.setStrokeWidth(Const.DP_1 * 2);
         //边框画笔
         mBorderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mBorderPaint.setColor(Color.BLACK);

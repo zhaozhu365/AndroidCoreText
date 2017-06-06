@@ -3,8 +3,7 @@ package com.hyena.coretext.blocks;
 import android.graphics.Canvas;
 
 import com.hyena.coretext.TextEnv;
-import com.hyena.framework.clientlog.LogUtil;
-import com.hyena.framework.utils.UIUtils;
+import com.hyena.coretext.utils.Const;
 
 import java.util.List;
 
@@ -19,7 +18,7 @@ public class CYLineBlock extends CYBlock<CYBlock> {
     private int mMaxHeightInLine = 0;
     private boolean isValid = false;
 
-    private static final int DP_20 = UIUtils.dip2px(20);
+    private static final int DP_20 = Const.DP_1 * 20;
 
     public CYLineBlock(TextEnv textEnv, CYParagraphStyle style) {
         super(textEnv, "");
