@@ -95,6 +95,7 @@ public class CYSinglePageView extends CYPageView {
             setPageBlock(pageBlock);
         }
         requestLayout();
+        postInvalidate();
     }
 
     private CYPageBlock parsePageBlock() {

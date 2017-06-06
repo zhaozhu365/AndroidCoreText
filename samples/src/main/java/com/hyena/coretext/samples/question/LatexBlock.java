@@ -62,6 +62,7 @@ public class LatexBlock extends CYPlaceHolderBlock implements ICYEditableGroup {
             fontSize = getParagraphStyle().getTextSize();
             color = getParagraphStyle().getTextColor();
         }
+        AjLatexMath.getPaint().setColor(color);
         mBuilder = mTexFormula.new TeXIconBuilder()
                 .setStyle(TeXConstants.STYLE_DISPLAY)
                 .setSize(UIUtils.px2dip(fontSize))
