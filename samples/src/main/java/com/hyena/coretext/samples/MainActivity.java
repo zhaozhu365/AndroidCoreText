@@ -14,8 +14,12 @@ import com.hyena.framework.servcie.ServiceProvider;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import maximsblog.blogspot.com.jlatexmath.core.DefaultTeXFont;
+import maximsblog.blogspot.com.jlatexmath.core.Glue;
 import maximsblog.blogspot.com.jlatexmath.core.MacroInfo;
 import maximsblog.blogspot.com.jlatexmath.core.ParseException;
+import maximsblog.blogspot.com.jlatexmath.core.SymbolAtom;
+import maximsblog.blogspot.com.jlatexmath.core.TeXFormula;
 import maximsblog.blogspot.com.jlatexmath.core.TeXParser;
 
 /**
@@ -35,6 +39,18 @@ public class MainActivity extends FragmentActivity {
                 return new FillInAtom(args[1], args[2], args[3]);
             }
         });
+        try {
+            SymbolAtom.get("");
+        } catch (Throwable e) {}
+        DefaultTeXFont.getSizeFactor(1);
+        try {
+            Glue.get(1, 1, null);
+        } catch (Throwable e) {}
+        try {
+            TeXFormula.get("");
+        } catch (Throwable e) {}
+
+
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 //        transaction.replace(R.id.main_container, new QuestionListFragment());
 //        transaction.replace(R.id.main_container, new SampleQuestionFragment());
