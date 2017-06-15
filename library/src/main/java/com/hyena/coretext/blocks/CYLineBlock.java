@@ -16,6 +16,7 @@ public class CYLineBlock extends CYBlock<CYBlock> {
     private boolean isInMonopolyRow;
     private CYParagraphStyle mParagraphStyle;
     private int mMaxHeightInLine = 0;
+    private int mMaxTextHeightInLine = 0;
     private boolean isValid = false;
 
     private static final int DP_20 = Const.DP_1 * 20;
@@ -62,6 +63,7 @@ public class CYLineBlock extends CYBlock<CYBlock> {
     @Override
     public void addChild(CYBlock child) {
         super.addChild(child);
+        child.setParent(this);
         if (!child.isValid())
             return;
 
@@ -83,6 +85,12 @@ public class CYLineBlock extends CYBlock<CYBlock> {
         if (child instanceof CYTextBlock || isInMonoMode) {
             if (height > mHeight) {
                 this.mHeight = height;
+            }
+        }
+        //最大的text高度
+        if (child instanceof CYTextBlock) {
+            if (height > mMaxTextHeightInLine) {
+                this.mMaxTextHeightInLine = height;
             }
         }
 
@@ -132,6 +140,7 @@ public class CYLineBlock extends CYBlock<CYBlock> {
                 child.setX(child.getX() + appendX);
                 child.setLineY(lineY);
                 child.setLineHeight(lineHeight);
+                child.setTextHeightInLine(mMaxTextHeightInLine);
             }
         }
     }

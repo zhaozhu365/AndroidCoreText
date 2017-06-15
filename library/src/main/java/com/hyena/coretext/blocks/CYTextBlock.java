@@ -10,48 +10,56 @@ import com.hyena.coretext.TextEnv;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by yangzc on 16/4/8.
  */
 public class CYTextBlock extends CYBlock {
 
-    private int start;
-    private int count;
-    private char chs[];
+    private Paint paint;
+    private int width, height;
+    private Paint.FontMetrics fontMetrics;
+    private Word word = null;
 
-    private Paint mPaint;
-    private int mWidth;
-    private Value<Integer> mHeight = new Value<Integer>(0);
-    private boolean mIsWord = false;
-    Paint.FontMetrics mFontMetrics;
-
+    /*
+     * 构造方法
+     */
     public CYTextBlock(TextEnv textEnv, String content){
         super(textEnv, content);
         if (TextUtils.isEmpty(content))
             content = "";
-        this.chs = content.toCharArray();
-        this.start = 0;
-        this.count = chs.length;
-
-        mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mPaint.set(textEnv.getPaint());
-        mIsWord = false;
-        parseSubBlocks();
+        //初始化画笔
+        paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.set(textEnv.getPaint());
+        //解析成单词
+        List<Word> words = parseWords(content);
+        //初始化子节点
+        setChildren(new ArrayList(words.size()));
+        int height = getTextHeight(paint);
+        Paint.FontMetrics fontMetrics = paint.getFontMetrics();
+        for (int i = 0; i < words.size(); i++) {
+            Word word = words.get(i);
+            int blockWidth = (int) paint.measureText(word.word);
+            addChild(buildChildBlock(textEnv, paint, blockWidth,
+                    height, fontMetrics, word));
+        }
     }
 
-    private CYTextBlock buildChildBlock(TextEnv textEnv, Paint paint
-            , int width, Value<Integer> height, char[] chs, int start, int count) {
+    /*
+     * 构造子节点
+     */
+    protected CYTextBlock buildChildBlock(TextEnv textEnv, Paint paint
+            , int width, int height, Paint.FontMetrics fontMetrics, Word word) {
         try {
             CYTextBlock textBlock = (CYTextBlock) clone();
             textBlock.setTextEnv(textEnv);
-            textBlock.mPaint = paint;
-            textBlock.mWidth = width;
-            textBlock.mHeight = height;
-            textBlock.chs = chs;
-            textBlock.mIsWord = true;
-            textBlock.start= start;
-            textBlock.count = count;
+            textBlock.paint = new Paint(paint);
+            textBlock.width = width;
+            textBlock.height = height;
+            textBlock.fontMetrics = fontMetrics;
+            textBlock.word = word;
             return textBlock;
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
@@ -63,49 +71,83 @@ public class CYTextBlock extends CYBlock {
     public void setParagraphStyle(CYParagraphStyle style) {
         super.setParagraphStyle(style);
         if (style != null) {
-            mPaint.setColor(style.getTextColor());
-            mPaint.setTextSize(style.getTextSize());
-            this.mWidth = (int) mPaint.measureText(chs, start, count);
-            this.mHeight.setValue(getTextHeight(mPaint));
+            paint.setColor(style.getTextColor());
+            setTextSize(style.getTextSize());
         }
     }
 
     public CYTextBlock setTextColor(int color) {
-        if (mPaint != null && color > 0) {
-            mPaint.setColor(color);
+        if (paint != null && color > 0) {
+            paint.setColor(color);
         }
         return this;
     }
 
     public CYTextBlock setTypeFace(Typeface typeface){
-        if (mPaint != null && typeface != null) {
-            mPaint.setTypeface(typeface);
+        if (paint != null && typeface != null) {
+            paint.setTypeface(typeface);
         }
         return this;
     }
 
+    @Override
+    public void setTextHeightInLine(int textHeight) {
+        super.setTextHeightInLine(textHeight);
+        this.height = textHeight;
+    }
+
+    protected void updateSize() {
+        float textWidth = paint.measureText(word.word);
+        float textHeight = getTextHeight(paint);
+        if (!TextUtils.isEmpty(word.pinyin)) {
+            float pinyinWidth = paint.measureText(word.pinyin);
+            float pinyinHeight = getTextHeight(paint);
+            if (pinyinWidth > textWidth) {
+                textWidth = pinyinWidth;
+            }
+            textHeight += pinyinHeight;
+        }
+        this.width = (int) textWidth;
+        this.height = (int) textHeight;
+    }
+
     public CYTextBlock setTextSize(int fontSize){
-        if (mPaint != null && fontSize > 0) {
-            mPaint.setTextSize(fontSize);
-            this.mWidth = (int) mPaint.measureText(chs, start, count);
+        if (paint != null && fontSize > 0
+                && paint.getTextSize() != fontSize) {
+            paint.setTextSize(fontSize);
+            updateSize();
         }
         return this;
     }
 
     @Override
     public List<CYBlock> getChildren() {
-        if (mIsWord) {
+        if (word != null) {
             return null;
         }
         return super.getChildren();
     }
 
-    private void parseSubBlocks() {
-        if (chs.length > 0) {
-            setChildren(new ArrayList(chs.length));
-            Value blockHeight = new Value<Integer>(getTextHeight(mPaint));
-            Paint.FontMetrics fontMetrics = mPaint.getFontMetrics();
-            TextEnv textEnv = getTextEnv();
+    /**
+     * 解析单词
+     * @param content 内容
+     * @return 单词列表
+     */
+    protected List<Word> parseWords(String content) {
+        List<Word> words = new ArrayList<>();
+        Pattern pattern = Pattern.compile(".*?<.*?>");
+        Matcher matcher = pattern.matcher(content);
+        String text = content;
+        while (matcher.find()) {
+            String value = matcher.group();
+            String word = value.replaceFirst("<.*?>", "");
+            String pinyin = value.replace(word, "").replaceAll("[<|>]", "");
+            words.add(new Word(word, pinyin));
+            text = text.replace(value, "");
+        }
+
+        if (!TextUtils.isEmpty(text)) {
+            char chs[] = text.toCharArray();
             for (int i = 0; i < chs.length; i++) {
                 int wordStart = i, count = 1;
                 while ((i + 1) < chs.length && isLetter(chs[i + 1])
@@ -113,41 +155,38 @@ public class CYTextBlock extends CYBlock {
                     count ++;
                     i ++;
                 }
-                int blockWidth = (int) mPaint.measureText(chs, wordStart, count);
-                CYTextBlock block = buildChildBlock(textEnv, mPaint,
-                        blockWidth, blockHeight, chs, wordStart, count);
-                if (block != null) {
-                    block.mFontMetrics = fontMetrics;
-                    addChild(block);
-                }
+                words.add(new Word(new String(chs, wordStart, count), ""));
             }
         }
+        return words;
     }
 
     @Override
     public int getContentWidth() {
-        return mWidth;
+        return width;
     }
 
     @Override
     public int getContentHeight() {
-        return mHeight.getValue().intValue();
+        return height;
     }
 
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
-        if (mFontMetrics != null && mIsWord) {
+        if (fontMetrics != null && word != null) {
             Rect rect = getContentRect();
             float x = rect.left;
-            float y = rect.bottom - mFontMetrics.bottom;
-            canvas.drawText(chs, start, count, x, y, mPaint);
-
+            float y = rect.bottom - fontMetrics.bottom;
+            canvas.drawText(word.word, x, y, paint);
+            if (!TextUtils.isEmpty(word.pinyin)) {
+                canvas.drawText(word.pinyin, x, y - getTextHeight(paint), paint);
+            }
             CYParagraphStyle paragraphStyle = getParagraphStyle();
             if (paragraphStyle != null) {
                 String style = paragraphStyle.getStyle();
-                if ("under_line".equals(style)) {
-                    canvas.drawLine(x, rect.bottom, x + rect.width(), rect.bottom, mPaint);
+                if ("under_line".equals(style)) {//添加下横线
+                    canvas.drawLine(x, rect.bottom, x + rect.width(), rect.bottom, paint);
                 }
             }
         }
@@ -160,16 +199,12 @@ public class CYTextBlock extends CYBlock {
         return false;
     }
 
-    class Value<T> {
-        private T mValue;
-        public Value(T value) {
-            this.mValue = value;
-        }
-        public void setValue(T value) {
-            this.mValue = value;
-        }
-        public T getValue() {
-            return mValue;
+    class Word {
+        public String word;
+        public String pinyin;
+        public Word(String word, String pinyin) {
+            this.word = word;
+            this.pinyin = pinyin;
         }
     }
 }

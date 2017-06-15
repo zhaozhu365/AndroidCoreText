@@ -4,13 +4,11 @@ import android.text.TextUtils;
 
 import com.hyena.coretext.blocks.CYBlock;
 import com.hyena.coretext.blocks.CYTextBlock;
+import com.hyena.coretext.builder.CYBlockProvider;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -27,32 +25,19 @@ public class AttributedString {
         this.mText = text;
     }
 
-    public <T extends CYBlock> T replaceBlock(int start, int end, Class<T> blockClz)
+    /**
+     * 替换block
+     * @param start 开始索引
+     * @param end 结束索引
+     * @param block 替换的block
+     */
+    public void replaceBlock(int start, int end, CYBlock block)
             throws IndexOutOfBoundsException {
-
-        if (TextUtils.isEmpty(mText))
-            return null;
-
-        if (mBlockSections == null)
-            mBlockSections = new ArrayList<BlockSection>();
-
-        if (start >=0 && end >=0 && end <= mText.length() && start<= mText.length()
-                && end >= start) {
-            BlockSection section = new BlockSection(start, end, blockClz);
-            T block = (T) section.getOrNewBlock();
-            mBlockSections.add(section);
-            return block;
-        } else {
-            throw new IndexOutOfBoundsException("IndexOutOfBoundsException");
-        }
-    }
-
-    public void replaceBlock(int start, int end, CYBlock block) {
         if (TextUtils.isEmpty(mText) || block == null)
             return;
 
         if (mBlockSections == null)
-            mBlockSections = new ArrayList<BlockSection>();
+            mBlockSections = new ArrayList<>();
 
         if (start >=0 && end >=0 && end <= mText.length() && start<= mText.length()
                 && end >= start) {
@@ -63,13 +48,14 @@ public class AttributedString {
         }
     }
 
-    public List<CYBlock> buildBlocks() {
-//        long ts = System.currentTimeMillis();
+    /**
+     * 开始构造blocks
+     * @return 所有构造块
+     */
+    public List<CYBlock> build() {
         List<CYBlock> blocks = new ArrayList<CYBlock>();
         if (mBlockSections == null) {
-            BlockSection ghostSection = new BlockSection(0
-                    , mText.length(), CYTextBlock.class);
-            blocks.add(ghostSection.getOrNewBlock());
+            blocks.addAll(buildTextBlock(0, mText.length()).getChildren());
         } else {
             Collections.sort(mBlockSections, new Comparator<BlockSection>() {
                 @Override
@@ -82,38 +68,34 @@ public class AttributedString {
             for (int i = 0; i < mBlockSections.size(); i++) {
                 BlockSection blockSection = mBlockSections.get(i);
                 if (blockSection.startIndex != endIndex) {
-                    BlockSection ghostSection = new BlockSection(endIndex
-                            , blockSection.startIndex, CYTextBlock.class);
-                    blocks.add(ghostSection.getOrNewBlock());
+                    blocks.addAll(buildTextBlock(endIndex, blockSection.startIndex).getChildren());
                 }
-                blocks.add(blockSection.getOrNewBlock());
-
+                blocks.add(blockSection.getBlock());
                 endIndex = blockSection.endIndex;
             }
-
             if (endIndex < mText.length()) {
-                BlockSection ghostSection = new BlockSection(endIndex
-                        , mText.length(), CYTextBlock.class);
-                blocks.add(ghostSection.getOrNewBlock());
+                blocks.addAll(buildTextBlock(endIndex, mText.length()).getChildren());
             }
         }
-//        Log.v("yangzc", "buildBlocks cost: " + (System.currentTimeMillis() - ts));
-        return resetBlocks(blocks);
+        return blocks;
+    }
+
+    /**
+     * 构造textBlock
+     * @param start 开始索引
+     * @param end 结束索引
+     * @return textBlock
+     */
+    private CYTextBlock buildTextBlock(int start, int end) {
+        String content = mText.substring(start, end);
+        content = content.replaceAll("labelsharp", "#");
+        return CYBlockProvider.getBlockProvider().buildTextBlock(mTextEnv, content);
     }
 
     private class BlockSection {
         public int startIndex;
         public int endIndex;
-        public Class<? extends CYBlock> blockClz;
-
-        private HashMap<Class, Constructor> constructorCache = new HashMap<>();
         private CYBlock mBlock;
-
-        public BlockSection(int startIndex, int endIndex, Class<? extends CYBlock> blockClz) {
-            this.startIndex = startIndex;
-            this.endIndex = endIndex;
-            this.blockClz = blockClz;
-        }
 
         public BlockSection(int startIndex, int endIndex, CYBlock block) {
             this.startIndex = startIndex;
@@ -121,55 +103,8 @@ public class AttributedString {
             mBlock = block;
         }
 
-        public CYBlock getOrNewBlock(){
-            if (mBlock != null)
-                return mBlock;
-
-            if (blockClz != null) {
-                try {
-                    Constructor<? extends  CYBlock> constructor = constructorCache.get(blockClz);
-                    if (constructor == null) {
-                        constructor = blockClz.getConstructor(TextEnv.class, String.class);
-                        constructorCache.put(blockClz, constructor);
-                    }
-                    String content = mText.substring(startIndex, endIndex);
-                    content = content.replaceAll("labelsharp", "#");
-                    mBlock = constructor.newInstance(mTextEnv, content);
-                    return mBlock;
-                } catch (NoSuchMethodException e) {
-                    e.printStackTrace();
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                } catch (InstantiationException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-            }
-            return null;
+        public CYBlock getBlock(){
+            return mBlock;
         }
-    }
-
-    /**
-     * 把所有TextBlock切成最小单元
-     * @param rawBlocks
-     * @return
-     */
-    private List<CYBlock> resetBlocks(List<CYBlock> rawBlocks) {
-//        long ts = System.currentTimeMillis();
-        List<CYBlock> result = new ArrayList<CYBlock>();
-        if (rawBlocks != null) {
-            int blockCount = rawBlocks.size();
-            for (int i = 0; i < blockCount; i++) {
-                CYBlock block = rawBlocks.get(i);
-                if (block instanceof CYTextBlock && block.getChildren() != null) {
-                    result.addAll(block.getChildren());
-                } else {
-                    result.add(block);
-                }
-            }
-        }
-//        Log.v("yangzc", "resetBlocks cost: " + (System.currentTimeMillis() - ts));
-        return result;
     }
 }

@@ -30,6 +30,8 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable, Clonea
     //内容范围
     private Rect mContentRect = new Rect();
     private Rect mBlockRect = new Rect();
+    //父节点
+    private CYBlock mParent;
     //所有子节点
     private List<T> mChildren = new ArrayList<T>();
     private TextEnv mTextEnv;
@@ -391,4 +393,14 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable, Clonea
     public boolean isValid() {
         return true;
     }
+
+    public void setParent(CYBlock parent) {
+        this.mParent = parent;
+    }
+
+    public CYBlock getParent() {
+        return mParent;
+    }
+
+    public void setTextHeightInLine(int textHeight) {}
 }

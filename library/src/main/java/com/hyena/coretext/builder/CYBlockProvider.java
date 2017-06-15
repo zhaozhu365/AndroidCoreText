@@ -6,6 +6,7 @@ package com.hyena.coretext.builder;
 
 import com.hyena.coretext.TextEnv;
 import com.hyena.coretext.blocks.CYBlock;
+import com.hyena.coretext.blocks.CYTextBlock;
 
 import java.util.List;
 
@@ -31,11 +32,33 @@ public class CYBlockProvider {
         return null;
     }
 
+    public CYTextBlock buildTextBlock(TextEnv textEnv, String content) {
+        if (mBlockBuilder != null) {
+            return mBlockBuilder.buildTextBlock(textEnv, content);
+        }
+        return new CYTextBlock(textEnv, content);
+    }
+
     public void registerBlockBuilder(CYBlockBuilder builder) {
         this.mBlockBuilder = builder;
     }
 
-    public static interface CYBlockBuilder {
-        public List<CYBlock> build(TextEnv textEnv, String content);
+    public interface CYBlockBuilder {
+
+        /**
+         * 构造block
+         * @param textEnv 运行环境
+         * @param content 内容
+         * @return 数据块
+         */
+        List<CYBlock> build(TextEnv textEnv, String content);
+
+        /**
+         * 创建文本block
+         * @param textEnv 运行环境
+         * @param content 内容
+         * @return 文本block
+         */
+        CYTextBlock buildTextBlock(TextEnv textEnv, String content);
     }
 }

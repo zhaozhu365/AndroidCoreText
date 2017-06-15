@@ -53,9 +53,9 @@ public class MainActivity extends FragmentActivity {
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 //        transaction.replace(R.id.main_container, new QuestionListFragment());
-//        transaction.replace(R.id.main_container, new SampleQuestionFragment());
+        transaction.replace(R.id.main_container, new SampleQuestionFragment());
 //        transaction.replace(R.id.main_container, new TestFragment());
-        transaction.replace(R.id.main_container, new PreviewQuestionFragment());
+//        transaction.replace(R.id.main_container, new PreviewQuestionFragment());
         transaction.commit();
 
         String value = "#{\"type\":\"para_begin\",\"style\":\"math_text\"}#" +

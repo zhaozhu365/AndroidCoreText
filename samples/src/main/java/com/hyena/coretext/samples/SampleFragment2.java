@@ -82,7 +82,7 @@
 ////        while (matcherP.find()) {
 ////            attString.replaceBlock(matcherP.start(), matcherP.end(), CYBreakLineBlock.class);
 ////        }
-//        mCyView.setBlocks(attString.buildBlocks());
+//        mCyView.setBlocks(attString.build());
 //    }
 //
 //    private String replaceFillIn(String html) {

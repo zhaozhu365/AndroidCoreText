@@ -5,13 +5,13 @@
 package com.hyena.coretext.samples.question;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.hyena.coretext.AttributedString;
 import com.hyena.coretext.TextEnv;
 import com.hyena.coretext.blocks.CYBlock;
 import com.hyena.coretext.blocks.CYBreakLineBlock;
 import com.hyena.coretext.blocks.CYParagraphEndBlock;
+import com.hyena.coretext.blocks.CYTextBlock;
 import com.hyena.coretext.builder.CYBlockProvider;
 
 import org.json.JSONException;
@@ -28,7 +28,12 @@ public class DefaultBlockBuilder implements CYBlockProvider.CYBlockBuilder {
 
     @Override
     public List<CYBlock> build(TextEnv textEnv, String content) {
-        return analysisCommand(textEnv, content).buildBlocks();
+        return analysisCommand(textEnv, content).build();
+    }
+
+    @Override
+    public CYTextBlock buildTextBlock(TextEnv textEnv, String content) {
+        return new CYTextBlock(textEnv, content);
     }
 
     private AttributedString analysisCommand(TextEnv textEnv, String content) {

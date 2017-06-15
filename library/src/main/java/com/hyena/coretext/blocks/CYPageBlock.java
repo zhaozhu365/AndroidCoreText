@@ -30,6 +30,7 @@ public class CYPageBlock extends CYBlock<CYLineBlock> {
     @Override
     public void addChild(CYLineBlock child) {
         super.addChild(child);
+        child.setParent(this);
         int width = child.getWidth();
         int height = child.getHeight();
         int lineY = child.getLineY();
