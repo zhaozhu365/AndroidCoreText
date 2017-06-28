@@ -1,7 +1,6 @@
 package com.hyena.coretext.blocks;
 
 import android.graphics.Canvas;
-import android.graphics.Paint;
 
 import com.hyena.coretext.TextEnv;
 import com.hyena.coretext.utils.Const;
@@ -21,14 +20,10 @@ public class CYEditBlock extends CYPlaceHolderBlock implements ICYEditable {
     }
 
     private void init(){
-        Paint paint = getTextEnv().getPaint();
-        int height = (int) (Math.ceil(paint.descent() - paint.ascent()) + 0.5f);
         setWidth(Const.DP_1 * 80);
-        setHeight(height);
+        setHeight(getTextHeight(getTextEnv().getPaint()));
         setFocusable(true);
         mEditFace = createEditFace(getTextEnv(), this);
-        mEditFace.setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight()
-                , getPaddingBottom());
     }
 
     protected CYEditFace createEditFace(TextEnv textEnv, ICYEditable editable) {
@@ -38,7 +33,8 @@ public class CYEditBlock extends CYPlaceHolderBlock implements ICYEditable {
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
-        mEditFace.onDraw(canvas, getBlockRect(), getContentRect());
+        if (mEditFace != null)
+            mEditFace.onDraw(canvas, getBlockRect(), getContentRect());
     }
 
     public CYEditFace getEditFace() {
@@ -63,7 +59,6 @@ public class CYEditBlock extends CYPlaceHolderBlock implements ICYEditable {
     @Override
     public void setText(String text) {
         getTextEnv().setEditableValue(getTabId(), text);
-        mEditFace.setText(text);
         requestLayout();
     }
 
@@ -92,14 +87,6 @@ public class CYEditBlock extends CYPlaceHolderBlock implements ICYEditable {
     }
 
     @Override
-    public void setPadding(int left, int top, int right, int bottom) {
-        super.setPadding(left, top, right, bottom);
-        if (mEditFace != null) {
-            mEditFace.setPadding(left, top, right, bottom);
-        }
-    }
-
-    @Override
     public boolean hasFocus() {
         return mEditFace.hasFocus();
     }
@@ -110,24 +97,6 @@ public class CYEditBlock extends CYPlaceHolderBlock implements ICYEditable {
         if (mEditFace != null) {
             mEditFace.setEditable(focusable);
         }
-    }
-
-    @Override
-    public void setParagraphStyle(CYParagraphStyle style) {
-        super.setParagraphStyle(style);
-        if (mEditFace != null) {
-            mEditFace.setParagraphStyle(style);
-        }
-    }
-
-    @Override
-    public int getContentWidth() {
-        return super.getContentWidth();
-    }
-
-    @Override
-    public int getContentHeight() {
-        return super.getContentHeight();
     }
 
     @Override

@@ -21,4 +21,5 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.github.yangzc:AndroidSupport:1.0.2'
+    compile project(':jlatexmath')
 }

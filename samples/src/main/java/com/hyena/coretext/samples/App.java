@@ -38,8 +38,6 @@ public class App extends BaseApp {
         //注册应用系统服务
         ServiceProvider.getServiceProvider().registServiceManager(new ServiceManager());
         CYBlockProvider.getBlockProvider().registerBlockBuilder(new DefaultBlockBuilder());
-        //init latex
-        AjLatexMath.init(this);
     }
 
     private class ServiceManager extends BaseServiceManager {

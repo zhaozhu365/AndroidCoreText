@@ -9,9 +9,9 @@ package com.hyena.coretext.blocks;
  */
 public interface ICYFocusable {
 
-    public void setFocus(boolean hasFocus);
-    public boolean hasFocus();
+    void setFocus(boolean hasFocus);
+    boolean hasFocus();
 
-    public void setFocusable(boolean focusable);
-    public boolean isFocusable();
+    void setFocusable(boolean focusable);
+    boolean isFocusable();
 }

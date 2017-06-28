@@ -44,8 +44,6 @@ public class CYEditFace {
     protected Paint.FontMetrics mDefaultTextPaintMetrics;
 
     private String mDefaultText;
-    private int paddingLeft, paddingTop, paddingRight, paddingBottom;
-    private CYParagraphStyle mParagraphStyle;
 
     public CYEditFace(TextEnv textEnv, ICYEditable editable) {
         this.mTextEnv = textEnv;
@@ -88,13 +86,6 @@ public class CYEditFace {
         if (value != null && value.getColor() != -1) {
             mTextPaint.setColor(value.getColor());
         }
-    }
-
-    public void setPadding(int left, int top, int right, int bottom) {
-        this.paddingLeft = left;
-        this.paddingTop = top;
-        this.paddingRight = right;
-        this.paddingBottom = bottom;
     }
 
     public void setDefaultText(String defaultText) {
@@ -218,10 +209,6 @@ public class CYEditFace {
         return null;
     }
 
-    public void setText(String text) {
-
-    }
-
     public void setTextColor(int color) {
         if (mTextPaint != null) {
             mTextPaint.setColor(color);
@@ -259,10 +246,6 @@ public class CYEditFace {
 
     public TextEnv getTextEnv() {
         return mTextEnv;
-    }
-
-    public void setParagraphStyle(CYParagraphStyle style) {
-        this.mParagraphStyle = style;
     }
 
     public void release() {

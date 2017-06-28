@@ -44,14 +44,20 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable, Clonea
 
     private static int DP_1 = Const.DP_1;
 
+    private String mContent;
     public CYBlock(TextEnv textEnv, String content) {
         this.mTextEnv = textEnv;
+        this.mContent = content;
         this.paddingBottom = DP_1;
         if (isDebug()) {
             mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             mPaint.setColor(Color.BLACK);
             mPaint.setStyle(Paint.Style.STROKE);
         }
+    }
+
+    public String getContent() {
+        return mContent;
     }
 
     public TextEnv getTextEnv() {
@@ -341,7 +347,7 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable, Clonea
                 }
             }
         } else {
-            if (this instanceof CYEditBlock && ((CYEditBlock)this).getTabId() == tabId) {
+            if (this instanceof ICYEditable && ((ICYEditable)this).getTabId() == tabId) {
                 return (ICYEditable) this;
             } else if (this instanceof ICYEditableGroup) {
                 return this.findEditableByTabId(tabId);
@@ -358,7 +364,7 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable, Clonea
                 block.findAllEditable(editables);
             }
         } else {
-            if (this instanceof CYEditBlock) {
+            if (this instanceof ICYEditable) {
                 editables.add((ICYEditable) this);
             } else if (this instanceof ICYEditableGroup) {
                 List<ICYEditable> edits = ((ICYEditableGroup)this).findAllEditable();

@@ -79,15 +79,15 @@ public class SampleQuestionFragment extends Fragment {
         mQtvQuestion.getBuilder().setTextSize(18);
         String question = "根据图片意思选择相符的句子#{\"type\":\"blank\",\"id\":1}##{\"type\":\"img\",\"id\"=1,\"size\":\"big_image\",\"src\":\"http://img1.3lian.com/2015/w8/28/d/66.jpg\"}#啊啊啊啊啊";
 //        question = "#{\"type\":\"para_begin\",\"size\" : 100,\"align\": \"left\",\"color\":\"#D0D0D0\",\"margin\":8}#单词挖空#{\"type\":\"para_end\"}##{\"type\":\"para_begin\",\"size\" : 30,\"align\": \"mid\",\"color\":\"#000000\",\"margin\":8}#a#{\"type\":\"blank\",\"id\": 1,\"size\":\"letter\"}#p#{\"type\":\"blank\",\"id\": 2,\"size\":\"letter\"}#e#{\"type\":\"para_end\"}#";
-//        question = "#{\"type\":\"para_begin\",\"size\" : 30,\"align\": \"left\",\"color\":\"#D0D0D0\",\"margin\":8}#" +
-//                "根据录音选择正确的翻译" +
-//                "#{\"type\":\"para_end\"}##{\"type\":\"para_begin\",\"size\" : 30,\"align\": \"mid\",\"color\":\"#000000\",\"margin\":8}#" +
-//                "#{\"type\":\"audio\",\"src\":\"http://7xohdn.com2.z0.glb.qiniucdn.com/tingli/15590285.mp3\"}#" +
-//                "\r\n#{\"type\":\"blank\",\"id\": 1,\"size\":\"line\"}#\r\n#{\"type\":\"para_end\"}#" +
-//                "" +
-//                "#{\"type\":\"latex\",\"content\":\"\\\\frac{7}{5}\"}#" +
-//                "";
-        question = "#{\"type\":\"para_begin\",\"size\":34,\"align\":\"left\",\"color\":\"#808080\",\"margin\":40}#根<gen>据<ju>读<du>音<yin>（音频）提示补全单词根提示补全单词提示补全单词提示补全单词提示补全单词提示补全单词#{\"type\":\"para_end\"}##{\"type\":\"para_begin\",\"size\":40,\"align\":\"left\",\"color\":\"#ffffff\",\"margin\":40}##{\"type\":\"audio\",\"src\":\"http://7xohdn.com2.z0.glb.qiniucdn.com/sseng/book.mp3\"}##{\"type\":\"para_end\"}##{\"type\":\"para_begin\",\"size\":40,\"align\":\"left\",\"color\":\"#4d4d4d\",\"margin\":40}#b#{\"type\":\"blank\",\"id\": 1,\"class\":\"choice\",\"size\":\"letter\"}##{\"type\":\"blank\",\"id\": 2,\"class\":\"choice\",\"size\":\"letter\"}#k#{\"type\":\"para_end\"}#";
+        question = "#{\"type\":\"para_begin\",\"size\" : 30,\"align\": \"left\",\"color\":\"#D0D0D0\",\"margin\":8}#" +
+                "根据录音选择正确的翻译" +
+                "#{\"type\":\"para_end\"}##{\"type\":\"para_begin\",\"size\" : 30,\"align\": \"mid\",\"color\":\"#000000\",\"margin\":8}#" +
+                "#{\"type\":\"audio\",\"src\":\"http://7xohdn.com2.z0.glb.qiniucdn.com/tingli/15590285.mp3\"}#" +
+                "\r\n#{\"type\":\"blank\",\"id\": 1,\"size\":\"line\"}#\r\n#{\"type\":\"para_end\"}#" +
+                "" +
+                "#{\"type\":\"latex\",\"content\":\"\\\\frac{7}{5}\"}#" +
+                "";
+//        question = "#{\"type\":\"para_begin\",\"size\":34,\"align\":\"left\",\"color\":\"#808080\",\"margin\":40}#根<gen>据<ju>读<du>音<yin>（音频）提示补全单词根提示补全单词提示补全单词提示补全单词提示补全单词提示补全单词#{\"type\":\"para_end\"}##{\"type\":\"para_begin\",\"size\":40,\"align\":\"left\",\"color\":\"#ffffff\",\"margin\":40}##{\"type\":\"audio\",\"src\":\"http://7xohdn.com2.z0.glb.qiniucdn.com/sseng/book.mp3\"}##{\"type\":\"para_end\"}##{\"type\":\"para_begin\",\"size\":40,\"align\":\"left\",\"color\":\"#4d4d4d\",\"margin\":40}#b#{\"type\":\"blank\",\"id\": 1,\"class\":\"choice\",\"size\":\"letter\"}##{\"type\":\"blank\",\"id\": 2,\"class\":\"choice\",\"size\":\"letter\"}#k#{\"type\":\"para_end\"}#";
 
 
 //        question = "#{\"type\":\"latex\",\"content\":\"\\\\frac{7}{5}\"}#";
