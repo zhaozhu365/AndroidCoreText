@@ -139,8 +139,11 @@ public class QuestionListFragment extends Fragment {
 //                    "#{\"type\":\"img\",\"id\"=1,\"size\":\"big_image\",\"src\":\"http://img1.3lian.com/2015/w8/28/d/66.jpg?aa=bb\"}#" +
                     "啊啊啊啊啊";
 
-            question = "杨忠诚测试杨忠诚测试杨忠诚测试杨忠诚测试杨忠诚测试杨忠诚测试杨忠诚测试杨忠诚测试杨忠诚测试杨忠诚测试i love u.i love u.i love u.i love u.i love u.i love u.i love u.i love u.i love u.i love u.#{\"type\":\"para_begin\",\"style\":\"math_text\"}#\n" +
-                    "#{\"type\":\"latex\",\"content\":\"\\\\frac{8}{3+\\#{\\\"type\\\":\\\"blank\\\",\\\"id\\\":\\\"1\\\",\\\"size\\\":\\\"express\\\",\\\"class\\\":\\\"fillin\\\"}\\#\"}#=2#{\"type\":\"para_end\"}##{\"type\":\"para_begin\",\"style\":\"math_text\"}#";
+            question = "杨忠诚测试杨忠诚测试杨忠诚测试杨忠诚测试杨忠诚测试杨忠诚测试杨忠诚测试杨忠诚测试杨忠诚测试杨忠诚测试i love u.i love u.i love u.i love u.i love u.i love u.i love u.i love u.i love u.i love u." +
+                    "#{\"type\":\"para_begin\",\"style\":\"math_text\"}#\n" +
+                    "#{\"type\":\"latex\",\"content\":\"\\\\frac{8}{3+\\#{\\\"type\\\":\\\"blank\\\",\\\"id\\\":\\\"1\\\",\\\"size\\\":\\\"express\\\",\\\"class\\\":\\\"fillin\\\"}\\#\"}#=2" +
+                    "#{\"type\":\"para_end\"}#" +
+                    "#{\"type\":\"para_begin\",\"style\":\"math_text\"}#";
             viewHolder.mQtvQuestion.getBuilder().setTextSize(10).setText(question).build();
 //            ICYEditable editable = viewHolder.mQtvQuestion.findEditableByTabId(1);
 //            if (editable != null) {

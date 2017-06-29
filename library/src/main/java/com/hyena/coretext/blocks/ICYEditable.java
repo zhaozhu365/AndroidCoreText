@@ -17,4 +17,9 @@ public interface ICYEditable extends ICYFocusable {
 
     void setTextColor(int color);
 
+    String getDefaultText();
+
+    void setEditable(boolean editable);
+
+    boolean isEditable();
 }

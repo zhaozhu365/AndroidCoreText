@@ -38,18 +38,18 @@ public class SampleQuestionFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-//        view.findViewById(R.id.latex_keyboard_1).setOnClickListener(mClickListener);
-//        view.findViewById(R.id.latex_keyboard_2).setOnClickListener(mClickListener);
-//        view.findViewById(R.id.latex_keyboard_3).setOnClickListener(mClickListener);
-//        view.findViewById(R.id.latex_keyboard_4).setOnClickListener(mClickListener);
-//        view.findViewById(R.id.latex_keyboard_5).setOnClickListener(mClickListener);
-//        view.findViewById(R.id.latex_keyboard_6).setOnClickListener(mClickListener);
-//        view.findViewById(R.id.latex_keyboard_7).setOnClickListener(mClickListener);
-//        view.findViewById(R.id.latex_keyboard_8).setOnClickListener(mClickListener);
-//        view.findViewById(R.id.latex_keyboard_9).setOnClickListener(mClickListener);
-//        view.findViewById(R.id.latex_keyboard_star).setOnClickListener(mClickListener);
-//        view.findViewById(R.id.latex_keyboard_del).setOnClickListener(mClickListener);
-//        view.findViewById(R.id.latex_keyboard_w).setOnClickListener(mClickListener);
+        view.findViewById(R.id.latex_keyboard_1).setOnClickListener(mClickListener);
+        view.findViewById(R.id.latex_keyboard_2).setOnClickListener(mClickListener);
+        view.findViewById(R.id.latex_keyboard_3).setOnClickListener(mClickListener);
+        view.findViewById(R.id.latex_keyboard_4).setOnClickListener(mClickListener);
+        view.findViewById(R.id.latex_keyboard_5).setOnClickListener(mClickListener);
+        view.findViewById(R.id.latex_keyboard_6).setOnClickListener(mClickListener);
+        view.findViewById(R.id.latex_keyboard_7).setOnClickListener(mClickListener);
+        view.findViewById(R.id.latex_keyboard_8).setOnClickListener(mClickListener);
+        view.findViewById(R.id.latex_keyboard_9).setOnClickListener(mClickListener);
+        view.findViewById(R.id.latex_keyboard_star).setOnClickListener(mClickListener);
+        view.findViewById(R.id.latex_keyboard_del).setOnClickListener(mClickListener);
+        view.findViewById(R.id.latex_keyboard_w).setOnClickListener(mClickListener);
 
         mQtvQuestion = (QuestionTextView) view.findViewById(R.id.qtv_question);
         mQtvQuestion.setFocusEventListener(new CYFocusEventListener() {
@@ -84,6 +84,11 @@ public class SampleQuestionFragment extends Fragment {
                 "#{\"type\":\"para_end\"}##{\"type\":\"para_begin\",\"size\" : 30,\"align\": \"mid\",\"color\":\"#000000\",\"margin\":8}#" +
                 "#{\"type\":\"audio\",\"src\":\"http://7xohdn.com2.z0.glb.qiniucdn.com/tingli/15590285.mp3\"}#" +
                 "\r\n#{\"type\":\"blank\",\"id\": 1,\"size\":\"line\"}#\r\n#{\"type\":\"para_end\"}#" +
+
+                "#{\"type\":\"para_begin\",\"style\":\"math_text\"}#\n" +
+                "#{\"type\":\"latex\",\"content\":\"\\\\frac{8}{3+\\#{\\\"type\\\":\\\"blank\\\",\\\"id\\\":\\\"2\\\",\\\"size\\\":\\\"express\\\",\\\"class\\\":\\\"fillin\\\"}\\#\"}#=2" +
+                "#{\"type\":\"para_end\"}#" +
+
                 "" +
                 "#{\"type\":\"latex\",\"content\":\"\\\\frac{7}{5}\"}#" +
                 "";
@@ -91,12 +96,10 @@ public class SampleQuestionFragment extends Fragment {
 
 
 //        question = "#{\"type\":\"latex\",\"content\":\"\\\\frac{7}{5}\"}#";
-        mQtvQuestion.getBuilder().setText(question);
-        mQtvQuestion.getBuilder().build();
+        mQtvQuestion.getBuilder().setDebug(false).setText(question).build();
     }
 
     private View.OnClickListener mClickListener = new View.OnClickListener() {
-
         @Override
         public void onClick(View v) {
             if (v != null && v instanceof TextView) {
@@ -105,6 +108,8 @@ public class SampleQuestionFragment extends Fragment {
                     ICYEditable editable = mQtvQuestion.findEditableByTabId(mFocusTabId);
                     if (editable != null) {
                         String currentText = mQtvQuestion.getText(mFocusTabId);
+                        if (currentText == null)
+                            currentText = "";
                         String text = textView.getText().toString();
                         if ("删除".equals(text)) {
                             if (TextUtils.isEmpty(currentText))

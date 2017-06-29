@@ -1,5 +1,7 @@
 package com.hyena.coretext.utils;
 
+import android.graphics.Paint;
+
 import com.hyena.coretext.blocks.CYBlock;
 import com.hyena.coretext.blocks.CYLineBlock;
 import com.hyena.coretext.blocks.CYPageBlock;
@@ -41,4 +43,7 @@ public class CYBlockUtils {
         return null;
     }
 
+    public static int getTextHeight(Paint paint) {
+        return (int) (Math.ceil(paint.descent() - paint.ascent()) + 0.5f);
+    }
 }

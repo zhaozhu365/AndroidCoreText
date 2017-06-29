@@ -2,6 +2,7 @@ package com.hyena.coretext.blocks;
 
 import android.graphics.Canvas;
 
+import com.hyena.coretext.CYPageView;
 import com.hyena.coretext.TextEnv;
 import com.hyena.coretext.utils.Const;
 import com.hyena.coretext.utils.EditableValue;
@@ -12,7 +13,8 @@ import com.hyena.coretext.utils.EditableValue;
 public class CYEditBlock extends CYPlaceHolderBlock implements ICYEditable {
 
     private int mTabId = 0;
-    private CYEditFace mEditFace;
+    private boolean mEditable = false;
+    private IEditFace mEditFace;
 
     public CYEditBlock(TextEnv textEnv, String content) {
         super(textEnv, content);
@@ -37,7 +39,7 @@ public class CYEditBlock extends CYPlaceHolderBlock implements ICYEditable {
             mEditFace.onDraw(canvas, getBlockRect(), getContentRect());
     }
 
-    public CYEditFace getEditFace() {
+    public IEditFace getEditFace() {
         return mEditFace;
     }
 
@@ -70,33 +72,51 @@ public class CYEditBlock extends CYPlaceHolderBlock implements ICYEditable {
             getTextEnv().setEditableValue(getTabId(), value);
         }
         value.setColor(color);
-        mEditFace.setTextColor(color);
         postInvalidateThis();
-    }
-
-    public void setDefaultText(String defaultText) {
-        mEditFace.setDefaultText(defaultText);
     }
 
     @Override
     public void setFocus(boolean focus) {
         super.setFocus(focus);
-        if (isFocusable()) {
-            mEditFace.setFocus(focus);
+        //当前选中的focusId
+        if (focus) {
+            CYPageView.FOCUS_TAB_ID = getTabId();
         }
+        if (mEditFace != null) {
+            mEditFace.setInEditMode(focus);
+        }
+        postInvalidateThis();
     }
 
     @Override
     public boolean hasFocus() {
-        return mEditFace.hasFocus();
+        return CYPageView.FOCUS_TAB_ID == getTabId();
     }
 
     @Override
     public void setFocusable(boolean focusable) {
         super.setFocusable(focusable);
-        if (mEditFace != null) {
-            mEditFace.setEditable(focusable);
-        }
+        setEditable(focusable);
+    }
+
+    @Override
+    public boolean isFocusable() {
+        return super.isFocusable();
+    }
+
+    @Override
+    public void setEditable(boolean editable) {
+        this.mEditable = editable;
+    }
+
+    @Override
+    public boolean isEditable() {
+        return mEditable;
+    }
+
+    @Override
+    public String getDefaultText() {
+        return "";
     }
 
     @Override

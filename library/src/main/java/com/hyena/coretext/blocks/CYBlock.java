@@ -7,6 +7,7 @@ import android.graphics.Rect;
 import android.util.Log;
 
 import com.hyena.coretext.TextEnv;
+import com.hyena.coretext.utils.CYBlockUtils;
 import com.hyena.coretext.utils.Const;
 
 import java.util.ArrayList;
@@ -393,7 +394,7 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable, Clonea
     }
 
     public int getTextHeight(Paint paint) {
-        return (int) (Math.ceil(paint.descent() - paint.ascent()) + 0.5f);
+        return CYBlockUtils.getTextHeight(paint);
     }
 
     public boolean isValid() {

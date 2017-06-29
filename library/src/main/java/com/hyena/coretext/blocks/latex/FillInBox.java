@@ -4,9 +4,10 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.RectF;
 
+import com.hyena.coretext.CYPageView;
 import com.hyena.coretext.TextEnv;
-import com.hyena.coretext.blocks.CYEditFace;
 import com.hyena.coretext.blocks.ICYEditable;
+import com.hyena.coretext.blocks.IEditFace;
 import com.hyena.coretext.utils.Const;
 import com.hyena.coretext.utils.EditableValue;
 import com.hyena.framework.utils.UIUtils;
@@ -28,9 +29,10 @@ public abstract class FillInBox extends Box implements ICYEditable {
     private TextEnv mTextEnv;
     private int mTabId;
     private Text mText;
-    private CYEditFace mEditFace;
+    private IEditFace mEditFace;
     private float mScale = 1.0f;
     private Rect mBlockRect = new Rect();
+    private Rect mContentRect = new Rect();
     private RectF mVisibleRect = new RectF();
 
     public FillInBox(TextEnv textEnv, int tabId, String clazz, Text text) {
@@ -46,11 +48,11 @@ public abstract class FillInBox extends Box implements ICYEditable {
                 * textEnv.getContext().getResources().getDisplayMetrics()
                 .scaledDensity / TeXFormula.PIXELS_PER_POINT;
 
-        setWidth(DP_56/ mScale);
-        setHeight((-mEditFace.getTextPaint().ascent() + DP_1) / mScale);
-        setDepth((mEditFace.getTextPaint().descent() + DP_1) / mScale);
-//            mEditFace.setPadding(DP_3, DP_2, DP_3, DP_2);
-        setText(text.getText());
+        setWidth((DP_56 + DP_3 + DP_3)/ mScale);
+        setHeight((-mTextEnv.getPaint().ascent() + DP_1 + DP_2 + DP_2) / mScale);
+        setDepth((mTextEnv.getPaint().descent() + DP_1) / mScale);
+        mTextEnv.setEditableValue(getTabId(), getText() == null ? mText.getText(): getText());
+        mEditFace.setInEditMode(CYPageView.FOCUS_TAB_ID == getTabId());
     }
 
     @Override
@@ -62,19 +64,24 @@ public abstract class FillInBox extends Box implements ICYEditable {
      * 获得编辑框皮肤
      * @return 编辑框皮肤
      */
-    public abstract CYEditFace getEditFace();
+    public abstract IEditFace getEditFace();
 
     @Override
     public void draw(Canvas g2, float x, float y) {
         if (mEditFace == null)
             return;
-
         mVisibleRect.set(x, y - getHeight(), x + getWidth(), y);
+
         mBlockRect.set((int)(x * mScale + 0.5), (int)((y - getHeight()) * mScale + 0.5)
                 , (int)((x + getWidth()) * mScale + 0.5), (int)((y + getDepth()) * mScale + 0.5));
+
+        mContentRect.set(mBlockRect.left + DP_3, mBlockRect.top + DP_2,
+                mBlockRect.right - DP_3, mBlockRect.bottom - DP_2);
+
         g2.save();
-        g2.scale(mText.getMetrics().getSize() / mScale, mText.getMetrics().getSize() / mScale);
-        mEditFace.onDraw(g2, mBlockRect, mBlockRect);
+        float scale = mText.getMetrics().getSize() / mScale;
+        g2.scale(scale,scale);
+        mEditFace.onDraw(g2, mBlockRect, mContentRect);
         g2.restore();
     }
 
@@ -85,21 +92,22 @@ public abstract class FillInBox extends Box implements ICYEditable {
 
     @Override
     public void setFocus(boolean focus) {
-        if (mEditFace != null)
-            mEditFace.setFocus(focus);
+        if (focus) {
+            CYPageView.FOCUS_TAB_ID = getTabId();
+        }
+        if (mEditFace != null) {
+            mEditFace.setInEditMode(focus);
+        }
+        mTextEnv.getEventDispatcher().postInvalidate(null);
     }
 
     @Override
     public boolean hasFocus() {
-        if (mEditFace != null)
-            return mEditFace.hasFocus();
-        return false;
+        return CYPageView.FOCUS_TAB_ID == getTabId();
     }
 
     @Override
     public void setFocusable(boolean focusable) {
-        if (mEditFace != null)
-            mEditFace.setEditable(focusable);
     }
 
     @Override
@@ -121,6 +129,7 @@ public abstract class FillInBox extends Box implements ICYEditable {
     @Override
     public void setText(String text) {
         mTextEnv.setEditableValue(getTabId(), text);
+        mTextEnv.getEventDispatcher().requestLayout();
     }
 
     @Override
@@ -131,8 +140,21 @@ public abstract class FillInBox extends Box implements ICYEditable {
             mTextEnv.setEditableValue(getTabId(), value);
         }
         value.setColor(color);
-        mEditFace.setTextColor(color);
         mTextEnv.getEventDispatcher().postInvalidate(null);
+    }
+
+    @Override
+    public void setEditable(boolean editable) {
+    }
+
+    @Override
+    public boolean isEditable() {
+        return true;
+    }
+
+    @Override
+    public String getDefaultText() {
+        return null;
     }
 
     /**

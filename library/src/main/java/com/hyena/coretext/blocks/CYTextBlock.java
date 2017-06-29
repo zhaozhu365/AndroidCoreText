@@ -93,7 +93,7 @@ public class CYTextBlock extends CYBlock {
     @Override
     public void setTextHeightInLine(int textHeight) {
         super.setTextHeightInLine(textHeight);
-        this.height = textHeight;
+        this.height = textHeight - getPaddingBottom() - getPaddingTop();
     }
 
     protected void updateSize() {

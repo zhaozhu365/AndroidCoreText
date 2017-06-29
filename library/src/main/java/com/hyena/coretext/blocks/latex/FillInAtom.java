@@ -3,6 +3,7 @@ package com.hyena.coretext.blocks.latex;
 import com.hyena.coretext.TextEnv;
 import com.hyena.coretext.blocks.CYEditFace;
 import com.hyena.coretext.blocks.ICYEditable;
+import com.hyena.coretext.blocks.IEditFace;
 
 import maximsblog.blogspot.com.jlatexmath.core.Atom;
 import maximsblog.blogspot.com.jlatexmath.core.Box;
@@ -61,7 +62,7 @@ public class FillInAtom extends Atom {
     public Box getFillInBox(final TeXEnvironment env, Text ch) {
         return new FillInBox((TextEnv) env.getTag(), Integer.valueOf(mIndex), mClazz, ch) {
             @Override
-            public CYEditFace getEditFace() {
+            public IEditFace getEditFace() {
                 return FillInAtom.this.getEditFace((TextEnv) env.getTag(), this);
             }
         };
@@ -73,7 +74,7 @@ public class FillInAtom extends Atom {
      * @param editable 可编辑block
      * @return 编辑皮肤
      */
-    public CYEditFace getEditFace(TextEnv env, ICYEditable editable) {
+    public IEditFace getEditFace(TextEnv env, ICYEditable editable) {
         return new CYEditFace(env, editable);
     }
 }

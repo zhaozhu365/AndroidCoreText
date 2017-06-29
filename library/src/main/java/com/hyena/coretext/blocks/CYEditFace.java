@@ -15,23 +15,22 @@ import android.text.TextUtils;
 
 import com.hyena.coretext.CYPageView;
 import com.hyena.coretext.TextEnv;
+import com.hyena.coretext.utils.CYBlockUtils;
 import com.hyena.coretext.utils.Const;
 import com.hyena.coretext.utils.EditableValue;
 
 /**
  * Created by yangzc on 17/2/9.
  */
-public class CYEditFace {
+public class CYEditFace implements IEditFace{
 
     private static final int ACTION_FLASH = 1;
     //刷新句柄
     private Handler mHandler;
     //是否显示输入提示（闪烁输入提示）
     private boolean mInputFlash = false;
-    //是否可以编辑
-    private boolean mIsEditable = true;
 
-    private TextEnv mTextEnv;
+    protected TextEnv mTextEnv;
     private ICYEditable mEditable;
 
     protected Paint mTextPaint;
@@ -43,12 +42,9 @@ public class CYEditFace {
     protected Paint.FontMetrics mTextPaintMetrics;
     protected Paint.FontMetrics mDefaultTextPaintMetrics;
 
-    private String mDefaultText;
-
     public CYEditFace(TextEnv textEnv, ICYEditable editable) {
         this.mTextEnv = textEnv;
         this.mEditable = editable;
-
         init();
     }
 
@@ -81,17 +77,6 @@ public class CYEditFace {
         };
     }
 
-    public void postInit() {
-        EditableValue value = mTextEnv.getEditableValue(mEditable.getTabId());
-        if (value != null && value.getColor() != -1) {
-            mTextPaint.setColor(value.getColor());
-        }
-    }
-
-    public void setDefaultText(String defaultText) {
-        this.mDefaultText = defaultText;
-    }
-
     public Paint getTextPaint() {
         return mTextPaint;
     }
@@ -104,7 +89,9 @@ public class CYEditFace {
         return mBackGroundPaint;
     }
 
+    @Override
     public void onDraw(Canvas canvas, Rect blockRect, Rect contentRect) {
+        updatePaint();
         drawBackGround(canvas, blockRect, contentRect);
         drawBorder(canvas, blockRect, contentRect);
         drawFlash(canvas, contentRect);
@@ -121,13 +108,13 @@ public class CYEditFace {
     }
 
     protected void drawBackGround(Canvas canvas, Rect blockRect, Rect contentRect) {
-        if (!hasFocus()) {
+        if (!mEditable.hasFocus()) {
             canvas.drawRect(blockRect, mBackGroundPaint);
         }
     }
 
     protected void drawFlash(Canvas canvas, Rect contentRect) {
-        if (mIsEditable && hasFocus() && mInputFlash) {
+        if (mEditable.isEditable() && mEditable.hasFocus() && mInputFlash) {
             String text = getText();
             float left;
             if (!TextUtils.isEmpty(text)) {
@@ -140,6 +127,7 @@ public class CYEditFace {
             } else {
                 left = contentRect.left + contentRect.width()/2;
             }
+            left += Const.DP_1;
             canvas.drawLine(left, contentRect.top, left, contentRect.bottom, mFlashPaint);
         }
     }
@@ -156,12 +144,12 @@ public class CYEditFace {
             }
             canvas.save();
             canvas.clipRect(contentRect);
-            TextEnv.Align align = getTextEnv().getTextAlign();
+            TextEnv.Align align = mTextEnv.getTextAlign();
             float y;
             if (align == TextEnv.Align.TOP) {
-                y = contentRect.top + getTextHeight(mTextPaint) - mTextPaintMetrics.bottom;
+                y = contentRect.top + CYBlockUtils.getTextHeight(mTextPaint) - mTextPaintMetrics.bottom;
             } else if(align == TextEnv.Align.CENTER) {
-                y = contentRect.top + (contentRect.height() + getTextHeight(mTextPaint))/2 - mTextPaintMetrics.bottom;
+                y = contentRect.top + (contentRect.height() + CYBlockUtils.getTextHeight(mTextPaint))/2 - mTextPaintMetrics.bottom;
             } else {
                 y = contentRect.bottom - mTextPaintMetrics.bottom;
             }
@@ -171,8 +159,8 @@ public class CYEditFace {
     }
 
     protected void drawDefaultText(Canvas canvas, Rect contentRect) {
-        if (!TextUtils.isEmpty(mDefaultText)) {
-            float textWidth = mDefaultTxtPaint.measureText(mDefaultText);
+        if (!TextUtils.isEmpty(mEditable.getDefaultText())) {
+            float textWidth = mDefaultTxtPaint.measureText(mEditable.getDefaultText());
             float contentWidth = contentRect.width();
             float x;
             if (textWidth > contentWidth) {
@@ -182,7 +170,7 @@ public class CYEditFace {
             }
             canvas.save();
             canvas.clipRect(contentRect);
-            canvas.drawText(mDefaultText, x, contentRect.bottom - mDefaultTextPaintMetrics.bottom, mTextPaint);
+            canvas.drawText(mEditable.getDefaultText(), x, contentRect.bottom - mDefaultTextPaintMetrics.bottom, mTextPaint);
             canvas.restore();
         }
     }
@@ -209,50 +197,27 @@ public class CYEditFace {
         return null;
     }
 
-    public void setTextColor(int color) {
-        if (mTextPaint != null) {
-            mTextPaint.setColor(color);
+    private void updatePaint() {
+        EditableValue value = mTextEnv.getEditableValue(mEditable.getTabId());
+        if (value != null && value.getColor() != -1) {
+            mTextPaint.setColor(value.getColor());
         }
     }
 
-    public void setEditable(boolean isEditable) {
-        this.mIsEditable = isEditable;
-        if (mTextEnv != null)
-            mTextEnv.getEventDispatcher().postInvalidate(null);
-    }
-
-    public void setFocus(boolean hasFocus) {
-        if (hasFocus && mEditable != null) {
-            CYPageView.FOCUS_TAB_ID = mEditable.getTabId();
-        }
-        if (hasFocus()) {
+    @Override
+    public void setInEditMode(boolean edit) {
+        if (edit) {
             mHandler.removeMessages(ACTION_FLASH);
             Message next = mHandler.obtainMessage(ACTION_FLASH);
-            mHandler.sendMessageDelayed(next, 500);
+            mHandler.sendMessageDelayed(next, 0);
         } else {
             mHandler.removeMessages(ACTION_FLASH);
         }
-        if (mTextEnv != null)
-            mTextEnv.getEventDispatcher().postInvalidate(null);
     }
 
-    /**
-     * 是否可在编辑模式
-     * @return
-     */
-    public boolean hasFocus() {
-        return mIsEditable && CYPageView.FOCUS_TAB_ID == mEditable.getTabId();
-    }
-
-    public TextEnv getTextEnv() {
-        return mTextEnv;
-    }
-
+    @Override
     public void release() {
         mHandler.removeMessages(ACTION_FLASH);
     }
 
-    public int getTextHeight(Paint paint) {
-        return (int) (Math.ceil(paint.descent() - paint.ascent()) + 0.5f);
-    }
 }

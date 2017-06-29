@@ -67,7 +67,6 @@ public class LatexBlock extends CYPlaceHolderBlock implements ICYEditableGroup {
      * 注册命令
      */
     public void registerCommand() {
-//        addCommand("fillin", 3);
     }
 
     /**
@@ -87,9 +86,6 @@ public class LatexBlock extends CYPlaceHolderBlock implements ICYEditableGroup {
      * @return
      */
     public Atom createAtom(String command, TeXParser tp, String[] args) {
-//        if ("fillin".equals(command)) {
-//            return new FillInAtom(args[1], args[2], args[3]);
-//        }
         return null;
     }
 
@@ -134,13 +130,12 @@ public class LatexBlock extends CYPlaceHolderBlock implements ICYEditableGroup {
      * @param latex
      */
     public void setFormula(String latex){
+        if (mTexIcon != null && mTexIcon.getBox() != null) {
+            releaseAll(mTexIcon.getBox());
+        }
         this.mLatex = latex;
         mTexFormula.setLaTeX(latex);
         mTexIcon = mBuilder.build();
-    }
-
-    public String getLatex() {
-        return mLatex;
     }
 
     @Override
