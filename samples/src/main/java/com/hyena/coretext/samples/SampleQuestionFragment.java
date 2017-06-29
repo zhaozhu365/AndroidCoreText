@@ -17,9 +17,6 @@ import com.hyena.coretext.blocks.ICYEditable;
 import com.hyena.coretext.event.CYFocusEventListener;
 import com.hyena.coretext.samples.question.QuestionTextView;
 import com.hyena.framework.clientlog.LogUtil;
-import com.hyena.framework.utils.ToastUtils;
-
-import java.util.List;
 
 /**
  * Created by yangzc on 17/2/6.
@@ -70,8 +67,8 @@ public class SampleQuestionFragment extends Fragment {
             @Override
             public void onClick(View v) {
 //                mQtvQuestion.clearFocus();
-                List<ICYEditable> list = mQtvQuestion.getEditableList();
-                ToastUtils.showToast(getContext(), "onClick!!! , editable size: " + list.size());
+//                List<ICYEditable> list = mQtvQuestion.getEditableList();
+//                ToastUtils.showToast(getContext(), "onClick!!! , editable size: " + list.size());
 //                mQtvQuestion.setText(2, "p");
 //                mQtvQuestion.setFocus(2);
             }

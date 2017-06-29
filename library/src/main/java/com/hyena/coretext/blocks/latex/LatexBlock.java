@@ -35,7 +35,6 @@ public class LatexBlock extends CYPlaceHolderBlock implements ICYEditableGroup {
     private TeXFormula mTexFormula;
     private TeXIcon mTexIcon;
     private TeXFormula.TeXIconBuilder mBuilder;
-    private String mLatex;
 
     private HashMap<String, Integer> mCommandMap = new HashMap<>();
     public LatexBlock(TextEnv textEnv, String content) {
@@ -133,7 +132,6 @@ public class LatexBlock extends CYPlaceHolderBlock implements ICYEditableGroup {
         if (mTexIcon != null && mTexIcon.getBox() != null) {
             releaseAll(mTexIcon.getBox());
         }
-        this.mLatex = latex;
         mTexFormula.setLaTeX(latex);
         mTexIcon = mBuilder.build();
     }
