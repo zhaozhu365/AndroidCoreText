@@ -15,7 +15,7 @@ public class CYParagraphStartBlock extends CYBlock {
 
     public CYParagraphStartBlock(TextEnv textEnv, String content) {
         super(textEnv, content);
-        mStyle = new CYParagraphStyle(textEnv);
+        mStyle = createStyle(textEnv);
     }
 
     @Override
@@ -30,6 +30,10 @@ public class CYParagraphStartBlock extends CYBlock {
 
     public void setParagraphStyle(CYParagraphStyle style) {
         this.mStyle = style;
+    }
+
+    public CYParagraphStyle createStyle(TextEnv textEnv) {
+        return new CYParagraphStyle(textEnv);
     }
 
     public CYParagraphStyle getStyle() {
