@@ -19,11 +19,20 @@ android {
     }
 }
 
+ext {
+    IS_RELEASE = project.getGradle().startParameter.taskNames.any{it.contains('library:assembleRelease')}
+}
+
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.github.yangzc:AndroidSupport:1.0.2'
-//    embedded project(':jlatexmath')
-    compile project(':jlatexmath')
 }
+
+if (IS_RELEASE) {
+    dependencies.add("embedded", project(':jlatexmath'));
+} else {
+    dependencies.add("compile", project(':jlatexmath'))
+}
+println("IS_RELEASE: " + IS_RELEASE)
 
 // ./gradlew library:assembleRelease
