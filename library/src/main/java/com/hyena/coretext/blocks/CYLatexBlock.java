@@ -5,10 +5,6 @@ import android.graphics.Rect;
 import android.text.TextUtils;
 
 import com.hyena.coretext.TextEnv;
-import com.hyena.coretext.blocks.CYParagraphStyle;
-import com.hyena.coretext.blocks.CYPlaceHolderBlock;
-import com.hyena.coretext.blocks.ICYEditable;
-import com.hyena.coretext.blocks.ICYEditableGroup;
 import com.hyena.coretext.blocks.latex.FillInBox;
 import com.hyena.framework.utils.UIUtils;
 

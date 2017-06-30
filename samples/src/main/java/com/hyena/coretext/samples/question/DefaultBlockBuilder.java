@@ -12,6 +12,7 @@ import com.hyena.coretext.blocks.CYBlock;
 import com.hyena.coretext.blocks.CYBreakLineBlock;
 import com.hyena.coretext.blocks.CYEditFace;
 import com.hyena.coretext.blocks.CYParagraphEndBlock;
+import com.hyena.coretext.blocks.CYTableBlock;
 import com.hyena.coretext.blocks.CYTextBlock;
 import com.hyena.coretext.blocks.ICYEditable;
 import com.hyena.coretext.blocks.CYLatexBlock;
@@ -160,6 +161,8 @@ public class DefaultBlockBuilder implements CYBlockProvider.CYBlockBuilder {
                 }
 
             };
+        } else if ("table".equals(type)) {
+            return (T) new CYTableBlock(textEnv, data);
         }
         return null;
     }

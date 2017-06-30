@@ -44,6 +44,8 @@ public class CYPageBlock extends CYBlock<CYLineBlock> {
 
     @Override
     public void draw(Canvas canvas) {
+        canvas.save();
+        canvas.translate(getPaddingLeft(), getPaddingTop());
         List<CYLineBlock> children = getChildren();
         if (children != null) {
             int count = children.size();
@@ -52,6 +54,7 @@ public class CYPageBlock extends CYBlock<CYLineBlock> {
                 lineBlock.draw(canvas);
             }
         }
+        canvas.restore();
     }
 
     public List<CYBlock> getBlocks() {

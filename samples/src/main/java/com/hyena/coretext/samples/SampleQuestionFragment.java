@@ -88,6 +88,7 @@ public class SampleQuestionFragment extends Fragment {
 
                 "" +
                 "#{\"type\":\"latex\",\"content\":\"\\\\frac{7}{5}\"}#" +
+                "#{\"type\":\"table\",\"content\":\"\\\\frac{7}{5}\"}#" +
                 "";
 //        question = "#{\"type\":\"para_begin\",\"size\":34,\"align\":\"left\",\"color\":\"#808080\",\"margin\":40}#根<gen>据<ju>读<du>音<yin>（音频）提示补全单词根提示补全单词提示补全单词提示补全单词提示补全单词提示补全单词#{\"type\":\"para_end\"}##{\"type\":\"para_begin\",\"size\":40,\"align\":\"left\",\"color\":\"#ffffff\",\"margin\":40}##{\"type\":\"audio\",\"src\":\"http://7xohdn.com2.z0.glb.qiniucdn.com/sseng/book.mp3\"}##{\"type\":\"para_end\"}##{\"type\":\"para_begin\",\"size\":40,\"align\":\"left\",\"color\":\"#4d4d4d\",\"margin\":40}#b#{\"type\":\"blank\",\"id\": 1,\"class\":\"choice\",\"size\":\"letter\"}##{\"type\":\"blank\",\"id\": 2,\"class\":\"choice\",\"size\":\"letter\"}#k#{\"type\":\"para_end\"}#";
 

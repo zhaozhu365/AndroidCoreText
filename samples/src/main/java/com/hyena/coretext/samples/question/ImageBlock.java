@@ -23,7 +23,7 @@ public class ImageBlock extends CYImageBlock {
 
     public ImageBlock(TextEnv textEnv, String content) {
         super(textEnv, content);
-        mScreenWidth = textEnv.getContext().getResources().getDisplayMetrics().widthPixels;
+        mScreenWidth = getTextEnv().getPageWidth();
         init(textEnv.getContext(), content);
     }
 
@@ -50,4 +50,10 @@ public class ImageBlock extends CYImageBlock {
         }
     }
 
+    @Override
+    public boolean onTouchEvent(int action, float x, float y) {
+        if (mBitmap != null)
+            return false;
+        return super.onTouchEvent(action, x, y);
+    }
 }
