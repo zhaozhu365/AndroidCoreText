@@ -29,7 +29,7 @@
 ///**
 // * Created by yangzc on 16/6/14.
 // */
-//public class LatexBlock extends CYPlaceHolderBlock implements ICYEditableGroup {
+//public class CYLatexBlock extends CYPlaceHolderBlock implements ICYEditableGroup {
 //
 //    private TeXFormula mTexFormula;
 //    private TeXIcon mTexIcon;
@@ -37,7 +37,7 @@
 //    private String mLatex;
 //
 //    private String mContent;
-//    public LatexBlock(TextEnv textEnv, String content) {
+//    public CYLatexBlock(TextEnv textEnv, String content) {
 //        super(textEnv, content);
 //        this.mContent = content;
 //    }

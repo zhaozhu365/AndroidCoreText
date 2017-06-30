@@ -1,4 +1,4 @@
-package com.hyena.coretext.blocks.latex;
+package com.hyena.coretext.blocks;
 
 import android.graphics.Canvas;
 import android.graphics.Rect;
@@ -9,6 +9,7 @@ import com.hyena.coretext.blocks.CYParagraphStyle;
 import com.hyena.coretext.blocks.CYPlaceHolderBlock;
 import com.hyena.coretext.blocks.ICYEditable;
 import com.hyena.coretext.blocks.ICYEditableGroup;
+import com.hyena.coretext.blocks.latex.FillInBox;
 import com.hyena.framework.utils.UIUtils;
 
 import java.util.ArrayList;
@@ -30,14 +31,14 @@ import maximsblog.blogspot.com.jlatexmath.core.TeXParser;
  * Created by yangzc on 17/6/27.
  */
 
-public class LatexBlock extends CYPlaceHolderBlock implements ICYEditableGroup {
+public class CYLatexBlock extends CYPlaceHolderBlock implements ICYEditableGroup {
 
     private TeXFormula mTexFormula;
     private TeXIcon mTexIcon;
     private TeXFormula.TeXIconBuilder mBuilder;
 
     private HashMap<String, Integer> mCommandMap = new HashMap<>();
-    public LatexBlock(TextEnv textEnv, String content) {
+    public CYLatexBlock(TextEnv textEnv, String content) {
         super(textEnv, content);
         //注册自定义命令
         registerCommand();

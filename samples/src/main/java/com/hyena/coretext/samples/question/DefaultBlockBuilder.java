@@ -14,8 +14,8 @@ import com.hyena.coretext.blocks.CYEditFace;
 import com.hyena.coretext.blocks.CYParagraphEndBlock;
 import com.hyena.coretext.blocks.CYTextBlock;
 import com.hyena.coretext.blocks.ICYEditable;
+import com.hyena.coretext.blocks.CYLatexBlock;
 import com.hyena.coretext.blocks.latex.FillInAtom;
-import com.hyena.coretext.blocks.latex.LatexBlock;
 import com.hyena.coretext.builder.CYBlockProvider;
 import com.hyena.coretext.samples.App;
 
@@ -133,7 +133,7 @@ public class DefaultBlockBuilder implements CYBlockProvider.CYBlockBuilder {
                     e.printStackTrace();
                 }
             }
-            return (T) new LatexBlock(textEnv, latex) {
+            return (T) new CYLatexBlock(textEnv, latex) {
                 @Override
                 public void registerCommand() {
                     super.registerCommand();

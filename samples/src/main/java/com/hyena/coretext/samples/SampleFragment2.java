@@ -18,7 +18,7 @@
 //import com.hyena.coretext.blocks.CYBreakLineBlock;
 //import com.hyena.coretext.blocks.CYEditBlock;
 //import com.hyena.coretext.layout.CYHorizontalLayout;
-//import com.hyena.coretext.samples.question.LatexBlock;
+//import com.hyena.coretext.samples.question.CYLatexBlock;
 //import com.hyena.fillin.utils.PluginInstaller;
 //
 //import java.util.ArrayList;
@@ -65,7 +65,7 @@
 //        for (int i = 0; i < pointArray.size(); i++) {
 //            System.out.println("formula:" + result.substring(pointArray.get(i)[0],
 //                    pointArray.get(i)[1]));
-//            attString.replaceBlock(pointArray.get(i)[0], pointArray.get(i)[1], LatexBlock.class);
+//            attString.replaceBlock(pointArray.get(i)[0], pointArray.get(i)[1], CYLatexBlock.class);
 //        }
 //
 ////        //replace fillInBlock
