@@ -68,8 +68,8 @@ public class CYTextBlock extends CYBlock {
     }
 
     @Override
-    public void setParagraphStyle(CYParagraphStyle style) {
-        super.setParagraphStyle(style);
+    public void setStyle(CYStyle style) {
+        super.setStyle(style);
         if (style != null) {
             paint.setColor(style.getTextColor());
             setTextSize(style.getTextSize());
@@ -182,7 +182,7 @@ public class CYTextBlock extends CYBlock {
             if (!TextUtils.isEmpty(word.pinyin)) {
                 canvas.drawText(word.pinyin, x, y - getTextHeight(paint), paint);
             }
-            CYParagraphStyle paragraphStyle = getParagraphStyle();
+            CYStyle paragraphStyle = getParagraphStyle();
             if (paragraphStyle != null) {
                 String style = paragraphStyle.getStyle();
                 if ("under_line".equals(style)) {//添加下横线

@@ -90,7 +90,7 @@ public class CYPageView extends View implements CYLayoutEventListener {
         return null;
     }
 
-    public List<ICYEditable> getEditableList() {
+    public List<ICYEditable> findEditableList() {
         List<ICYEditable> editableList = new ArrayList<ICYEditable>();
         if (mPageBlock != null) {
             mPageBlock.findAllEditable(editableList);

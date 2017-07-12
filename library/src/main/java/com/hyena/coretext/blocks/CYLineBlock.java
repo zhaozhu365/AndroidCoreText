@@ -14,14 +14,14 @@ public class CYLineBlock extends CYBlock<CYBlock> {
 
     private int mWidth, mHeight;
     private boolean isInMonopolyRow;
-    private CYParagraphStyle mParagraphStyle;
+    private CYStyle mParagraphStyle;
     private int mMaxHeightInLine = 0;
     private int mMaxTextHeightInLine = 0;
     private boolean isValid = false;
 
     private static final int DP_20 = Const.DP_1 * 20;
 
-    public CYLineBlock(TextEnv textEnv, CYParagraphStyle style) {
+    public CYLineBlock(TextEnv textEnv, CYStyle style) {
         super(textEnv, "");
         this.mParagraphStyle = style;
     }

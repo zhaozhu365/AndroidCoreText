@@ -62,11 +62,11 @@ public class CYSinglePageView extends CYPageView {
             }
         }
         blocks = CYBlockProvider.getBlockProvider().build(getTextEnv(), text);
-        mEditableList = getEditableList();
+        mEditableList = findEditableList();
         doLayout(true);
     }
 
-    public List<ICYEditable> getEditables() {
+    public List<ICYEditable> getEditableList() {
         return mEditableList;
     }
 

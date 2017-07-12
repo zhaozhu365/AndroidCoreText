@@ -9,32 +9,40 @@ import com.hyena.coretext.TextEnv;
 /**
  * Created by yangzc on 17/2/13.
  */
-public class CYParagraphStyle {
-
-    private String mStyleId;
-
+public class CYStyle {
+    //文字对齐方式[不可继承]
     private CYHorizontalAlign mHorizontalAlign = CYHorizontalAlign.LEFT;
-
+    //文字颜色[可继承]
     private int mTextColor;
-
+    //文字大小[可继承]
     private int mTextSize;//base 640
-
+    //当前行上下间距[不可继承]
     private int mMarginTop, mMarginBottom;
-
-    private String mStyle;
-
+    //环境变量
     private TextEnv mTextEnv;
+    //当前样式名称[可继承]
+    private String mStyle;
+    //是否独占一块[不可继承]
+    private boolean mSingleBlock;
 
-    public CYParagraphStyle(TextEnv textEnv) {
+    //构造方法
+    public CYStyle(TextEnv textEnv, CYStyle parent) {
         this.mTextEnv = textEnv;
+        init();
+        if (parent != null) {
+            setTextColor(parent.getTextColor());
+            setTextSize(parent.getTextSize());
+            setStyle(parent.getStyle());
+        }
     }
 
-    public void setStyleId(String styleId) {
-        this.mStyleId = styleId;
-    }
-
-    public String getStyleId() {
-        return mStyleId;
+    /**
+     * 初始化样式
+     */
+    private void init() {
+        setTextSize(mTextEnv.getFontSize());
+        setTextColor(mTextEnv.getTextColor());
+        setHorizontalAlign(CYHorizontalAlign.LEFT);
     }
 
     public void setStyle(String style) {
@@ -83,6 +91,14 @@ public class CYParagraphStyle {
 
     public int getMarginBottom() {
         return mMarginBottom;
+    }
+
+    public boolean isSingleBlock() {
+        return mSingleBlock;
+    }
+
+    public void setSingleBlock(boolean isSingleBlock) {
+        this.mSingleBlock = isSingleBlock;
     }
 
 }

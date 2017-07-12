@@ -11,11 +11,11 @@ import com.hyena.coretext.TextEnv;
 import com.hyena.coretext.blocks.CYBlock;
 import com.hyena.coretext.blocks.CYBreakLineBlock;
 import com.hyena.coretext.blocks.CYEditFace;
-import com.hyena.coretext.blocks.CYParagraphEndBlock;
+import com.hyena.coretext.blocks.CYLatexBlock;
+import com.hyena.coretext.blocks.CYStyleEndBlock;
 import com.hyena.coretext.blocks.CYTableBlock;
 import com.hyena.coretext.blocks.CYTextBlock;
 import com.hyena.coretext.blocks.ICYEditable;
-import com.hyena.coretext.blocks.CYLatexBlock;
 import com.hyena.coretext.blocks.latex.FillInAtom;
 import com.hyena.coretext.builder.CYBlockProvider;
 import com.hyena.coretext.samples.App;
@@ -111,7 +111,7 @@ public class DefaultBlockBuilder implements CYBlockProvider.CYBlockBuilder {
         } else if ("para_begin".equals(type)) {
             return (T) new ParagraphStartBlock(textEnv, data);
         } else if ("para_end".equals(type)) {
-            return (T) new CYParagraphEndBlock(textEnv, data);
+            return (T) new CYStyleEndBlock(textEnv, data);
         } else if ("audio".equals(type)) {
             return (T) new AudioBlock(textEnv, data);
         } else if ("latex".equals(type)) {

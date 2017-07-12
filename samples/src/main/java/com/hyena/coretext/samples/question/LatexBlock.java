@@ -5,7 +5,7 @@
 //import android.text.TextUtils;
 //
 //import com.hyena.coretext.TextEnv;
-//import com.hyena.coretext.blocks.CYParagraphStyle;
+//import com.hyena.coretext.blocks.CYStyle;
 //import com.hyena.coretext.blocks.CYPlaceHolderBlock;
 //import com.hyena.coretext.blocks.ICYEditable;
 //import com.hyena.coretext.blocks.ICYEditableGroup;
@@ -43,8 +43,8 @@
 //    }
 //
 //    @Override
-//    public void setParagraphStyle(CYParagraphStyle style) {
-//        super.setParagraphStyle(style);
+//    public void setStyle(CYStyle style) {
+//        super.setStyle(style);
 //        try {
 //            JSONObject jsonObject = new JSONObject(mContent);
 //            init(jsonObject.optString("content"));

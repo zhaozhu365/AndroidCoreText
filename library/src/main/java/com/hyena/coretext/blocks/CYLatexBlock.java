@@ -86,8 +86,8 @@ public class CYLatexBlock extends CYPlaceHolderBlock implements ICYEditableGroup
     }
 
     @Override
-    public void setParagraphStyle(CYParagraphStyle style) {
-        super.setParagraphStyle(style);
+    public void setStyle(CYStyle style) {
+        super.setStyle(style);
         String content = getContent();
         if (!TextUtils.isEmpty(content)) {
             update(content);

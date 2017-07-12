@@ -41,7 +41,7 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable, Clonea
     //是否在独享行中
     private boolean mIsInMonopolyRow = true;
     private boolean mFocusable = false;
-    private CYParagraphStyle mParagraphStyle;
+    private CYStyle mParagraphStyle;
 
     private static int DP_1 = Const.DP_1;
 
@@ -375,11 +375,11 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable, Clonea
         }
     }
 
-    public void setParagraphStyle(CYParagraphStyle style) {
+    public void setStyle(CYStyle style) {
         this.mParagraphStyle = style;
     }
 
-    public CYParagraphStyle getParagraphStyle() {
+    public CYStyle getParagraphStyle() {
         return mParagraphStyle;
     }
 
