@@ -178,21 +178,55 @@ public class CYTextBlock extends CYBlock {
             Rect rect = getContentRect();
             float x = rect.left;
             float y = rect.bottom - fontMetrics.bottom;
-            canvas.drawText(word.word, x, y, paint);
-            if (!TextUtils.isEmpty(word.pinyin)) {
-                canvas.drawText(word.pinyin, x, y - getTextHeight(paint), paint);
-            }
-            CYStyle paragraphStyle = getParagraphStyle();
-            if (paragraphStyle != null) {
-                String style = paragraphStyle.getStyle();
-                if ("under_line".equals(style)) {//添加下横线
-                    canvas.drawLine(x, rect.bottom, x + rect.width(), rect.bottom, paint);
-                }
+            //绘制单词
+            drawText(canvas, word.word, x, y, paint);
+            //绘制拼音
+            drawPinyin(canvas, word.pinyin, x, y - getTextHeight(paint), paint);
+            //绘制下横线
+            drawUnderLine(canvas, rect);
+        }
+    }
+
+    /*
+     * 绘制单词
+     */
+    protected void drawText(Canvas canvas, String text, float x, float y, Paint paint) {
+        if (!TextUtils.isEmpty(text)) {
+            canvas.drawText(text, x, y, paint);
+        }
+    }
+
+    /*
+     * 绘制拼音
+     */
+    protected void drawPinyin(Canvas canvas, String pinyin, float x, float y, Paint paint) {
+        if (!TextUtils.isEmpty(pinyin)) {
+            canvas.drawText(pinyin, x, y, paint);
+        }
+    }
+
+    /**
+     * 绘制下横线
+     * @param canvas canvas
+     * @param rect 文本范围
+     */
+    protected void drawUnderLine(Canvas canvas, Rect rect) {
+        float x = rect.left;
+        CYStyle paragraphStyle = getParagraphStyle();
+        if (paragraphStyle != null) {
+            String style = paragraphStyle.getStyle();
+            if ("under_line".equals(style)) {//添加下横线
+                canvas.drawLine(x, rect.bottom, x + rect.width(), rect.bottom, paint);
             }
         }
     }
 
-    public static boolean isLetter(char ch) {
+    /**
+     * 是否是字母
+     * @param ch 内容
+     * @return true|false
+     */
+    public boolean isLetter(char ch) {
         if (('A' <= ch && ch <= 'Z') || ('a' <= ch && ch <= 'z') || ch == '-') {
             return true;
         }
