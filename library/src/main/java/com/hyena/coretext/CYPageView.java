@@ -85,7 +85,7 @@ public class CYPageView extends View implements CYLayoutEventListener {
      */
     public ICYEditable findEditableByTabId(int tabId) {
         if (mPageBlock != null) {
-            return mPageBlock.findEditableByTabId(tabId);
+            return mPageBlock.findEditableInBlockByTabId(tabId);
         }
         return null;
     }

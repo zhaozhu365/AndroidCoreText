@@ -52,10 +52,8 @@ public class CYEditFace implements IEditFace{
         //文本画笔
         mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mTextPaint.set(mTextEnv.getPaint());
-        mTextPaintMetrics = mTextPaint.getFontMetrics();
         //默认文字画笔
         mDefaultTxtPaint = new Paint(mTextPaint);
-        mDefaultTextPaintMetrics = mDefaultTxtPaint.getFontMetrics();
         //闪动提示画笔
         mFlashPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mFlashPaint.setStrokeWidth(Const.DP_1 * 2);
@@ -67,6 +65,8 @@ public class CYEditFace implements IEditFace{
         //背景画笔
         mBackGroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mBackGroundPaint.setColor(Color.GRAY);
+        //更新环境
+        updateEnv();
 
         mHandler = new Handler(Looper.getMainLooper()) {
             @Override
@@ -87,6 +87,19 @@ public class CYEditFace implements IEditFace{
 
     public Paint getBackGroundPaint() {
         return mBackGroundPaint;
+    }
+
+    public Paint getFlashPaint() {
+        return mFlashPaint;
+    }
+
+    public Paint getBorderPaint() {
+        return mBorderPaint;
+    }
+
+    public void updateEnv() {
+        mDefaultTextPaintMetrics = mDefaultTxtPaint.getFontMetrics();
+        mTextPaintMetrics = mTextPaint.getFontMetrics();
     }
 
     @Override

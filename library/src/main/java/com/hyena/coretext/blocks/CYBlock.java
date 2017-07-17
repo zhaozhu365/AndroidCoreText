@@ -337,12 +337,12 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable, Clonea
      * @param tabId tabId
      * @return
      */
-    public ICYEditable findEditableByTabId(int tabId) {
+    public ICYEditable findEditableInBlockByTabId(int tabId) {
         List<T> children = getChildren();
         if (children != null && !children.isEmpty()) {
             for (int i = 0; i < children.size(); i++) {
                 T block = children.get(i);
-                ICYEditable editable = block.findEditableByTabId(tabId);
+                ICYEditable editable = block.findEditableInBlockByTabId(tabId);
                 if (editable != null) {
                     return editable;
                 }
@@ -351,7 +351,7 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable, Clonea
             if (this instanceof ICYEditable && ((ICYEditable)this).getTabId() == tabId) {
                 return (ICYEditable) this;
             } else if (this instanceof ICYEditableGroup) {
-                return this.findEditableByTabId(tabId);
+                return ((ICYEditableGroup)this).findEditableByTabId(tabId);
             }
         }
         return null;

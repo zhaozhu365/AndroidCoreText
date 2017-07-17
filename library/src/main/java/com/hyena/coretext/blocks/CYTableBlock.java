@@ -115,6 +115,20 @@ public class CYTableBlock extends CYPlaceHolderBlock implements ICYEditableGroup
     }
 
     @Override
+    public ICYEditable findEditableByTabId(int tabId) {
+        List<ICYEditable> edits = findAllEditable();
+        if (edits == null)
+            return null;
+
+        for (int i = 0; i < edits.size(); i++) {
+            ICYEditable editable = edits.get(i);
+            if (editable.getTabId() == tabId)
+                return editable;
+        }
+        return null;
+    }
+
+    @Override
     public ICYEditable findEditable(float x, float y) {
         for (int i = 0; i < cells.length; i++) {
             TableCell rows[] = cells[i];
