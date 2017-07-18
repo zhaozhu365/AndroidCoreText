@@ -16,6 +16,9 @@ import com.hyena.coretext.layout.CYHorizontalLayout;
 import com.hyena.coretext.utils.Const;
 import com.hyena.framework.utils.UiThreadHandler;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -40,6 +43,17 @@ public class CYSinglePageView extends CYPageView {
         super(context, attrs, defStyleAttr);
     }
 
+    @Override
+    public ICYEditable findEditableByTabId(int tabId) {
+        List<ICYEditable> editableList = getEditableList();
+        for (int i = 0; i < editableList.size(); i++) {
+            ICYEditable editable = editableList.get(i);
+            if (editable.getTabId() == tabId)
+                return editable;
+        }
+        return null;
+    }
+
     private void setText(String questionTxt) {
         this.mQuestionTxt = questionTxt;
     }
@@ -62,12 +76,28 @@ public class CYSinglePageView extends CYPageView {
             }
         }
         blocks = CYBlockProvider.getBlockProvider().build(getTextEnv(), text);
-        mEditableList = findEditableList();
         doLayout(true);
+        mEditableList = findEditableList();
     }
 
     public List<ICYEditable> getEditableList() {
         return mEditableList;
+    }
+
+    public List<ICYEditable> findEditableList() {
+        List<ICYEditable> editableList = new ArrayList<>();
+        if (blocks != null && !blocks.isEmpty()) {
+            for (int i = 0; i < blocks.size(); i++) {
+                blocks.get(i).findAllEditable(editableList);
+            }
+        }
+        Collections.sort(editableList, new Comparator<ICYEditable>() {
+            @Override
+            public int compare(ICYEditable lhs, ICYEditable rhs) {
+                return lhs.getTabId() - rhs.getTabId();
+            }
+        });
+        return editableList;
     }
 
     @Override

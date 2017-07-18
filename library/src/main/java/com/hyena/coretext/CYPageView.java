@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Created by yangzc on 16/4/8.
  */
-public class CYPageView extends View implements CYLayoutEventListener {
+public abstract class CYPageView extends View implements CYLayoutEventListener {
 
     public static int FOCUS_TAB_ID = -1;
     private CYPageBlock mPageBlock;
@@ -83,20 +83,7 @@ public class CYPageView extends View implements CYLayoutEventListener {
      * @param tabId tabId
      * @return
      */
-    public ICYEditable findEditableByTabId(int tabId) {
-        if (mPageBlock != null) {
-            return mPageBlock.findEditableInBlockByTabId(tabId);
-        }
-        return null;
-    }
-
-    public List<ICYEditable> findEditableList() {
-        List<ICYEditable> editableList = new ArrayList<ICYEditable>();
-        if (mPageBlock != null) {
-            mPageBlock.findAllEditable(editableList);
-        }
-        return editableList;
-    }
+    public abstract ICYEditable findEditableByTabId(int tabId);
 
     public void clearFocus() {
         FOCUS_TAB_ID = -1;
