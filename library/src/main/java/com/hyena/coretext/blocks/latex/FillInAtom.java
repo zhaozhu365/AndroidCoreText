@@ -62,8 +62,8 @@ public class FillInAtom extends Atom {
     public Box getFillInBox(final TeXEnvironment env, Text ch) {
         return new FillInBox((TextEnv) env.getTag(), Integer.valueOf(mIndex), mClazz, ch) {
             @Override
-            public IEditFace getEditFace() {
-                return FillInAtom.this.getEditFace((TextEnv) env.getTag(), this);
+            public IEditFace createEditFace() {
+                return FillInAtom.this.createEditFace((TextEnv) env.getTag(), this);
             }
         };
     }
@@ -74,7 +74,7 @@ public class FillInAtom extends Atom {
      * @param editable 可编辑block
      * @return 编辑皮肤
      */
-    public IEditFace getEditFace(TextEnv env, ICYEditable editable) {
+    public IEditFace createEditFace(TextEnv env, ICYEditable editable) {
         return new CYEditFace(env, editable);
     }
 }

@@ -37,7 +37,7 @@ public abstract class FillInBox extends Box implements ICYEditable {
 
     public FillInBox(TextEnv textEnv, int tabId, String clazz, Text text) {
         super();
-        mEditFace = getEditFace();
+        mEditFace = createEditFace();
         if (mEditFace == null)
             return;
 
@@ -48,23 +48,50 @@ public abstract class FillInBox extends Box implements ICYEditable {
                 * textEnv.getContext().getResources().getDisplayMetrics()
                 .scaledDensity / TeXFormula.PIXELS_PER_POINT;
 
-        setWidth((DP_56 + DP_3 + DP_3)/ mScale);
-        setHeight((-mTextEnv.getPaint().ascent() + DP_1 + DP_2 + DP_2) / mScale);
+        setWidthWithScale(DP_56 + DP_3 + DP_3);
+        setHeightWithScale(-mTextEnv.getPaint().ascent() + DP_1 + DP_2 + DP_2);
         setDepth((mTextEnv.getPaint().descent() + DP_1) / mScale);
         mTextEnv.setEditableValue(getTabId(), getText() == null ? mText.getText(): getText());
         mEditFace.setInEditMode(CYPageView.FOCUS_TAB_ID == getTabId());
     }
 
-    @Override
-    public void setWidth(float w) {
-        super.setWidth(w);
+    /**
+     * 设置动态宽度
+     * @param width
+     */
+    public void setWidthWithScale(float width) {
+        super.setWidth(width/mScale);
+    }
+
+    /**
+     * 动态设置高度
+     * @param height
+     */
+    public void setHeightWithScale(float height) {
+        super.setHeight(height/mScale);
+    }
+
+    /**
+     * 获取缩放比
+     * @return
+     */
+    public float getScale() {
+        return mScale;
+    }
+
+    /**
+     * 获取编辑框皮肤
+     * @return
+     */
+    public IEditFace getEditFace() {
+        return mEditFace;
     }
 
     /**
      * 获得编辑框皮肤
      * @return 编辑框皮肤
      */
-    public abstract IEditFace getEditFace();
+    public abstract IEditFace createEditFace();
 
     @Override
     public void draw(Canvas g2, float x, float y) {

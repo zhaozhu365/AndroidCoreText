@@ -146,7 +146,7 @@ public class DefaultBlockBuilder implements CYBlockProvider.CYBlockBuilder {
                     if ("fillin".equals(command)) {
                         return new FillInAtom(args[1], args[2], args[3]) {
                             @Override
-                            public CYEditFace getEditFace(TextEnv env, ICYEditable editable) {
+                            public CYEditFace createEditFace(TextEnv env, ICYEditable editable) {
                                 return new EditFace(env, editable);
                             }
 
