@@ -1,9 +1,8 @@
 package com.hyena.coretext.blocks.latex;
 
 import com.hyena.coretext.TextEnv;
-import com.hyena.coretext.blocks.CYEditFace;
-import com.hyena.coretext.blocks.ICYEditable;
 import com.hyena.coretext.blocks.IEditFace;
+import com.hyena.framework.utils.MathUtils;
 
 import maximsblog.blogspot.com.jlatexmath.core.Atom;
 import maximsblog.blogspot.com.jlatexmath.core.Box;
@@ -15,7 +14,7 @@ import maximsblog.blogspot.com.jlatexmath.core.Text;
 /**
  * Created by yangzc on 17/6/27.
  */
-public class FillInAtom extends Atom {
+public abstract class FillInAtom extends Atom {
 
     private String mIndex;
     private String mText;
@@ -38,7 +37,7 @@ public class FillInAtom extends Atom {
         }
         boolean smallCap = env.getSmallCap();
         Text ch = getString(env.getTeXFont(), env.getStyle(), smallCap);
-        Box box = getFillInBox(env, ch);
+        Box box = createFillInBox(env, MathUtils.valueOfInt(mIndex), mClazz, ch);
         if (smallCap && Character.isLowerCase('0')) {
             box = new ScaleBox(box, 0.8f, 0.8f);
         }
@@ -55,26 +54,6 @@ public class FillInAtom extends Atom {
 
     /**
      * 获得Latex编辑框Box
-     * @param env 环境
-     * @param ch 内容
-     * @return Box
      */
-    public Box getFillInBox(final TeXEnvironment env, Text ch) {
-        return new FillInBox((TextEnv) env.getTag(), Integer.valueOf(mIndex), mClazz, ch) {
-            @Override
-            public IEditFace createEditFace() {
-                return FillInAtom.this.createEditFace((TextEnv) env.getTag(), this);
-            }
-        };
-    }
-
-    /**
-     * 获得编辑框皮肤
-     * @param env 环境
-     * @param editable 可编辑block
-     * @return 编辑皮肤
-     */
-    public IEditFace createEditFace(TextEnv env, ICYEditable editable) {
-        return new CYEditFace(env, editable);
-    }
+    public abstract Box createFillInBox(final TeXEnvironment env, int index, String clazz, Text ch);
 }

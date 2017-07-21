@@ -27,8 +27,8 @@ public class TextEnv {
     private int textColor = Color.BLACK;
     private Typeface typeface;
     private int verticalSpacing = 0;
-    private int pageWidth = 0;
-    private int pageHeight = 0;
+    private int suggestedPageWidth = 0;
+    private int suggestedPageHeight = 0;
     private boolean editable = true;
     private Align textAlign = Align.BOTTOM;
     private float mFontScale = 1.0f;
@@ -103,21 +103,21 @@ public class TextEnv {
         return this;
     }
 
-    public int getPageWidth() {
-        return pageWidth;
+    public int getSuggestedPageWidth() {
+        return suggestedPageWidth;
     }
 
-    public TextEnv setPageWidth(int pageWidth) {
-        this.pageWidth = pageWidth;
+    public TextEnv setSuggestedPageWidth(int pageWidth) {
+        this.suggestedPageWidth = pageWidth;
         return this;
     }
 
-    public int getPageHeight() {
-        return pageHeight;
+    public int getSuggestedPageHeight() {
+        return suggestedPageHeight;
     }
 
-    public TextEnv setPageHeight(int pageHeight) {
-        this.pageHeight = pageHeight;
+    public TextEnv setSuggestedPageHeight(int pageHeight) {
+        this.suggestedPageHeight = pageHeight;
         return this;
     }
 

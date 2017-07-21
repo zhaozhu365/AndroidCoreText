@@ -1,7 +1,6 @@
 package com.hyena.coretext.samples;
 
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,10 +12,7 @@ import com.hyena.coretext.AttributedString;
 import com.hyena.coretext.CYPageView;
 import com.hyena.coretext.TextEnv;
 import com.hyena.coretext.blocks.CYBlock;
-import com.hyena.coretext.blocks.CYImageBlock;
 import com.hyena.coretext.blocks.CYPageBlock;
-import com.hyena.coretext.blocks.CYPlaceHolderBlock;
-import com.hyena.coretext.blocks.CYTextBlock;
 import com.hyena.coretext.layout.CYHorizontalLayout;
 import com.hyena.coretext.layout.CYLayout;
 
@@ -35,7 +31,7 @@ public class SampleRichTextFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         int width = getResources().getDisplayMetrics().widthPixels;
         TextEnv textEnv = new TextEnv(getContext()).setTextColor(Color.BLACK).setFontSize(60)
-                .setPageWidth(width - 40).setPageHeight(Integer.MAX_VALUE).setEditable(true);
+                .setSuggestedPageWidth(width - 40).setSuggestedPageHeight(Integer.MAX_VALUE).setEditable(true);
 
         List<CYBlock> blocks = new ArrayList<CYBlock>();
         //=================================================================================================================

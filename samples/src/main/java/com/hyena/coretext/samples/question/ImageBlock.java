@@ -23,7 +23,7 @@ public class ImageBlock extends CYImageBlock {
 
     public ImageBlock(TextEnv textEnv, String content) {
         super(textEnv, content);
-        mScreenWidth = getTextEnv().getPageWidth();
+        mScreenWidth = getTextEnv().getSuggestedPageWidth();
         init(textEnv.getContext(), content);
     }
 

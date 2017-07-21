@@ -114,7 +114,7 @@ public class CYLatexBlock extends CYPlaceHolderBlock implements ICYEditableGroup
                 .setStyle(TeXConstants.STYLE_DISPLAY)
                 .setSize(fontSize)
                 .setFGColor(color)
-                .setWidth(TeXConstants.UNIT_PIXEL, getTextEnv().getPageWidth(), TeXConstants.ALIGN_LEFT)
+                .setWidth(TeXConstants.UNIT_PIXEL, getTextEnv().getSuggestedPageWidth(), TeXConstants.ALIGN_LEFT)
                 .setIsMaxWidth(true)//非精准宽度
                 .setInterLineSpacing(TeXConstants.UNIT_PIXEL, AjLatexMath.getLeading(fontSize))
                 .setTag(getTextEnv());

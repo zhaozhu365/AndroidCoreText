@@ -17,9 +17,6 @@ import com.hyena.coretext.event.CYLayoutEventListener;
 import com.hyena.coretext.utils.CYBlockUtils;
 import com.hyena.coretext.utils.Const;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by yangzc on 16/4/8.
  */
@@ -263,11 +260,11 @@ public abstract class CYPageView extends View implements CYLayoutEventListener {
     public TextEnv buildDefaultTextEnv(Context context) {
         int width = getResources().getDisplayMetrics().widthPixels;
         return new TextEnv(context)
-                .setPageWidth(width)
+                .setSuggestedPageWidth(width)
                 .setTextColor(0xff333333)
                 .setFontSize(Const.DP_1 * 20)
                 .setTextAlign(TextEnv.Align.CENTER)
-                .setPageHeight(Integer.MAX_VALUE)
+                .setSuggestedPageHeight(Integer.MAX_VALUE)
                 .setVerticalSpacing(Const.DP_1 * 3);
     }
 

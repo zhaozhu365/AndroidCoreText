@@ -102,25 +102,41 @@ public class CYSinglePageView extends CYPageView {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        CYPageBlock pageBlock = getPageBlock();
         int width = getDefaultSize(getSuggestedMinimumWidth(), widthMeasureSpec);
-        if (width > 0) {
-            if (getPageBlock() != null && getTextEnv().getPageWidth() == width) {
-                setMeasuredDimension(width, getPageBlock().getHeight());
-            } else {
-                getTextEnv().setPageWidth(width);
-                //measure
-                CYPageBlock pageBlock = parsePageBlock();
-                setPageBlock(pageBlock);
-                setMeasuredDimension(width, pageBlock == null ? 0 : pageBlock.getHeight());
-            }
+        if (pageBlock != null && width == getTextEnv().getSuggestedPageWidth()) {
+            setMeasuredDimension(getSize(pageBlock.getWidth(), widthMeasureSpec),
+                    getSize(pageBlock.getHeight(), heightMeasureSpec));
         } else {
-            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+            getTextEnv().setSuggestedPageWidth(width);
+            pageBlock = parsePageBlock();
+            setPageBlock(pageBlock);
+            if (pageBlock != null) {
+                setMeasuredDimension(getSize(pageBlock.getWidth(), widthMeasureSpec),
+                        getSize(pageBlock.getHeight(), heightMeasureSpec));
+            } else {
+                super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+            }
         }
+    }
+
+    private int getSize(int defaultSize, int measureSpec) {
+        int specMode = MeasureSpec.getMode(measureSpec);
+        int specSize = MeasureSpec.getSize(measureSpec);
+        switch (specMode) {
+            case MeasureSpec.UNSPECIFIED:
+            case MeasureSpec.AT_MOST:
+                return defaultSize;
+            case MeasureSpec.EXACTLY:
+                return specSize;
+        }
+        return defaultSize;
     }
 
     @Override
     public void doLayout(boolean force) {
         super.doLayout(force);
+        //宽度不合法，则抛弃
         if (force) {
             CYPageBlock pageBlock = parsePageBlock();
             setPageBlock(pageBlock);

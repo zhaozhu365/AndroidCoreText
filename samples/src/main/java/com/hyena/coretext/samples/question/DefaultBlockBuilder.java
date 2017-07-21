@@ -16,7 +16,9 @@ import com.hyena.coretext.blocks.CYStyleEndBlock;
 import com.hyena.coretext.blocks.CYTableBlock;
 import com.hyena.coretext.blocks.CYTextBlock;
 import com.hyena.coretext.blocks.ICYEditable;
+import com.hyena.coretext.blocks.IEditFace;
 import com.hyena.coretext.blocks.latex.FillInAtom;
+import com.hyena.coretext.blocks.latex.FillInBox;
 import com.hyena.coretext.builder.CYBlockProvider;
 import com.hyena.coretext.samples.App;
 
@@ -146,14 +148,13 @@ public class DefaultBlockBuilder implements CYBlockProvider.CYBlockBuilder {
                     if ("fillin".equals(command)) {
                         return new FillInAtom(args[1], args[2], args[3]) {
                             @Override
-                            public CYEditFace createEditFace(TextEnv env, ICYEditable editable) {
-                                return new EditFace(env, editable);
-                            }
-
-                            @Override
-                            public Box getFillInBox(TeXEnvironment env, Text ch) {
-                                //重新new一个box
-                                return super.getFillInBox(env, ch);
+                            public Box createFillInBox(final TeXEnvironment env, int index, String clazz, Text ch) {
+                                return new FillInBox((TextEnv) env.getTag(), index, clazz, ch) {
+                                    @Override
+                                    public IEditFace createEditFace() {
+                                        return new EditFace((TextEnv) env.getTag(), this);
+                                    }
+                                };
                             }
                         };
                     }

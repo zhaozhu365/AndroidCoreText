@@ -32,7 +32,7 @@ public class CYTableBlock extends CYPlaceHolderBlock implements ICYEditableGroup
         mBorderPaint.setColor(Color.BLACK);
         mBorderPaint.setStrokeWidth(Const.DP_1);
         mBorderPaint.setStyle(Paint.Style.STROKE);
-        setWidth(getTextEnv().getPageWidth());
+        setWidth(getTextEnv().getSuggestedPageWidth());
         initTable(3, 4);
         merge(1, 1, 2, 2);
 

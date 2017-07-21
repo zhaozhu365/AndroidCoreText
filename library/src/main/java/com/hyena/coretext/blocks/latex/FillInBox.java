@@ -38,8 +38,9 @@ public abstract class FillInBox extends Box implements ICYEditable {
     public FillInBox(TextEnv textEnv, int tabId, String clazz, Text text) {
         super();
         mEditFace = createEditFace();
-        if (mEditFace == null)
-            return;
+        if (mEditFace == null) {
+            throw new RuntimeException("createEditFace must be override!!!");
+        }
 
         this.mTextEnv = textEnv;
         this.mTabId = tabId;

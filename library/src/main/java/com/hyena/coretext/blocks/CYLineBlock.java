@@ -127,9 +127,9 @@ public class CYLineBlock extends CYBlock<CYBlock> {
             int appendX = 0;
             if (mParagraphStyle != null) {
                 if(mParagraphStyle.getHorizontalAlign() == CYHorizontalAlign.CENTER) {
-                    appendX = (getTextEnv().getPageWidth() - getWidth()) >> 1;
+                    appendX = (getTextEnv().getSuggestedPageWidth() - getWidth()) >> 1;
                 } else if (mParagraphStyle.getHorizontalAlign() == CYHorizontalAlign.RIGHT){
-                    appendX = getTextEnv().getPageWidth() - getWidth();
+                    appendX = getTextEnv().getSuggestedPageWidth() - getWidth();
                 }
             }
             int lineHeight = getLineHeight();

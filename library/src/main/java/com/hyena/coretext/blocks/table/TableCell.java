@@ -58,11 +58,11 @@ public class TableCell {
      */
     public void setCellText(String text) {
         TextEnv textEnv = new TextEnv(tableBlock.getTextEnv().getContext())
-                .setPageWidth(getWidth())
+                .setSuggestedPageWidth(getWidth())
                 .setTextColor(0xff333333)
                 .setFontSize(Const.DP_1 * 20)
                 .setTextAlign(TextEnv.Align.CENTER)
-                .setPageHeight(Integer.MAX_VALUE)
+                .setSuggestedPageHeight(Integer.MAX_VALUE)
                 .setVerticalSpacing(Const.DP_1 * 3);
         textEnv.getEventDispatcher().addLayoutEventListener(new CYLayoutEventListener() {
             @Override

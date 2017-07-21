@@ -37,13 +37,11 @@ public class CYTextBlock extends CYBlock {
         List<Word> words = parseWords(content);
         //初始化子节点
         setChildren(new ArrayList(words.size()));
-        int height = getTextHeight(paint);
         Paint.FontMetrics fontMetrics = paint.getFontMetrics();
         for (int i = 0; i < words.size(); i++) {
             Word word = words.get(i);
             int blockWidth = (int) paint.measureText(word.word);
-            addChild(buildChildBlock(textEnv, paint, blockWidth,
-                    height, fontMetrics, word));
+            addChild(buildChildBlock(textEnv, paint, blockWidth, fontMetrics, word));
         }
     }
 
@@ -51,13 +49,12 @@ public class CYTextBlock extends CYBlock {
      * 构造子节点
      */
     protected CYTextBlock buildChildBlock(TextEnv textEnv, Paint paint
-            , int width, int height, Paint.FontMetrics fontMetrics, Word word) {
+            , int width, Paint.FontMetrics fontMetrics, Word word) {
         try {
             CYTextBlock textBlock = (CYTextBlock) clone();
             textBlock.setTextEnv(textEnv);
             textBlock.paint = new Paint(paint);
             textBlock.width = width;
-            textBlock.height = height;
             textBlock.fontMetrics = fontMetrics;
             textBlock.word = word;
             return textBlock;
@@ -74,6 +71,7 @@ public class CYTextBlock extends CYBlock {
             paint.setColor(style.getTextColor());
             setTextSize(style.getTextSize());
         }
+        updateSize();
     }
 
     public CYTextBlock setTextColor(int color) {
@@ -115,7 +113,6 @@ public class CYTextBlock extends CYBlock {
         if (paint != null && fontSize > 0
                 && paint.getTextSize() != fontSize) {
             paint.setTextSize(fontSize);
-            updateSize();
         }
         return this;
     }
@@ -233,7 +230,7 @@ public class CYTextBlock extends CYBlock {
         return false;
     }
 
-    class Word {
+    public static class Word {
         public String word;
         public String pinyin;
         public Word(String word, String pinyin) {

@@ -34,12 +34,12 @@ public class CYHorizontalLayout extends CYLayout {
 
     public CYHorizontalLayout(TextEnv textEnv, List<CYBlock> blocks) {
         super(textEnv);
-        this.leftWidth = textEnv.getPageWidth();
+        this.leftWidth = textEnv.getSuggestedPageWidth();
         this.mBlocks = blocks;
     }
 
     private void reset() {
-        this.leftWidth = getTextEnv().getPageWidth();
+        this.leftWidth = getTextEnv().getSuggestedPageWidth();
         this.y = 0;
         line = null;
         if (placeHolderBlocks == null)
@@ -75,7 +75,7 @@ public class CYHorizontalLayout extends CYLayout {
                     continue;
 
                 int maxBlockHeight = line.getMaxBlockHeightInLine();
-                if (y + maxBlockHeight > getTextEnv().getPageHeight()) {
+                if (y + maxBlockHeight > getTextEnv().getSuggestedPageHeight()) {
                     page = new CYPageBlock(getTextEnv());
                     y = 0;
                 } else {
@@ -101,7 +101,7 @@ public class CYHorizontalLayout extends CYLayout {
     }
 
     private List<CYLineBlock> parseLines(List<CYBlock> blocks) {
-        int pageWidth = getTextEnv().getPageWidth();
+        int pageWidth = getTextEnv().getSuggestedPageWidth();
         int blockCount = blocks.size();
         for (int i = 0; i < blockCount; i++) {
             CYBlock itemBlock = blocks.get(i);
@@ -231,7 +231,7 @@ public class CYHorizontalLayout extends CYLayout {
         }
 
         y += lineHeight + getTextEnv().getVerticalSpacing();
-        leftWidth = getTextEnv().getPageWidth();
+        leftWidth = getTextEnv().getSuggestedPageWidth();
         line = new CYLineBlock(getTextEnv(), getStyle(styleStack));
         lines.add(line);
         linePlaceHolderBlocks = getLinePlaceHolderBlocks(y);
