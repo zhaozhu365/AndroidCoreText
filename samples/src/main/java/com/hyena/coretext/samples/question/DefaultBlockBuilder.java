@@ -129,8 +129,8 @@ public class DefaultBlockBuilder implements CYBlockProvider.CYBlockBuilder {
                         String id = jsonFillIn.optString("id");
     //                String size = jsonFillIn.optString("size");//永远express
                         String clazz = jsonFillIn.optString("class");
-                        String replaceStr = "\\\\fillin{" + id + "}{" + clazz + "}{10}";
-                        latex = matcher.replaceFirst(replaceStr);
+                        String replaceStr = "\\fillin{" + id + "}{" + clazz + "}{10}";
+                        latex = latex.replace("#{" + group + "}#", replaceStr);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

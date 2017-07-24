@@ -141,7 +141,9 @@ public class CYEditFace implements IEditFace{
                 left = contentRect.left + contentRect.width()/2;
             }
             left += Const.DP_1;
-            canvas.drawLine(left, contentRect.top, left, contentRect.bottom, mFlashPaint);
+            int textHeight = CYBlockUtils.getTextHeight(mTextPaint);
+            int padding = (contentRect.height() - textHeight) /2 - Const.DP_1 * 2;
+            canvas.drawLine(left, contentRect.top + padding, left, contentRect.bottom - padding, mFlashPaint);
         }
     }
 

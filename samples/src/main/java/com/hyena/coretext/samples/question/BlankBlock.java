@@ -23,7 +23,7 @@ public class BlankBlock extends CYEditBlock {
     private String size;
     private int mWidth, mHeight;
     private static int DP_2 = Const.DP_1 * 2;
-    private static int DP_3 = Const.DP_1 * 3;
+    private static int DP_3 = Const.DP_1 * 5;
 
     private String mDefaultText;
     public BlankBlock(TextEnv textEnv, String content) {

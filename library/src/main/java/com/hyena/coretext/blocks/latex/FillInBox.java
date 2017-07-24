@@ -23,7 +23,7 @@ public abstract class FillInBox extends Box implements ICYEditable {
 
     private static final int DP_1 = Const.DP_1;
     private static final int DP_2 = Const.DP_1 * 2;
-    private static final int DP_3 = Const.DP_1 * 3;
+    private static final int DP_3 = Const.DP_1 * 5;
     private static final int DP_56 = Const.DP_1 * 56;
 
     private TextEnv mTextEnv;
@@ -51,7 +51,8 @@ public abstract class FillInBox extends Box implements ICYEditable {
 
         setWidthWithScale(DP_56 + DP_3 + DP_3);
         setHeightWithScale(-mTextEnv.getPaint().ascent() + DP_1 + DP_2 + DP_2);
-        setDepth((mTextEnv.getPaint().descent() + DP_1) / mScale);
+//        setDepth((mTextEnv.getPaint().descent() + DP_1) / mScale);
+        setDepth(getHeight()/2);
         mTextEnv.setEditableValue(getTabId(), getText() == null ? mText.getText(): getText());
         mEditFace.setInEditMode(CYPageView.FOCUS_TAB_ID == getTabId());
     }
