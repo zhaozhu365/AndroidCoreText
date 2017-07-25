@@ -1,6 +1,7 @@
 package com.hyena.coretext.blocks.latex;
 
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 
@@ -96,7 +97,7 @@ public abstract class FillInBox extends Box implements ICYEditable {
     public abstract IEditFace createEditFace();
 
     @Override
-    public void draw(Canvas g2, float x, float y) {
+    public void draw(Canvas g2, float x, float y, Paint paint) {
         if (mEditFace == null)
             return;
         mVisibleRect.set(x, y - getHeight(), x + getWidth(), y);
