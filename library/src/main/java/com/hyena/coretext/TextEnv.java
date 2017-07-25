@@ -10,6 +10,7 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.util.SparseArray;
 
+import com.hyena.coretext.builder.IBlockMaker;
 import com.hyena.coretext.event.CYEventDispatcher;
 import com.hyena.coretext.utils.EditableValue;
 
@@ -37,6 +38,7 @@ public class TextEnv {
     private CYEventDispatcher mEventDispatcher = new CYEventDispatcher();
     private SparseArray<EditableValue> mEditableValues = new SparseArray<EditableValue>();
     private String mTag = "";
+    private IBlockMaker mBlockMaker;
 
     public TextEnv(Context context) {
         this.context = context;
@@ -62,6 +64,14 @@ public class TextEnv {
 
     public String getTag() {
         return mTag;
+    }
+
+    public void setBlockMaker(IBlockMaker maker) {
+        this.mBlockMaker = maker;
+    }
+
+    public IBlockMaker getBlockMaker() {
+        return mBlockMaker;
     }
 
     public TextEnv setFontScale(float scale) {

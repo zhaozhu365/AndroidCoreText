@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import com.hyena.coretext.blocks.CYBlock;
 import com.hyena.coretext.blocks.CYTextBlock;
 import com.hyena.coretext.builder.CYBlockProvider;
+import com.hyena.coretext.builder.IBlockMaker;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -89,6 +90,10 @@ public class AttributedString {
     private CYTextBlock buildTextBlock(int start, int end) {
         String content = mText.substring(start, end);
         content = content.replaceAll("labelsharp", "#");
+        IBlockMaker maker = mTextEnv.getBlockMaker();
+        if (maker != null) {
+            return maker.buildTextBlock(mTextEnv, content);
+        }
         return CYBlockProvider.getBlockProvider().buildTextBlock(mTextEnv, content);
     }
 

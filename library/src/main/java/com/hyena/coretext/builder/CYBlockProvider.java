@@ -43,7 +43,7 @@ public class CYBlockProvider {
         this.mBlockBuilder = builder;
     }
 
-    public interface CYBlockBuilder {
+    public interface CYBlockBuilder extends IBlockMaker {
 
         /**
          * 构造block
