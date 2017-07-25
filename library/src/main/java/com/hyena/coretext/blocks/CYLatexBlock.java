@@ -1,6 +1,7 @@
 package com.hyena.coretext.blocks;
 
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.text.TextUtils;
 
@@ -32,10 +33,12 @@ public class CYLatexBlock extends CYPlaceHolderBlock implements ICYEditableGroup
     private TeXFormula mTexFormula;
     private TeXIcon mTexIcon;
     private TeXFormula.TeXIconBuilder mBuilder;
+    private Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     private HashMap<String, Integer> mCommandMap = new HashMap<>();
     public CYLatexBlock(TextEnv textEnv, String content) {
         super(textEnv, content);
+        mPaint = new Paint(textEnv.getPaint());
         //注册自定义命令
         registerCommand();
         //初始化latex自定义命令
@@ -109,14 +112,14 @@ public class CYLatexBlock extends CYPlaceHolderBlock implements ICYEditableGroup
         }
         fontSize = UIUtils.px2dip(fontSize);
 
-        AjLatexMath.getPaint().setColor(color);
+//        AjLatexMath.getPaint().setColor(color);
         mBuilder = mTexFormula.new TeXIconBuilder()
                 .setStyle(TeXConstants.STYLE_DISPLAY)
                 .setSize(fontSize)
                 .setFGColor(color)
                 .setWidth(TeXConstants.UNIT_PIXEL, getTextEnv().getSuggestedPageWidth(), TeXConstants.ALIGN_LEFT)
                 .setIsMaxWidth(true)//非精准宽度
-                .setInterLineSpacing(TeXConstants.UNIT_PIXEL, AjLatexMath.getLeading(fontSize))
+                .setInterLineSpacing(TeXConstants.UNIT_PIXEL, AjLatexMath.getLeading(mPaint, fontSize))
                 .setTag(getTextEnv());
         setFormula(latex);
     }
@@ -155,7 +158,7 @@ public class CYLatexBlock extends CYPlaceHolderBlock implements ICYEditableGroup
             canvas.save();
             Rect contentRect = getContentRect();
             canvas.translate(contentRect.left, contentRect.top);
-            mTexIcon.paintIcon(canvas, 0, 0);
+            mTexIcon.paintIcon(canvas, 0, 0, mPaint);
             canvas.restore();
         }
     }
