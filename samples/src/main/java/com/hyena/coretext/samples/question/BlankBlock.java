@@ -51,6 +51,7 @@ public class BlankBlock extends CYEditBlock {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        setMargin(Const.DP_1 * 3, Const.DP_1 * 3);
         updateSize(getText());
     }
 

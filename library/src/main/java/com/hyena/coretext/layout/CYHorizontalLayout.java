@@ -187,7 +187,7 @@ public class CYHorizontalLayout extends CYLayout {
                     placeHolderBlocks.add((CYPlaceHolderBlock) itemBlock);
                 }
                 CYPlaceHolderBlock hitCell;
-                int blockWidth = itemBlock.getWidth();
+                int blockWidth = itemBlock.getWidth() + itemBlock.getMarginLeft() + itemBlock.getMarginRight();
                 //修正位置
                 if (blockWidth < leftWidth) {
                     hitCell = getHitCell(linePlaceHolderBlocks, pageWidth - leftWidth, y, itemBlock);
@@ -206,7 +206,7 @@ public class CYHorizontalLayout extends CYLayout {
                         hitCell = getHitCell(linePlaceHolderBlocks, pageWidth - leftWidth, y, itemBlock);
                     }
                 }
-                itemBlock.setX(pageWidth - leftWidth);
+                itemBlock.setX(pageWidth - leftWidth + itemBlock.getMarginLeft());
                 itemBlock.setLineY(y);
                 leftWidth -= blockWidth;
                 line.addChild(itemBlock);

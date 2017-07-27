@@ -26,6 +26,7 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable, Clonea
     //当前行高度
     private int lineHeight;
     private int paddingLeft = 0, paddingTop = 0, paddingRight = 0, paddingBottom = 0;
+    private int marginLeft = 0, marginRight = 0;
     //是否存在焦点
     private boolean mFocus = false;
     //内容范围
@@ -122,6 +123,11 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable, Clonea
         this.paddingBottom = bottom;
     }
 
+    public void setMargin(int left, int right) {
+        this.marginLeft = left;
+        this.marginRight = right;
+    }
+
     /**
      * @return padding left
      */
@@ -148,6 +154,20 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable, Clonea
      */
     public int getPaddingBottom() {
         return paddingBottom;
+    }
+
+    /**
+     * @return margin left
+     */
+    public int getMarginLeft() {
+        return marginLeft;
+    }
+
+    /**
+     * @return margin right
+     */
+    public int getMarginRight() {
+        return marginRight;
     }
 
     /**
