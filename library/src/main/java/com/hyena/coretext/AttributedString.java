@@ -89,7 +89,7 @@ public class AttributedString {
      */
     private CYTextBlock buildTextBlock(int start, int end) {
         String content = mText.substring(start, end);
-        content = content.replaceAll("labelsharp", "#");
+//        content = content.replaceAll("labelsharp", "#");
         IBlockMaker maker = mTextEnv.getBlockMaker();
         if (maker != null) {
             return maker.buildTextBlock(mTextEnv, content);

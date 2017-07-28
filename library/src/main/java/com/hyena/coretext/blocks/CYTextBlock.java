@@ -7,6 +7,7 @@ import android.graphics.Typeface;
 import android.text.TextUtils;
 
 import com.hyena.coretext.TextEnv;
+import com.hyena.coretext.utils.PaintManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,21 +41,18 @@ public class CYTextBlock extends CYBlock {
         Paint.FontMetrics fontMetrics = paint.getFontMetrics();
         for (int i = 0; i < words.size(); i++) {
             Word word = words.get(i);
-            int blockWidth = getTextWidth(paint, word.word);
-            addChild(buildChildBlock(textEnv, paint, blockWidth, fontMetrics, word));
+            addChild(buildChildBlock(textEnv, paint, fontMetrics, word));
         }
     }
 
     /*
      * 构造子节点
      */
-    protected CYTextBlock buildChildBlock(TextEnv textEnv, Paint paint
-            , int width, Paint.FontMetrics fontMetrics, Word word) {
+    protected CYTextBlock buildChildBlock(TextEnv textEnv, Paint paint, Paint.FontMetrics fontMetrics, Word word) {
         try {
             CYTextBlock textBlock = (CYTextBlock) clone();
             textBlock.setTextEnv(textEnv);
-            textBlock.paint = new Paint(paint);
-            textBlock.width = width;
+            textBlock.paint = paint;
             textBlock.fontMetrics = fontMetrics;
             textBlock.word = word;
             return textBlock;
@@ -149,7 +147,7 @@ public class CYTextBlock extends CYBlock {
             char chs[] = text.toCharArray();
             for (int i = 0; i < chs.length; i++) {
                 int wordStart = i, count = 1;
-                while ((i + 1) < chs.length && isLetter(chs[i + 1])
+                while ((i + 1) < chs.length && !PaintManager.isChinese(chs[i + 1])
                         && !Character.isSpace(chs[i + 1])) {
                     count ++;
                     i ++;
@@ -218,18 +216,6 @@ public class CYTextBlock extends CYBlock {
                 canvas.drawLine(x, rect.bottom, x + rect.width(), rect.bottom, paint);
             }
         }
-    }
-
-    /**
-     * 是否是字母
-     * @param ch 内容
-     * @return true|false
-     */
-    public boolean isLetter(char ch) {
-        if (('A' <= ch && ch <= 'Z') || ('a' <= ch && ch <= 'z') || ch == '-') {
-            return true;
-        }
-        return false;
     }
 
     public static class Word {

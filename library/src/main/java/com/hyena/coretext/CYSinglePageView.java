@@ -68,7 +68,7 @@ public class CYSinglePageView extends CYPageView {
             blocks = null;
             return;
         }
-        String text = mQuestionTxt.replaceAll("\\\\#", "labelsharp")
+        String text = mQuestionTxt/*.replaceAll("\\\\#", "labelsharp")*/
                 .replaceAll("\n", "").replaceAll("\r", "");
         if (blocks != null && !blocks.isEmpty()) {
             for (int i = 0; i < blocks.size(); i++) {

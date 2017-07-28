@@ -72,7 +72,7 @@ public class PaintManager {
         return (int) (Math.ceil(paint.descent() - paint.ascent()) + 0.5f);
     }
 
-    private boolean isChinese(char c) {
+    public static boolean isChinese(char c) {
         if (c >= 19968 && c <= 171941) {
             return true;
         }

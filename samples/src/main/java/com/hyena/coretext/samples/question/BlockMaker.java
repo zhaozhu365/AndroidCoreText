@@ -67,8 +67,8 @@ public class BlockMaker implements IBlockMaker {
         } else if ("audio".equals(type)) {
             return (T) new AudioBlock(textEnv, data);
         } else if ("latex".equals(type)) {
-            String latex = data.replaceAll("labelsharp", "#");
-            Pattern pattern = Pattern.compile("#\\{(.*?)\\}#");
+            String latex = data/*.replaceAll("labelsharp", "#")*/;
+            Pattern pattern = Pattern.compile("\\\\#\\{(.*?)\\}\\\\#");
             Matcher matcher = pattern.matcher(latex);
             while (matcher.find()) {
                 String group = matcher.group(1);
@@ -80,7 +80,7 @@ public class BlockMaker implements IBlockMaker {
                         //                String size = jsonFillIn.optString("size");//永远express
                         String clazz = jsonFillIn.optString("class");
                         String replaceStr = "\\fillin{" + id + "}{" + clazz + "}{10}";
-                        latex = latex.replace("#{" + group + "}#", replaceStr);
+                        latex = latex.replace("\\#{" + group + "}\\#", replaceStr);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
