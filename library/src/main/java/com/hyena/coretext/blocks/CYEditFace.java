@@ -18,6 +18,7 @@ import com.hyena.coretext.TextEnv;
 import com.hyena.coretext.utils.CYBlockUtils;
 import com.hyena.coretext.utils.Const;
 import com.hyena.coretext.utils.EditableValue;
+import com.hyena.coretext.utils.PaintManager;
 
 /**
  * Created by yangzc on 17/2/9.
@@ -131,7 +132,8 @@ public class CYEditFace implements IEditFace{
             String text = getText();
             float left;
             if (!TextUtils.isEmpty(text)) {
-                float textWidth = mTextPaint.measureText(text);
+                float textWidth = PaintManager.getInstance().getWidth(mTextPaint, text);
+//                mTextPaint.measureText(text);
                 if (textWidth > contentRect.width()) {
                     left = contentRect.right;
                 } else {
@@ -141,7 +143,7 @@ public class CYEditFace implements IEditFace{
                 left = contentRect.left + contentRect.width()/2;
             }
             left += Const.DP_1;
-            int textHeight = CYBlockUtils.getTextHeight(mTextPaint);
+            int textHeight = PaintManager.getInstance().getHeight(mTextPaint);
             int padding = (contentRect.height() - textHeight) /2 - Const.DP_1 * 2;
             canvas.drawLine(left, contentRect.top + padding, left, contentRect.bottom - padding, mFlashPaint);
         }
@@ -149,7 +151,7 @@ public class CYEditFace implements IEditFace{
 
     protected void drawText(Canvas canvas, String text, Rect contentRect) {
         if (!TextUtils.isEmpty(text)) {
-            float textWidth = mTextPaint.measureText(text);
+            float textWidth = PaintManager.getInstance().getWidth(mTextPaint, text);
             float contentWidth = contentRect.width();
             float x;
             if (textWidth > contentWidth) {
@@ -162,9 +164,9 @@ public class CYEditFace implements IEditFace{
             TextEnv.Align align = mTextEnv.getTextAlign();
             float y;
             if (align == TextEnv.Align.TOP) {
-                y = contentRect.top + CYBlockUtils.getTextHeight(mTextPaint) - mTextPaintMetrics.bottom;
+                y = contentRect.top + PaintManager.getInstance().getHeight(mTextPaint) - mTextPaintMetrics.bottom;
             } else if(align == TextEnv.Align.CENTER) {
-                y = contentRect.top + (contentRect.height() + CYBlockUtils.getTextHeight(mTextPaint))/2 - mTextPaintMetrics.bottom;
+                y = contentRect.top + (contentRect.height() + PaintManager.getInstance().getHeight(mTextPaint))/2 - mTextPaintMetrics.bottom;
             } else {
                 y = contentRect.bottom - mTextPaintMetrics.bottom;
             }
@@ -175,7 +177,8 @@ public class CYEditFace implements IEditFace{
 
     protected void drawDefaultText(Canvas canvas, Rect contentRect) {
         if (!TextUtils.isEmpty(mEditable.getDefaultText())) {
-            float textWidth = mDefaultTxtPaint.measureText(mEditable.getDefaultText());
+            float textWidth = PaintManager.getInstance().getWidth(mDefaultTxtPaint, mEditable.getDefaultText());
+//            mDefaultTxtPaint.measureText(mEditable.getDefaultText());
             float contentWidth = contentRect.width();
             float x;
             if (textWidth > contentWidth) {

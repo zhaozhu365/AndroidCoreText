@@ -3,6 +3,7 @@ package com.hyena.coretext.samples;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.widget.TextView;
 
 import com.hyena.framework.servcie.IServiceManager;
 import com.hyena.framework.servcie.ServiceProvider;
@@ -18,8 +19,8 @@ public class MainActivity extends FragmentActivity {
 //        Debug.startMethodTracing();
         setContentView(R.layout.activity_main);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//        transaction.replace(R.id.main_container, new QuestionListFragment());
-        transaction.replace(R.id.main_container, new SampleQuestionFragment());
+        transaction.replace(R.id.main_container, new QuestionListFragment1());
+//        transaction.replace(R.id.main_container, new SampleQuestionFragment());
 //        transaction.replace(R.id.main_container, new TestFragment());
 //        transaction.replace(R.id.main_container, new PreviewQuestionFragment());
         transaction.commit();

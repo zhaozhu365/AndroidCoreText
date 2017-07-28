@@ -9,6 +9,7 @@ import com.hyena.coretext.blocks.CYEditBlock;
 import com.hyena.coretext.blocks.CYEditFace;
 import com.hyena.coretext.blocks.ICYEditable;
 import com.hyena.coretext.utils.Const;
+import com.hyena.coretext.utils.PaintManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -71,7 +72,9 @@ public class BlankBlock extends CYEditBlock {
             text = "";
         int textHeight = getTextHeight(getTextEnv().getPaint());
         if (!getTextEnv().isEditable()) {
-            int width = (int) getTextEnv().getPaint().measureText(text);
+//            int width = (int) getTextEnv().getPaint().measureText(text);
+            int width = (int) PaintManager.getInstance().getWidth(getTextEnv()
+                    .getPaint(), text + "()");
             this.mWidth = width + DP_2 * 5;
             this.mHeight = textHeight;
         } else {

@@ -13,8 +13,14 @@ import java.util.List;
 public class CYPageBlock extends CYBlock<CYLineBlock> {
 
     private int mWidth, mHeight;
+    private int mMeasureWidth;
     public CYPageBlock(TextEnv textEnv) {
         super(textEnv, "");
+        this.mMeasureWidth = textEnv.getSuggestedPageWidth();
+    }
+
+    public int getMeasureWidth() {
+        return mMeasureWidth;
     }
 
     @Override
@@ -31,7 +37,7 @@ public class CYPageBlock extends CYBlock<CYLineBlock> {
     public void addChild(CYLineBlock child) {
         super.addChild(child);
         child.setParent(this);
-        int width = child.getWidth();
+        int width = child.getWidth() + child.getMarginLeft() + child.getMarginRight();
         int height = child.getHeight();
         int lineY = child.getLineY();
         if (width > mWidth) {

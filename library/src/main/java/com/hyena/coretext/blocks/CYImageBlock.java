@@ -53,6 +53,9 @@ public class CYImageBlock extends CYPlaceHolderBlock {
     }
 
     protected void setBitmap(Bitmap bitmap) {
+        if (mBitmap != null && !mBitmap.isRecycled() && mBitmap == bitmap)
+            return;
+
         if (bitmap != null && !bitmap.isRecycled()) {
             this.mBitmap = bitmap;
         }

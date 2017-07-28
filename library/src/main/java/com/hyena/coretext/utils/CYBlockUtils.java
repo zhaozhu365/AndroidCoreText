@@ -42,8 +42,4 @@ public class CYBlockUtils {
         }
         return null;
     }
-
-    public static int getTextHeight(Paint paint) {
-        return (int) (Math.ceil(paint.descent() - paint.ascent()) + 0.5f);
-    }
 }

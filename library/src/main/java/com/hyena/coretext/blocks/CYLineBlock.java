@@ -67,7 +67,7 @@ public class CYLineBlock extends CYBlock<CYBlock> {
         if (!child.isValid())
             return;
 
-        int width = child.getWidth();
+        int width = child.getWidth() + child.getMarginLeft() + child.getMarginRight();
         int height = child.getHeight();
 
         /*

@@ -40,7 +40,7 @@ public class CYTextBlock extends CYBlock {
         Paint.FontMetrics fontMetrics = paint.getFontMetrics();
         for (int i = 0; i < words.size(); i++) {
             Word word = words.get(i);
-            int blockWidth = (int) paint.measureText(word.word);
+            int blockWidth = getTextWidth(paint, word.word);
             addChild(buildChildBlock(textEnv, paint, blockWidth, fontMetrics, word));
         }
     }
@@ -95,10 +95,10 @@ public class CYTextBlock extends CYBlock {
     }
 
     protected void updateSize() {
-        float textWidth = paint.measureText(word.word);
+        float textWidth = getTextWidth(paint, word.word);
         float textHeight = getTextHeight(paint);
         if (!TextUtils.isEmpty(word.pinyin)) {
-            float pinyinWidth = paint.measureText(word.pinyin);
+            float pinyinWidth = getTextWidth(paint, word.pinyin);
             float pinyinHeight = getTextHeight(paint);
             if (pinyinWidth > textWidth) {
                 textWidth = pinyinWidth;
@@ -135,12 +135,14 @@ public class CYTextBlock extends CYBlock {
         Pattern pattern = Pattern.compile(".*?<.*?>");
         Matcher matcher = pattern.matcher(content);
         String text = content;
-        while (matcher.find()) {
-            String value = matcher.group();
-            String word = value.replaceFirst("<.*?>", "");
-            String pinyin = value.replace(word, "").replaceAll("[<|>]", "");
-            words.add(new Word(word, pinyin));
-            text = text.replace(value, "");
+        if (content.contains("<") && content.contains(">")) {
+            while (matcher.find()) {
+                String value = matcher.group();
+                String word = value.replaceFirst("<.*?>", "");
+                String pinyin = value.replace(word, "").replaceAll("[<|>]", "");
+                words.add(new Word(word, pinyin));
+                text = text.replace(value, "");
+            }
         }
 
         if (!TextUtils.isEmpty(text)) {
@@ -237,5 +239,10 @@ public class CYTextBlock extends CYBlock {
             this.word = word;
             this.pinyin = pinyin;
         }
+    }
+
+    @Override
+    public boolean isDebug() {
+        return false;
     }
 }

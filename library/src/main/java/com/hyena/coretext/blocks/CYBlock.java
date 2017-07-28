@@ -9,6 +9,7 @@ import android.util.Log;
 import com.hyena.coretext.TextEnv;
 import com.hyena.coretext.utils.CYBlockUtils;
 import com.hyena.coretext.utils.Const;
+import com.hyena.coretext.utils.PaintManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -414,7 +415,11 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable, Clonea
     }
 
     public int getTextHeight(Paint paint) {
-        return CYBlockUtils.getTextHeight(paint);
+        return PaintManager.getInstance().getHeight(paint);
+    }
+
+    public int getTextWidth(Paint paint, String text) {
+        return (int) PaintManager.getInstance().getWidth(paint, text);
     }
 
     public boolean isValid() {
