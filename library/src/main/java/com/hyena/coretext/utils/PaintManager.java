@@ -51,7 +51,7 @@ public class PaintManager {
     }
 
     private float getCharWidth(Paint paint, char ch) {
-        if (isLetter(ch)) {
+        if (!isChinese(ch)) {
             Float width = mLetterWidthCache.get(ch + "-" + paint.getTextSize());
             if (width == null) {
                 width = paint.measureText(ch + "");
@@ -72,8 +72,8 @@ public class PaintManager {
         return (int) (Math.ceil(paint.descent() - paint.ascent()) + 0.5f);
     }
 
-    private boolean isLetter(char ch) {
-        if (('A' <= ch && ch <= 'Z') || ('a' <= ch && ch <= 'z') || ch == '-' || ch == ' ') {
+    private boolean isChinese(char c) {
+        if (c >= 19968 && c <= 171941) {
             return true;
         }
         return false;

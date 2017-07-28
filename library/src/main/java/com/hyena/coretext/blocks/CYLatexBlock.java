@@ -110,16 +110,14 @@ public class CYLatexBlock extends CYPlaceHolderBlock implements ICYEditableGroup
             fontSize = getParagraphStyle().getTextSize();
             color = getParagraphStyle().getTextColor();
         }
-        fontSize = UIUtils.px2dip(fontSize);
-
-//        AjLatexMath.getPaint().setColor(color);
+        TeXFormula.setDPITarget(fontSize * 72);
         mBuilder = mTexFormula.new TeXIconBuilder()
                 .setStyle(TeXConstants.STYLE_DISPLAY)
-                .setSize(fontSize)
+                .setSize(TeXFormula.PIXELS_PER_POINT / AjLatexMath.getContext().getResources().getDisplayMetrics().scaledDensity)
                 .setFGColor(color)
                 .setWidth(TeXConstants.UNIT_PIXEL, getTextEnv().getSuggestedPageWidth(), TeXConstants.ALIGN_LEFT)
                 .setIsMaxWidth(true)//非精准宽度
-                .setInterLineSpacing(TeXConstants.UNIT_PIXEL, AjLatexMath.getLeading(mPaint, fontSize))
+                .setInterLineSpacing(TeXConstants.UNIT_PIXEL, AjLatexMath.getLeading(mPaint, UIUtils.px2dip(fontSize)))
                 .setTag(getTextEnv());
         setFormula(latex);
     }
