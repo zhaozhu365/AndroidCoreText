@@ -68,11 +68,12 @@ public class TextEnv {
 
     public void setCachePage(String content, CYPageBlock pageBlock, List<CYBlock> blocks) {
         if (mAttachedView != null) {
+            int id = getId(mAttachedView.getContext(), "id_attached");
             HashMap<String, CachedPage> cached = (HashMap<String, CachedPage>) mAttachedView
-                    .getTag(R.id.id_attached);
+                    .getTag(id);
             if (cached == null) {
                 cached = new HashMap<>();
-                mAttachedView.setTag(R.id.id_attached, cached);
+                mAttachedView.setTag(id, cached);
             }
             cached.put(content, new CachedPage(pageBlock, blocks));
         }
@@ -80,13 +81,18 @@ public class TextEnv {
 
     public CachedPage getCachedPage(String content) {
         if (mAttachedView != null) {
+            int id = getId(mAttachedView.getContext(), "id_attached");
             HashMap<String, CachedPage> cached = (HashMap<String, CachedPage>) mAttachedView
-                    .getTag(R.id.id_attached);
+                    .getTag(id);
             if (cached != null) {
                 return cached.get(content);
             }
         }
         return null;
+    }
+
+    public int getId(Context context, String paramString) {
+        return context.getResources().getIdentifier(paramString, "id", context.getPackageName());
     }
 
     public TextEnv setAttachedView(View view) {
