@@ -78,8 +78,14 @@ public class CYImageBlock extends CYPlaceHolderBlock {
     }
 
     @Override
-    public void release() {
-        super.release();
+    public void restart() {
+        super.restart();
+        ImageLoader.getImageLoader().addImageFetcherListener(mImageFetcherListener);
+    }
+
+    @Override
+    public void stop() {
+        super.stop();
         ImageLoader.getImageLoader().removeImageFetcherListener(mImageFetcherListener);
     }
 

@@ -195,12 +195,18 @@ public abstract class FillInBox extends Box implements ICYEditable {
         return mVisibleRect;
     }
 
+    public void restart() {
+        if (mEditFace != null) {
+            mEditFace.restart();
+        }
+    }
+
     /**
      * 释放
      */
-    public void release() {
+    public void stop() {
         if (mEditFace != null)
-            mEditFace.release();
+            mEditFace.stop();
     }
 
 }

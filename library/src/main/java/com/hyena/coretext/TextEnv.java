@@ -9,10 +9,17 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.util.SparseArray;
+import android.view.View;
 
+import com.hyena.coretext.blocks.CYBlock;
+import com.hyena.coretext.blocks.CYPageBlock;
 import com.hyena.coretext.builder.IBlockMaker;
 import com.hyena.coretext.event.CYEventDispatcher;
+import com.hyena.coretext.utils.CachedPage;
 import com.hyena.coretext.utils.EditableValue;
+
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by yangzc on 17/1/20.
@@ -39,6 +46,7 @@ public class TextEnv {
     private SparseArray<EditableValue> mEditableValues = new SparseArray<EditableValue>();
     private String mTag = "";
     private IBlockMaker mBlockMaker;
+    private View mAttachedView;
 
     public TextEnv(Context context) {
         this.context = context;
@@ -58,16 +66,46 @@ public class TextEnv {
         return this;
     }
 
-    public void setTag(String tag) {
+    public void setCachePage(String content, CYPageBlock pageBlock, List<CYBlock> blocks) {
+        if (mAttachedView != null) {
+            HashMap<String, CachedPage> cached = (HashMap<String, CachedPage>) mAttachedView
+                    .getTag(R.id.id_attached);
+            if (cached == null) {
+                cached = new HashMap<>();
+                mAttachedView.setTag(R.id.id_attached, cached);
+            }
+            cached.put(content, new CachedPage(pageBlock, blocks));
+        }
+    }
+
+    public CachedPage getCachedPage(String content) {
+        if (mAttachedView != null) {
+            HashMap<String, CachedPage> cached = (HashMap<String, CachedPage>) mAttachedView
+                    .getTag(R.id.id_attached);
+            if (cached != null) {
+                return cached.get(content);
+            }
+        }
+        return null;
+    }
+
+    public TextEnv setAttachedView(View view) {
+        this.mAttachedView = view;
+        return this;
+    }
+
+    public TextEnv setTag(String tag) {
         this.mTag = tag;
+        return this;
     }
 
     public String getTag() {
         return mTag;
     }
 
-    public void setBlockMaker(IBlockMaker maker) {
+    public TextEnv setBlockMaker(IBlockMaker maker) {
         this.mBlockMaker = maker;
+        return this;
     }
 
     public IBlockMaker getBlockMaker() {
@@ -190,8 +228,9 @@ public class TextEnv {
     }
 
     private boolean mDebug = false;
-    public void setDebug(boolean debug) {
+    public TextEnv setDebug(boolean debug) {
         this.mDebug = debug;
+        return this;
     }
 
     public boolean isDebug() {

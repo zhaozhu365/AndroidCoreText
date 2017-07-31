@@ -7,7 +7,6 @@ import android.graphics.Rect;
 import android.util.Log;
 
 import com.hyena.coretext.TextEnv;
-import com.hyena.coretext.utils.CYBlockUtils;
 import com.hyena.coretext.utils.Const;
 import com.hyena.coretext.utils.PaintManager;
 
@@ -404,12 +403,22 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable, Clonea
         return mParagraphStyle;
     }
 
-    public void release() {
+    public void restart() {
         List<T> children = getChildren();
         if (children != null && !children.isEmpty()) {
             for (int i = 0; i < children.size(); i++) {
                 T block = children.get(i);
-                block.release();
+                block.restart();
+            }
+        }
+    }
+
+    public void stop() {
+        List<T> children = getChildren();
+        if (children != null && !children.isEmpty()) {
+            for (int i = 0; i < children.size(); i++) {
+                T block = children.get(i);
+                block.stop();
             }
         }
     }

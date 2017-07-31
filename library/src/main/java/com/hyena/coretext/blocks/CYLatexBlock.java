@@ -128,7 +128,7 @@ public class CYLatexBlock extends CYPlaceHolderBlock implements ICYEditableGroup
      */
     public void setFormula(String latex){
         if (mTexIcon != null && mTexIcon.getBox() != null) {
-            releaseAll(mTexIcon.getBox());
+            stopAll(mTexIcon.getBox());
         }
         mTexFormula.setLaTeX(latex);
         mTexIcon = mBuilder.build();
@@ -268,15 +268,30 @@ public class CYLatexBlock extends CYPlaceHolderBlock implements ICYEditableGroup
         return null;
     }
 
-    private void releaseAll(Box box) {
+    private void stopAll(Box box) {
         if (box != null) {
             if (box instanceof FillInBox) {
-                ((FillInBox) box).release();
+                ((FillInBox) box).stop();
             } else {
                 if (box.getChildren() != null && !box.getChildren().isEmpty()) {
                     for (int i = 0; i < box.getChildren().size(); i++) {
                         Box child = box.getChildren().get(i);
-                        releaseAll(child);
+                        stopAll(child);
+                    }
+                }
+            }
+        }
+    }
+
+    private void restartAll(Box box) {
+        if (box != null) {
+            if (box instanceof FillInBox) {
+                ((FillInBox) box).restart();
+            } else {
+                if (box.getChildren() != null && !box.getChildren().isEmpty()) {
+                    for (int i = 0; i < box.getChildren().size(); i++) {
+                        Box child = box.getChildren().get(i);
+                        restartAll(child);
                     }
                 }
             }
@@ -284,10 +299,18 @@ public class CYLatexBlock extends CYPlaceHolderBlock implements ICYEditableGroup
     }
 
     @Override
-    public void release() {
-        super.release();
+    public void restart() {
+        super.restart();
+        if (mTexIcon != null) {
+            restartAll(mTexIcon.getBox());
+        }
+    }
+
+    @Override
+    public void stop() {
+        super.stop();
         if (mTexIcon != null)
-            releaseAll(mTexIcon.getBox());
+            stopAll(mTexIcon.getBox());
     }
 
 }

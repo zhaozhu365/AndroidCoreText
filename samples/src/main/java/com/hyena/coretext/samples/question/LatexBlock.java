@@ -243,7 +243,7 @@
 //    private void releaseAll(Box box) {
 //        if (box != null) {
 //            if (box instanceof FillInAtom.FillInBox) {
-//                ((FillInAtom.FillInBox) box).release();
+//                ((FillInAtom.FillInBox) box).stop();
 //            } else {
 //                if (box.getChildren() != null && !box.getChildren().isEmpty()) {
 //                    for (int i = 0; i < box.getChildren().size(); i++) {
@@ -256,8 +256,8 @@
 //    }
 //
 //    @Override
-//    public void release() {
-//        super.release();
+//    public void stop() {
+//        super.stop();
 //        if (mTexIcon != null)
 //            releaseAll(mTexIcon.getBox());
 //    }

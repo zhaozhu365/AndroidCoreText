@@ -177,9 +177,9 @@
 //
 //        }
 //
-//        public void release() {
+//        public void stop() {
 //            if (mEditFace != null)
-//                mEditFace.release();
+//                mEditFace.stop();
 //        }
 //
 //    }

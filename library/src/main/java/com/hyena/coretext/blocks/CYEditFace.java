@@ -234,7 +234,11 @@ public class CYEditFace implements IEditFace{
     }
 
     @Override
-    public void release() {
+    public void restart() {
+    }
+
+    @Override
+    public void stop() {
         mHandler.removeMessages(ACTION_FLASH);
     }
 

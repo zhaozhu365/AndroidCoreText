@@ -24,7 +24,12 @@ public interface IEditFace {
     void setInEditMode(boolean edit);
 
     /**
-     * 释放
+     * 重新开始
      */
-    void release();
+    void restart();
+
+    /**
+     * 停止
+     */
+    void stop();
 }

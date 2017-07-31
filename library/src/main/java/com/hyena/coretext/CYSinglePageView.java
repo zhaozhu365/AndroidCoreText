@@ -5,7 +5,6 @@
 package com.hyena.coretext;
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.util.AttributeSet;
 
 import com.hyena.coretext.blocks.CYBlock;
@@ -13,6 +12,7 @@ import com.hyena.coretext.blocks.CYPageBlock;
 import com.hyena.coretext.blocks.ICYEditable;
 import com.hyena.coretext.builder.CYBlockProvider;
 import com.hyena.coretext.layout.CYHorizontalLayout;
+import com.hyena.coretext.utils.CachedPage;
 import com.hyena.coretext.utils.Const;
 import com.hyena.framework.utils.UiThreadHandler;
 
@@ -28,7 +28,6 @@ public class CYSinglePageView extends CYPageView {
 
     private String mQuestionTxt;
     private List<ICYEditable> mEditableList;
-
     private List<CYBlock> blocks;
 
     public CYSinglePageView(Context context) {
@@ -59,25 +58,27 @@ public class CYSinglePageView extends CYPageView {
     }
 
     private void build() {
-        if (TextUtils.isEmpty(mQuestionTxt)) {
-            if (blocks != null && !blocks.isEmpty()) {
-                for (int i = 0; i < blocks.size(); i++) {
-                    blocks.get(i).release();
-                }
-            }
-            blocks = null;
-            return;
-        }
+        if (mQuestionTxt == null)
+            mQuestionTxt = "";
+
         String text = mQuestionTxt/*.replaceAll("\\\\#", "labelsharp")*/
                 .replaceAll("\n", "").replaceAll("\r", "");
-        if (blocks != null && !blocks.isEmpty()) {
-            for (int i = 0; i < blocks.size(); i++) {
-                blocks.get(i).release();
-            }
+        if (getPageBlock() != null) {
+            getPageBlock().stop();
         }
-        blocks = CYBlockProvider.getBlockProvider().build(getTextEnv(), text);
-        doLayout(true);
-        mEditableList = findEditableList();
+        CachedPage cachedPage = getTextEnv().getCachedPage(mQuestionTxt);
+        if (cachedPage != null && cachedPage.mPageBlock != null) {
+            cachedPage.mPageBlock.restart();
+            this.blocks = cachedPage.mBlocks;
+            setPageBlock(cachedPage.mPageBlock);
+            mEditableList = findEditableList();
+            requestLayout();
+            postInvalidate();
+        } else {
+            blocks = CYBlockProvider.getBlockProvider().build(getTextEnv(), text);
+            doLayout(true);
+            mEditableList = findEditableList();
+        }
     }
 
     public List<ICYEditable> getEditableList() {
@@ -98,6 +99,13 @@ public class CYSinglePageView extends CYPageView {
             }
         });
         return editableList;
+    }
+
+    @Override
+    public void setPageBlock(CYPageBlock pageBlock) {
+        //cache page
+        super.setPageBlock(pageBlock);
+        getTextEnv().setCachePage(mQuestionTxt, pageBlock, blocks);
     }
 
     @Override

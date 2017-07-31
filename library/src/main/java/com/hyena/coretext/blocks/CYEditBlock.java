@@ -120,9 +120,17 @@ public class CYEditBlock extends CYPlaceHolderBlock implements ICYEditable {
     }
 
     @Override
-    public void release() {
-        super.release();
+    public void restart() {
+        super.restart();
+        if (mEditFace != null) {
+            mEditFace.restart();
+        }
+    }
+
+    @Override
+    public void stop() {
+        super.stop();
         if (mEditFace != null)
-            mEditFace.release();
+            mEditFace.stop();
     }
 }

@@ -242,7 +242,12 @@ public abstract class CYPageView extends View implements CYLayoutEventListener {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        release();
+        if (mPageBlock != null) {
+            mPageBlock.stop();
+        }
+        if (mTextEnv != null) {
+            mTextEnv.getEventDispatcher().removeLayoutEventListener(this);
+        }
     }
 
     protected void release() {
@@ -253,7 +258,7 @@ public abstract class CYPageView extends View implements CYLayoutEventListener {
             mFocusEditable.setFocus(false);
         }
         if (mPageBlock != null) {
-            mPageBlock.release();
+            mPageBlock.stop();
         }
     }
 
