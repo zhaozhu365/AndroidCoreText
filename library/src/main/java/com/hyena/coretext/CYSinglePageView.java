@@ -111,13 +111,13 @@ public class CYSinglePageView extends CYPageView {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         CYPageBlock pageBlock = getPageBlock();
+        int width = getDefaultSize(getSuggestedMinimumWidth(), widthMeasureSpec);
+        getTextEnv().setSuggestedPageWidth(width);
         if (pageBlock != null && pageBlock.getMeasureWidth()
                 == getTextEnv().getSuggestedPageWidth()) {
             setMeasuredDimension(getSize(pageBlock.getWidth(), widthMeasureSpec),
                     getSize(pageBlock.getHeight(), heightMeasureSpec));
         } else {
-            int width = getDefaultSize(getSuggestedMinimumWidth(), widthMeasureSpec);
-            getTextEnv().setSuggestedPageWidth(width);
             pageBlock = parsePageBlock();
             setPageBlock(pageBlock);
             if (pageBlock != null) {
