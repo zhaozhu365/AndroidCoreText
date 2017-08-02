@@ -48,13 +48,6 @@ public abstract class CYPageView extends View implements CYLayoutEventListener {
         mTextEnv.getEventDispatcher().addLayoutEventListener(this);
     }
 
-    public void setTextEnv(TextEnv textEnv) {
-        if (mTextEnv != null) {
-            mTextEnv.getEventDispatcher().clear();
-        }
-        this.mTextEnv = textEnv;
-    }
-
     public TextEnv getTextEnv() {
         return mTextEnv;
     }

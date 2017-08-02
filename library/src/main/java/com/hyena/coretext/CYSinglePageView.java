@@ -68,8 +68,7 @@ public class CYSinglePageView extends CYPageView {
         }
         CachedPage cachedPage = getTextEnv().getCachedPage(mQuestionTxt);
         if (cachedPage != null && cachedPage.mPageBlock != null) {
-            cachedPage.mPageBlock.getTextEnv().set(getTextEnv());
-            setTextEnv(cachedPage.mPageBlock.getTextEnv());
+            cachedPage.mPageBlock.setTextEnv(getTextEnv());
             cachedPage.mPageBlock.restart();
             this.blocks = cachedPage.mBlocks;
             setPageBlock(cachedPage.mPageBlock);

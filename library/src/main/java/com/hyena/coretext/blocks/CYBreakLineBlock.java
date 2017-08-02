@@ -1,7 +1,6 @@
 package com.hyena.coretext.blocks;
 
 import android.graphics.Canvas;
-import android.graphics.Paint;
 
 import com.hyena.coretext.TextEnv;
 

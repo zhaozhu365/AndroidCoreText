@@ -68,6 +68,13 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable, Clonea
 
     public void setTextEnv(TextEnv textEnv) {
         this.mTextEnv = textEnv;
+        List<T> children = getChildren();
+        if (children != null && !children.isEmpty()) {
+            for (int i = 0; i < children.size(); i++) {
+                T block = children.get(i);
+                block.setTextEnv(textEnv);
+            }
+        }
     }
 
     /**

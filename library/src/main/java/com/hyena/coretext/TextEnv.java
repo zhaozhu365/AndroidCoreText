@@ -98,6 +98,17 @@ public class TextEnv {
         }
     }
 
+    public void clearCache(String content) {
+        if (mAttachedView != null) {
+            int id = getId(mAttachedView.getContext(), "id_attached");
+            HashMap<String, CachedPage> cached = (HashMap<String, CachedPage>) mAttachedView
+                    .getTag(id);
+            if (cached != null) {
+                cached.remove(content);
+            }
+        }
+    }
+
     public CachedPage getCachedPage(String content) {
         if (mAttachedView != null) {
             int id = getId(mAttachedView.getContext(), "id_attached");

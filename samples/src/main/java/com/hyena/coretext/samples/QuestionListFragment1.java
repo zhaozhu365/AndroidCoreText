@@ -13,9 +13,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.hyena.coretext.blocks.ICYEditable;
 import com.hyena.coretext.samples.question.QuestionTextView;
+import com.hyena.coretext.utils.EditableValue;
 import com.hyena.framework.app.adapter.SingleTypeAdapter;
 import com.hyena.framework.utils.FileUtils;
 
@@ -84,26 +86,24 @@ public class QuestionListFragment1 extends Fragment {
                 convertView.setTag(viewHolder);
 
                 viewHolder.mQtvQuestion = (QuestionTextView) convertView.findViewById(R.id.qtv_question);
+                viewHolder.mIndex = (TextView) convertView.findViewById(R.id.index);
 
             } else {
                 viewHolder = (ViewHolder) convertView.getTag();
             }
             Item item = getItem(position);
 //            viewHolder.mQtvQuestion.getTextEnv().setFontScale(0.1f);
+            viewHolder.mIndex.setText(position + "  ");
+            viewHolder.mQtvQuestion.getTextEnv().setTag(position + "").setEditableValue(1, new EditableValue(Color.RED, "position" + position));
             viewHolder.mQtvQuestion.getTextEnv().setAttachedView(parent);
             viewHolder.mQtvQuestion.getBuilder().setText(item.question)
                     .setEditable(false).build();
-
-            ICYEditable editable = viewHolder.mQtvQuestion.findEditableByTabId(1);
-            if (editable != null) {
-                editable.setText("Hello");
-                editable.setTextColor(Color.RED);
-            }
             return convertView;
         }
 
         class ViewHolder {
             QuestionTextView mQtvQuestion;
+            TextView mIndex;
         }
 
     }
