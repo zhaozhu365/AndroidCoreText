@@ -22,4 +22,6 @@ public interface ICYEditable extends ICYFocusable {
     void setEditable(boolean editable);
 
     boolean isEditable();
+
+    boolean hasBottomLine();
 }

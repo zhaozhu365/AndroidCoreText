@@ -65,6 +65,12 @@ public class CYEditBlock extends CYPlaceHolderBlock implements ICYEditable {
     }
 
     @Override
+    public boolean hasBottomLine() {
+        EditableValue value = getTextEnv().getEditableValue(getTabId());
+        return value == null ? false : value.hasBottomLine();
+    }
+
+    @Override
     public void setTextColor(int color) {
         EditableValue value = getTextEnv().getEditableValue(getTabId());
         if (value == null) {

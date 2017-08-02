@@ -157,6 +157,12 @@ public abstract class FillInBox extends Box implements ICYEditable {
     }
 
     @Override
+    public boolean hasBottomLine() {
+        EditableValue value = mTextEnv.getEditableValue(getTabId());
+        return value == null ? false : value.hasBottomLine();
+    }
+
+    @Override
     public void setText(String text) {
         mTextEnv.setEditableValue(getTabId(), text);
         mTextEnv.getEventDispatcher().requestLayout();

@@ -39,6 +39,7 @@ public class CYEditFace implements IEditFace{
     protected Paint mBorderPaint;
     protected Paint mBackGroundPaint;
     protected Paint mDefaultTxtPaint;
+    protected Paint mBottomLinePaint;
 
     protected Paint.FontMetrics mTextPaintMetrics;
     protected Paint.FontMetrics mDefaultTextPaintMetrics;
@@ -66,6 +67,10 @@ public class CYEditFace implements IEditFace{
         //背景画笔
         mBackGroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mBackGroundPaint.setColor(Color.GRAY);
+        //下横线
+        mBottomLinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mBottomLinePaint.set(mTextPaint);
+        mBottomLinePaint.setStrokeWidth(Const.DP_1);
         //更新环境
         updateEnv();
 
@@ -113,7 +118,7 @@ public class CYEditFace implements IEditFace{
         if (TextUtils.isEmpty(text)) {
             drawDefaultText(canvas, contentRect);
         } else {
-            drawText(canvas, getText(), contentRect);
+            drawText(canvas, getText(), contentRect, hasBottomLine());
         }
     }
 
@@ -149,7 +154,7 @@ public class CYEditFace implements IEditFace{
         }
     }
 
-    protected void drawText(Canvas canvas, String text, Rect contentRect) {
+    protected void drawText(Canvas canvas, String text, Rect contentRect, boolean isShowUnderLine) {
         if (!TextUtils.isEmpty(text)) {
             float textWidth = PaintManager.getInstance().getWidth(mTextPaint, text);
             float contentWidth = contentRect.width();
@@ -172,6 +177,11 @@ public class CYEditFace implements IEditFace{
             }
             canvas.drawText(text, x, y, mTextPaint);
             canvas.restore();
+
+            if (isShowUnderLine) {
+                y += mTextPaintMetrics.descent + Const.DP_1;
+                canvas.drawLine(x, y, x + textWidth, y, mBottomLinePaint);
+            }
         }
     }
 
@@ -213,6 +223,12 @@ public class CYEditFace implements IEditFace{
         if (mEditable != null)
             return mEditable.getText();
         return null;
+    }
+
+    public boolean hasBottomLine() {
+        if (mEditable != null)
+            return mEditable.hasBottomLine();
+        return false;
     }
 
     private void updatePaint() {
