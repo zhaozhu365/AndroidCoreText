@@ -11,7 +11,7 @@ public class EditableValue {
 
     private int color = -1;
     private String value;
-    private boolean hasBottomLine = true;
+    private boolean hasBottomLine = false;
 
     public EditableValue() {
     }
