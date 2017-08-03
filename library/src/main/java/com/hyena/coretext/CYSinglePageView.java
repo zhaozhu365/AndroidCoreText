@@ -105,7 +105,7 @@ public class CYSinglePageView extends CYPageView implements IRender {
             setMeasuredDimension(getSize(pageBlock.getWidth(), widthMeasureSpec),
                     getSize(pageBlock.getHeight(), heightMeasureSpec));
         } else {
-            mBuilder.build();
+            mBuilder.reLayout(true);
             pageBlock = mBuilder.getPage();
             setPageBlock(pageBlock);
             if (pageBlock != null) {
@@ -232,6 +232,9 @@ public class CYSinglePageView extends CYPageView implements IRender {
         }
 
         public void reLayout(boolean force) {
+            if (mBlocks == null) {
+                mBlocks = CYBlockProvider.getBlockProvider().build(this, mText);
+            }
             if (mBlocks != null && !mBlocks.isEmpty()) {
                 CYHorizontalLayout layout = new CYHorizontalLayout(this, mBlocks);
                 List<CYPageBlock> pages = layout.parse();
