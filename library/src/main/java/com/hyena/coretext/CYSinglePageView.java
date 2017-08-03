@@ -51,6 +51,7 @@ public class CYSinglePageView extends CYPageView implements IRender {
             builder = new Builder(getContext(), text);
             setCachePage(attachView, tag, builder);
         }
+        builder.setTag(tag);
         builder.setRender(this);
         builder.getEventDispatcher().addLayoutEventListener(this);
         this.mBuilder = builder;
