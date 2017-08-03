@@ -149,8 +149,7 @@ public class CYSinglePageView extends CYPageView implements IRender {
     @Override
     public void doLayout(boolean force) {
         super.doLayout(force);
-        mBuilder.build();
-        setPageBlock(mBuilder.getPage());
+        mBuilder.reLayout(force);
         UiThreadHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -230,6 +229,20 @@ public class CYSinglePageView extends CYPageView implements IRender {
 
         public CYPageBlock getPage() {
             return mPageBlock;
+        }
+
+        public void reLayout(boolean force) {
+            if (mBlocks != null && !mBlocks.isEmpty()) {
+                CYHorizontalLayout layout = new CYHorizontalLayout(this, mBlocks);
+                List<CYPageBlock> pages = layout.parse();
+                if (pages != null && pages.size() > 0) {
+                    mPageBlock = pages.get(0);
+                    mPageBlock.setPadding(0, 0, 0, 0);
+                }
+            }
+            if (render != null) {
+                render.setPageBlock(mPageBlock);
+            }
         }
 
         @Override
