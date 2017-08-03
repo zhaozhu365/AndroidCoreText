@@ -6,29 +6,29 @@ package com.hyena.coretext;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.View;
 
 import com.hyena.coretext.blocks.CYBlock;
 import com.hyena.coretext.blocks.CYPageBlock;
 import com.hyena.coretext.blocks.ICYEditable;
 import com.hyena.coretext.builder.CYBlockProvider;
 import com.hyena.coretext.layout.CYHorizontalLayout;
-import com.hyena.coretext.utils.CachedPage;
 import com.hyena.coretext.utils.Const;
 import com.hyena.framework.utils.UiThreadHandler;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 /**
  * Created by yangzc on 17/3/3.
  */
-public class CYSinglePageView extends CYPageView {
+public class CYSinglePageView extends CYPageView implements IRender {
 
-    private String mQuestionTxt;
-    private List<ICYEditable> mEditableList;
-    private List<CYBlock> blocks;
+    //构建器
+    private Builder mBuilder;
 
     public CYSinglePageView(Context context) {
         super(context);
@@ -42,6 +42,33 @@ public class CYSinglePageView extends CYPageView {
         super(context, attrs, defStyleAttr);
     }
 
+    /**
+     * 获取构建器
+     */
+    public Builder getBuilder(View attachView, String tag, String text) {
+        Builder builder = getCachedPage(attachView, tag);
+        if (builder == null) {
+            builder = new Builder(getContext(), text);
+            setCachePage(attachView, tag, builder);
+        }
+        builder.setRender(this);
+        builder.getEventDispatcher().addLayoutEventListener(this);
+        this.mBuilder = builder;
+        return mBuilder;
+    }
+
+    /**
+     * 获取构造器
+     * @param text
+     * @return
+     */
+    public Builder getBuilder(String text) {
+        this.mBuilder = new Builder(getContext(), text);
+        mBuilder.setRender(this);
+        mBuilder.getEventDispatcher().addLayoutEventListener(this);
+        return mBuilder;
+    }
+
     @Override
     public ICYEditable findEditableByTabId(int tabId) {
         List<ICYEditable> editableList = getEditableList();
@@ -53,74 +80,32 @@ public class CYSinglePageView extends CYPageView {
         return null;
     }
 
-    private void setText(String questionTxt) {
-        this.mQuestionTxt = questionTxt;
-    }
-
-    private void build() {
-        if (mQuestionTxt == null)
-            mQuestionTxt = "";
-
-        String text = mQuestionTxt/*.replaceAll("\\\\#", "labelsharp")*/
-                .replaceAll("\n", "").replaceAll("\r", "");
-        if (getPageBlock() != null) {
-            getPageBlock().stop();
-        }
-        CachedPage cachedPage = getTextEnv().getCachedPage(mQuestionTxt);
-        if (cachedPage != null && cachedPage.mPageBlock != null
-                && cachedPage.mPageBlock.getTextEnv() == getTextEnv()) {
-            cachedPage.mPageBlock.setTextEnv(getTextEnv());
-            cachedPage.mPageBlock.restart();
-            this.blocks = cachedPage.mBlocks;
-            setPageBlock(cachedPage.mPageBlock);
-            mEditableList = findEditableList();
-            requestLayout();
-            postInvalidate();
-        } else {
-            blocks = CYBlockProvider.getBlockProvider().build(getTextEnv(), text);
-            doLayout(true);
-            mEditableList = findEditableList();
-        }
-    }
-
     public List<ICYEditable> getEditableList() {
-        return mEditableList;
+        if (mBuilder != null) {
+            return mBuilder.getEditableList();
+        }
+        return null;
     }
 
     public List<ICYEditable> findEditableList() {
-        List<ICYEditable> editableList = new ArrayList<>();
-        if (blocks != null && !blocks.isEmpty()) {
-            for (int i = 0; i < blocks.size(); i++) {
-                blocks.get(i).findAllEditable(editableList);
-            }
+        if (mBuilder != null) {
+            return mBuilder.findEditableList();
         }
-        Collections.sort(editableList, new Comparator<ICYEditable>() {
-            @Override
-            public int compare(ICYEditable lhs, ICYEditable rhs) {
-                return lhs.getTabId() - rhs.getTabId();
-            }
-        });
-        return editableList;
-    }
-
-    @Override
-    public void setPageBlock(CYPageBlock pageBlock) {
-        //cache page
-        super.setPageBlock(pageBlock);
-        getTextEnv().setCachePage(mQuestionTxt, pageBlock, blocks);
+        return null;
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        CYPageBlock pageBlock = getPageBlock();
+        CYPageBlock pageBlock = mBuilder.getPage();
         int width = getDefaultSize(getSuggestedMinimumWidth(), widthMeasureSpec);
-        getTextEnv().setSuggestedPageWidth(width);
+        mBuilder.setSuggestedPageWidth(width);
         if (pageBlock != null && pageBlock.getMeasureWidth()
-                == getTextEnv().getSuggestedPageWidth()) {
+                == mBuilder.getSuggestedPageWidth()) {
             setMeasuredDimension(getSize(pageBlock.getWidth(), widthMeasureSpec),
                     getSize(pageBlock.getHeight(), heightMeasureSpec));
         } else {
-            pageBlock = parsePageBlock();
+            mBuilder.build();
+            pageBlock = mBuilder.getPage();
             setPageBlock(pageBlock);
             if (pageBlock != null) {
                 setMeasuredDimension(getSize(pageBlock.getWidth(), widthMeasureSpec),
@@ -128,6 +113,22 @@ public class CYSinglePageView extends CYPageView {
             } else {
                 super.onMeasure(widthMeasureSpec, heightMeasureSpec);
             }
+        }
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        if (mBuilder != null) {
+            mBuilder.getEventDispatcher().addLayoutEventListener(this);
+        }
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        if (mBuilder != null) {
+            mBuilder.getEventDispatcher().removeLayoutEventListener(this);
         }
     }
 
@@ -147,11 +148,8 @@ public class CYSinglePageView extends CYPageView {
     @Override
     public void doLayout(boolean force) {
         super.doLayout(force);
-        //宽度不合法，则抛弃
-        if (force) {
-            CYPageBlock pageBlock = parsePageBlock();
-            setPageBlock(pageBlock);
-        }
+        mBuilder.build();
+        setPageBlock(mBuilder.getPage());
         UiThreadHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -161,55 +159,121 @@ public class CYSinglePageView extends CYPageView {
         });
     }
 
-    private CYPageBlock parsePageBlock() {
-        if (blocks != null && !blocks.isEmpty()) {
-            CYHorizontalLayout layout = new CYHorizontalLayout(getTextEnv(), blocks);
-            List<CYPageBlock> pages = layout.parse();
-            if (pages != null && pages.size() > 0) {
-                CYPageBlock pageBlock = pages.get(0);
-                pageBlock.setPadding(0, 0, 0, 0);
-                return pageBlock;
+    public void setCachePage(View attachedView, String tag, Builder builder) {
+        if (attachedView != null) {
+            int id = getId(attachedView.getContext(), "id_attached");
+            HashMap<String, Builder> cached = (HashMap<String, Builder>) attachedView
+                    .getTag(id);
+            if (cached == null) {
+                cached = new HashMap<>();
+                attachedView.setTag(id, cached);
+            }
+            cached.put(tag, builder);
+        }
+    }
+
+    public void clearCache(View attachedView, String tag) {
+        if (attachedView != null) {
+            int id = getId(attachedView.getContext(), "id_attached");
+            HashMap<String, Builder> cached = (HashMap<String, Builder>) attachedView
+                    .getTag(id);
+            if (cached != null) {
+                cached.remove(tag);
+            }
+        }
+    }
+
+    public Builder getCachedPage(View attachedView, String tag) {
+        if (attachedView != null) {
+            int id = getId(attachedView.getContext(), "id_attached");
+            HashMap<String, Builder> cached = (HashMap<String, Builder>) attachedView
+                    .getTag(id);
+            if (cached != null) {
+                return cached.get(tag);
             }
         }
         return null;
     }
 
-    private Builder mBuilder = new Builder();
-
-    public Builder getBuilder() {
-        return mBuilder;
+    public int getId(Context context, String paramString) {
+        return context.getResources().getIdentifier(paramString, "id", context.getPackageName());
     }
 
-    public class Builder {
-
+    public static class Builder extends TextEnv {
+        //构建数据
         private String mText;
-        public Builder setEditable(boolean editable) {
-            getTextEnv().setEditable(editable);
-            return this;
+        //构造后的block列表
+        private List<CYBlock> mBlocks;
+        //构造后的页面
+        private CYPageBlock mPageBlock;
+        //编辑框
+        private List<ICYEditable> mEditableList;
+
+        public Builder(Context context, String text) {
+            super(context);
+            //初始化默认值
+            int width = context.getResources().getDisplayMetrics().widthPixels;
+            setSuggestedPageWidth(width)
+                .setTextColor(0xff333333)
+                .setFontSize(Const.DP_1 * 20)
+                .setTextAlign(TextEnv.Align.CENTER)
+                .setSuggestedPageHeight(Integer.MAX_VALUE)
+                .setVerticalSpacing(Const.DP_1 * 3);
+
+            this.mText = text.replaceAll("\n", "").replaceAll("\r", "");
         }
 
-        public Builder setTextColor(int textColor) {
-            getTextEnv().setTextColor(textColor);
-            return this;
+        public List<CYBlock> getBlocks() {
+            return mBlocks;
         }
 
-        public Builder setTextSize(int dp) {
-            getTextEnv().setFontSize(Const.DP_1 * dp);
-            return this;
+        public CYPageBlock getPage() {
+            return mPageBlock;
         }
 
-        public Builder setText(String questionTxt) {
-            CYSinglePageView.this.setText(questionTxt);
-            return this;
-        }
-
-        public Builder setDebug(boolean debug) {
-            getTextEnv().setDebug(debug);
-            return this;
-        }
-
+        @Override
         public void build() {
-            CYSinglePageView.this.build();
+            if (mPageBlock == null) {
+                mBlocks = CYBlockProvider.getBlockProvider().build(this, mText);
+                if (mBlocks != null && !mBlocks.isEmpty()) {
+                    CYHorizontalLayout layout = new CYHorizontalLayout(this, mBlocks);
+                    List<CYPageBlock> pages = layout.parse();
+                    if (pages != null && pages.size() > 0) {
+                        mPageBlock = pages.get(0);
+                        mPageBlock.setPadding(0, 0, 0, 0);
+                    }
+                }
+                mEditableList = findEditableList();
+            }
+            if (render != null) {
+                render.setPageBlock(mPageBlock);
+            }
+        }
+
+        public List<ICYEditable> getEditableList() {
+            return mEditableList;
+        }
+
+        private List<ICYEditable> findEditableList() {
+            List<ICYEditable> editableList = new ArrayList<>();
+            if (mBlocks != null && !mBlocks.isEmpty()) {
+                for (int i = 0; i < mBlocks.size(); i++) {
+                    mBlocks.get(i).findAllEditable(editableList);
+                }
+            }
+            Collections.sort(editableList, new Comparator<ICYEditable>() {
+                @Override
+                public int compare(ICYEditable lhs, ICYEditable rhs) {
+                    return lhs.getTabId() - rhs.getTabId();
+                }
+            });
+            return editableList;
+        }
+
+        private IRender render;
+        public void setRender(IRender render) {
+            this.render = render;
         }
     }
+
 }

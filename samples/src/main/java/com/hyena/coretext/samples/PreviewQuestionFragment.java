@@ -159,8 +159,7 @@ public class PreviewQuestionFragment extends Fragment {
         if (!TextUtils.isEmpty(text) && !text.equals(mLastText)) {
             this.mLastText = text;
             long ts = System.currentTimeMillis();
-            mPreviewQuestion.getBuilder().setTextSize(18)
-                    .setText(text).build();
+            mPreviewQuestion.getBuilder(null, null, text).setFontSize(18);
             final long cost = System.currentTimeMillis() - ts;
             UiThreadHandler.post(new Runnable() {
                 @Override

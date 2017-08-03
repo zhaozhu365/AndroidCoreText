@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.hyena.coretext.blocks.ICYEditable;
 import com.hyena.coretext.samples.question.QuestionTextView;
 import com.hyena.coretext.utils.EditableValue;
 import com.hyena.framework.app.adapter.SingleTypeAdapter;
@@ -94,10 +93,11 @@ public class QuestionListFragment1 extends Fragment {
             Item item = getItem(position);
 //            viewHolder.mQtvQuestion.getTextEnv().setFontScale(0.1f);
             viewHolder.mIndex.setText(position + "  ");
-            viewHolder.mQtvQuestion.getTextEnv().setTag(position + "").setEditableValue(1, new EditableValue(Color.RED, "position" + position));
-            viewHolder.mQtvQuestion.getTextEnv().setAttachedView(parent);
-            viewHolder.mQtvQuestion.getBuilder().setText(item.question)
+            viewHolder.mQtvQuestion.getBuilder(parent, position + "", item.question)
+                    .setTag(position + "")
+                    .setEditableValue(1, new EditableValue(Color.RED, "position" + position))
                     .setEditable(false).build();
+
             return convertView;
         }
 

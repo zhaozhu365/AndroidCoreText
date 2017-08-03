@@ -34,10 +34,10 @@ public class TestFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         QuestionTextView qtv = (QuestionTextView) view.findViewById(R.id.question_content);
-        qtv.getTextEnv().setEditableValue(1, new EditableValue(Color.RED, "a"));
-        qtv.getTextEnv().setEditableValue(2, new EditableValue(Color.BLUE, "a"));
-        qtv.getTextEnv().setEditableValue(3, new EditableValue(Color.GRAY, "a"));
-        qtv.getTextEnv().setEditableValue(4, new EditableValue(Color.GREEN, "a"));
+//        qtv.getTextEnv().setEditableValue(1, new EditableValue(Color.RED, "a"));
+//        qtv.getTextEnv().setEditableValue(2, new EditableValue(Color.BLUE, "a"));
+//        qtv.getTextEnv().setEditableValue(3, new EditableValue(Color.GRAY, "a"));
+//        qtv.getTextEnv().setEditableValue(4, new EditableValue(Color.GREEN, "a"));
 
         String question =
 //                "#{\"type\":\"para_begin\",\"size\" : 30,\"align\": \"left\",\"color\":\"#D0D0D0\",\"margin\":8}#" +
@@ -52,9 +52,9 @@ public class TestFragment extends Fragment {
 //                "a#{\"type\":\"blank\",\"id\": 4,\"size\":\"letter\"}#" +
 //                        "#{\"type\":\"para_end\"}#" +
                         "";
-        qtv.getTextEnv().setEditable(false);
-        qtv.getTextEnv().setDebug(true);
-        qtv.getBuilder().setText(formatQuestionText(question, "1", "啊啊啊啊啊")).build();
+//        qtv.getTextEnv().setEditable(false);
+//        qtv.getTextEnv().setDebug(true);
+//        qtv.getBuilder().setText(formatQuestionText(question, "1", "啊啊啊啊啊")).build();
 
 //        ViewGroup viewGroup = (ViewGroup) view.findViewById(R.id.choice_content);
 //        View child = viewGroup.getChildAt(0);

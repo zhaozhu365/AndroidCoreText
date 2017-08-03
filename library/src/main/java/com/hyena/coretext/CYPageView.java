@@ -26,7 +26,6 @@ public abstract class CYPageView extends View implements CYLayoutEventListener {
     private CYPageBlock mPageBlock;
     private CYBlock mFocusBlock;
     private ICYEditable mFocusEditable;
-    private TextEnv mTextEnv;
 
     public CYPageView(Context context) {
         super(context);
@@ -44,12 +43,6 @@ public abstract class CYPageView extends View implements CYLayoutEventListener {
     }
 
     private void init() {
-        mTextEnv = buildDefaultTextEnv(getContext());
-        mTextEnv.getEventDispatcher().addLayoutEventListener(this);
-    }
-
-    public TextEnv getTextEnv() {
-        return mTextEnv;
     }
 
     @Override
@@ -69,6 +62,7 @@ public abstract class CYPageView extends View implements CYLayoutEventListener {
      */
     public void setPageBlock(CYPageBlock pageBlock) {
         this.mPageBlock = pageBlock;
+        requestLayout();
     }
 
     public CYPageBlock getPageBlock() {
@@ -123,7 +117,7 @@ public abstract class CYPageView extends View implements CYLayoutEventListener {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (mPageBlock == null || mTextEnv == null)
+        if (mPageBlock == null)
             return super.onTouchEvent(event);
 
         int action = MotionEventCompat.getActionMasked(event);
@@ -234,9 +228,6 @@ public abstract class CYPageView extends View implements CYLayoutEventListener {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        if (mTextEnv != null) {
-            mTextEnv.getEventDispatcher().addLayoutEventListener(this);
-        }
     }
 
     @Override
@@ -245,15 +236,9 @@ public abstract class CYPageView extends View implements CYLayoutEventListener {
         if (mPageBlock != null) {
             mPageBlock.stop();
         }
-        if (mTextEnv != null) {
-            mTextEnv.getEventDispatcher().removeLayoutEventListener(this);
-        }
     }
 
     protected void release() {
-        if (mTextEnv != null) {
-            mTextEnv.getEventDispatcher().removeLayoutEventListener(this);
-        }
         if (mFocusEditable != null) {
             mFocusEditable.setFocus(false);
         }
@@ -262,16 +247,16 @@ public abstract class CYPageView extends View implements CYLayoutEventListener {
         }
     }
 
-    public TextEnv buildDefaultTextEnv(Context context) {
-        int width = getResources().getDisplayMetrics().widthPixels;
-        return new TextEnv(context)
-                .setSuggestedPageWidth(width)
-                .setTextColor(0xff333333)
-                .setFontSize(Const.DP_1 * 20)
-                .setTextAlign(TextEnv.Align.CENTER)
-                .setSuggestedPageHeight(Integer.MAX_VALUE)
-                .setVerticalSpacing(Const.DP_1 * 3);
-    }
+//    public TextEnv buildDefaultTextEnv(Context context) {
+//        int width = getResources().getDisplayMetrics().widthPixels;
+//        return new TextEnv(context)
+//                .setSuggestedPageWidth(width)
+//                .setTextColor(0xff333333)
+//                .setFontSize(Const.DP_1 * 20)
+//                .setTextAlign(TextEnv.Align.CENTER)
+//                .setSuggestedPageHeight(Integer.MAX_VALUE)
+//                .setVerticalSpacing(Const.DP_1 * 3);
+//    }
 
     public void measure() {
         if (mPageBlock != null) {
