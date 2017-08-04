@@ -159,6 +159,7 @@
                 android:id="@+id/qtv_question"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="#00ffff"
                 android:layout_centerInParent="true" />
         </RelativeLayout>
     </ScrollView>

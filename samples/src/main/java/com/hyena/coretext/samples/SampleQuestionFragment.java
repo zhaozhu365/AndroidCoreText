@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.hyena.coretext.blocks.ICYEditable;
 import com.hyena.coretext.event.CYFocusEventListener;
 import com.hyena.coretext.samples.question.QuestionTextView;
+import com.hyena.coretext.utils.Const;
 import com.hyena.framework.clientlog.LogUtil;
 
 /**
@@ -104,7 +105,7 @@ public class SampleQuestionFragment extends Fragment {
                 "";
 
 //        String question = "#{\\\"type\\\":\\\"para_begin\\\",\\\"style\\\":\\\"math_text\\\"}#3+(#{\\\"type\\\":\\\"blank\\\",\\\"id\\\": 1,\\\"class\\\":\\\"fillin\\\",\\\"size\\\":\\\"express\\\"}#)=5#{\\\"type\\\":\\\"para_end\\\"}#";
-        mQtvQuestion.getBuilder(question).setDebug(false).setFontSize(18).build();
+        mQtvQuestion.getBuilder(question).setDebug(false).setFontSize(18 * Const.DP_1).build();
     }
 
     private View.OnClickListener mClickListener = new View.OnClickListener() {

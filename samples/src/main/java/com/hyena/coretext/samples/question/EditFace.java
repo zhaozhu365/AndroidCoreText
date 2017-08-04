@@ -60,13 +60,13 @@ public class EditFace extends CYEditFace {
     }
 
     @Override
-    protected void drawFlash(Canvas canvas, Rect contentRect) {
+    protected void drawFlash(Canvas canvas, Rect blockRect, Rect contentRect) {
         if (!mTextEnv.isEditable())
             return;
 
         mFlashPaint.setColor(0xff3eabff);
         if ("fillin".equals(mClass)) {
-            super.drawFlash(canvas, contentRect);
+            super.drawFlash(canvas, blockRect, contentRect);
         }
     }
 
