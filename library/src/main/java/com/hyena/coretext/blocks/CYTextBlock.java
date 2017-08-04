@@ -184,9 +184,17 @@ public class CYTextBlock extends CYBlock {
         }
     }
 
+    @Override
+    public boolean isEmpty() {
+        if (word == null || TextUtils.isEmpty(word.word.trim())) {
+            return true;
+        }
+        return super.isEmpty();
+    }
+
     /*
-     * 绘制单词
-     */
+         * 绘制单词
+         */
     protected void drawText(Canvas canvas, String text, float x, float y, Paint paint) {
         if (!TextUtils.isEmpty(text)) {
             canvas.drawText(text, x, y, paint);
@@ -225,10 +233,5 @@ public class CYTextBlock extends CYBlock {
             this.word = word;
             this.pinyin = pinyin;
         }
-    }
-
-    @Override
-    public boolean isDebug() {
-        return false;
     }
 }

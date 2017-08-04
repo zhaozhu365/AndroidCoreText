@@ -50,6 +50,7 @@ public class CYPageBlock extends CYBlock<CYLineBlock> {
 
     @Override
     public void draw(Canvas canvas) {
+        super.draw(canvas);
         canvas.save();
         canvas.translate(getPaddingLeft(), getPaddingTop());
         List<CYLineBlock> children = getChildren();

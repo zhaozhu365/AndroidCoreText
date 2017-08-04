@@ -234,6 +234,10 @@ public class CYSinglePageView extends CYPageView implements IRender {
         public void reLayout(boolean force) {
             if (mBlocks == null) {
                 mBlocks = CYBlockProvider.getBlockProvider().build(this, mText);
+            } else {
+                for (int i = 0; i < mBlocks.size(); i++) {
+                    mBlocks.get(i).onMeasure();
+                }
             }
             if (mBlocks != null && !mBlocks.isEmpty()) {
                 CYHorizontalLayout layout = new CYHorizontalLayout(this, mBlocks);

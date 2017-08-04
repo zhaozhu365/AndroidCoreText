@@ -1,6 +1,7 @@
 package com.hyena.coretext.blocks;
 
 import android.graphics.Canvas;
+import android.text.TextUtils;
 
 import com.hyena.coretext.TextEnv;
 import com.hyena.coretext.utils.Const;
@@ -45,6 +46,7 @@ public class CYLineBlock extends CYBlock<CYBlock> {
 
     @Override
     public void draw(Canvas canvas) {
+        super.draw(canvas);
         List<CYBlock> children = getChildren();
         if (children != null) {
             int count = children.size();
@@ -53,6 +55,23 @@ public class CYLineBlock extends CYBlock<CYBlock> {
                 block.draw(canvas);
             }
         }
+    }
+
+    @Override
+    public boolean isEmpty() {
+        boolean isEmpty = true;
+        List<CYBlock> children = getChildren();
+        if (children != null) {
+            int count = children.size();
+            for (int i = 0; i < count; i++) {
+                CYBlock block = children.get(i);
+                if (!block.isEmpty()) {
+                    isEmpty = false;
+                    break;
+                }
+            }
+        }
+        return isEmpty;
     }
 
     @Override

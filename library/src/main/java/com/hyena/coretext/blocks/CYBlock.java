@@ -442,6 +442,10 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable, Clonea
         return true;
     }
 
+    public boolean isEmpty() {
+        return false;
+    }
+
     public void setParent(CYBlock parent) {
         this.mParent = parent;
     }
