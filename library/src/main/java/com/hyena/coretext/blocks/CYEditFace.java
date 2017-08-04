@@ -113,12 +113,12 @@ public class CYEditFace implements IEditFace{
         updatePaint();
         drawBackGround(canvas, blockRect, contentRect);
         drawBorder(canvas, blockRect, contentRect);
-        drawFlash(canvas, contentRect);
+        drawFlash(canvas, blockRect, contentRect);
         String text = getText();
         if (TextUtils.isEmpty(text)) {
-            drawDefaultText(canvas, contentRect);
+            drawDefaultText(canvas, blockRect, contentRect);
         } else {
-            drawText(canvas, getText(), contentRect, hasBottomLine());
+            drawText(canvas, getText(), blockRect, contentRect, hasBottomLine());
         }
     }
 
@@ -132,7 +132,7 @@ public class CYEditFace implements IEditFace{
         }
     }
 
-    protected void drawFlash(Canvas canvas, Rect contentRect) {
+    protected void drawFlash(Canvas canvas, Rect blockRect, Rect contentRect) {
         if (mEditable.isEditable() && mEditable.hasFocus() && mInputFlash) {
             String text = getText();
             float left;
@@ -154,7 +154,7 @@ public class CYEditFace implements IEditFace{
         }
     }
 
-    protected void drawText(Canvas canvas, String text, Rect contentRect, boolean isShowUnderLine) {
+    protected void drawText(Canvas canvas, String text, Rect blockRect, Rect contentRect, boolean isShowUnderLine) {
         if (!TextUtils.isEmpty(text)) {
             float textWidth = PaintManager.getInstance().getWidth(mTextPaint, text);
             float contentWidth = contentRect.width();
@@ -185,7 +185,7 @@ public class CYEditFace implements IEditFace{
         }
     }
 
-    protected void drawDefaultText(Canvas canvas, Rect contentRect) {
+    protected void drawDefaultText(Canvas canvas, Rect blockRect, Rect contentRect) {
         if (!TextUtils.isEmpty(mEditable.getDefaultText())) {
             float textWidth = PaintManager.getInstance().getWidth(mDefaultTxtPaint, mEditable.getDefaultText());
 //            mDefaultTxtPaint.measureText(mEditable.getDefaultText());
