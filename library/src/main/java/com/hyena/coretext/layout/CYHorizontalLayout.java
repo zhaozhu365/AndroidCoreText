@@ -82,11 +82,13 @@ public class CYHorizontalLayout extends CYLayout {
                     line.updateLineY(y);
                     y += line.getHeight() + getTextEnv().getVerticalSpacing();
                 }
+
                 page.addChild(line);
             }
 
-            if (page.getChildren() != null && !page.getChildren().isEmpty()) {
-                page.getChildren().get(0).setPadding(0, line.getPaddingTop(), 0, 0);
+            List<CYLineBlock> children = page.getChildren();
+            if (children != null && !children.isEmpty()) {
+                children.get(children.size() - 1).setPadding(0, line.getPaddingTop(), 0, 0);
             }
         }
         mPageBlocks.add(page);
