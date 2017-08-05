@@ -46,6 +46,9 @@ public class CYSinglePageView extends CYPageView implements IRender {
      * 获取构建器
      */
     public Builder getBuilder(View attachView, String tag, String text) {
+        if (attachView == null)
+            return getBuilder(text);
+
         Builder builder = getCachedPage(attachView, tag);
         if (builder == null) {
             builder = new Builder(getContext(), text);
@@ -97,6 +100,10 @@ public class CYSinglePageView extends CYPageView implements IRender {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        if (mBuilder == null) {
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+            return;
+        }
         CYPageBlock pageBlock = mBuilder.getPage();
         int width = getDefaultSize(getSuggestedMinimumWidth(), widthMeasureSpec);
         mBuilder.setSuggestedPageWidth(width);
