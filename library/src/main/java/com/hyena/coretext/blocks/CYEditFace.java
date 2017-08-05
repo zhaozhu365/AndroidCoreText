@@ -150,6 +150,9 @@ public class CYEditFace implements IEditFace{
             left += Const.DP_1;
             int textHeight = PaintManager.getInstance().getHeight(mTextPaint);
             int padding = (contentRect.height() - textHeight) /2 - Const.DP_1 * 2;
+            if (padding <= 0) {
+                padding = Const.DP_1 * 2;
+            }
             canvas.drawLine(left, contentRect.top + padding, left, contentRect.bottom - padding, mFlashPaint);
         }
     }
