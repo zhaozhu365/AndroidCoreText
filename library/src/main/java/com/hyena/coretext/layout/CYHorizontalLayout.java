@@ -63,17 +63,12 @@ public class CYHorizontalLayout extends CYLayout {
     public List<CYPageBlock> parse() {
         reset();
 
-        List<CYLineBlock> lines = parseLines(mBlocks);
-
+        List<CYLineBlock> lines = trimLine(parseLines(mBlocks));
         CYPageBlock page = new CYPageBlock(getTextEnv());
         int y = 0;
         if (lines != null) {
             for (int i = 0; i < lines.size(); i++) {
                 CYLineBlock line = lines.get(i);
-                if (line.getChildren() == null || line.getChildren().isEmpty()
-                        || !line.isValid() || line.isEmpty())
-                    continue;
-
                 int maxBlockHeight = line.getMaxBlockHeightInLine();
                 if (y + maxBlockHeight > getTextEnv().getSuggestedPageHeight()) {
                     page = new CYPageBlock(getTextEnv());
@@ -82,17 +77,29 @@ public class CYHorizontalLayout extends CYLayout {
                     line.updateLineY(y);
                     y += line.getHeight() + getTextEnv().getVerticalSpacing();
                 }
-
+                if (i == lines.size() -1) {
+                    line.setPadding(0, line.getPaddingTop(), 0, 0);
+                }
                 page.addChild(line);
-            }
-
-            List<CYLineBlock> children = page.getChildren();
-            if (children != null && !children.isEmpty()) {
-                children.get(children.size() - 1).setPadding(0, line.getPaddingTop(), 0, 0);
             }
         }
         mPageBlocks.add(page);
         return mPageBlocks;
+    }
+
+    private List<CYLineBlock> trimLine(List<CYLineBlock> lines) {
+        List<CYLineBlock> result = new ArrayList<>();
+        if (lines != null) {
+            for (int i = 0; i < lines.size(); i++) {
+                CYLineBlock line = lines.get(i);
+                if (line.getChildren() == null || line.getChildren().isEmpty()
+                        || !line.isValid() || line.isEmpty())
+                    continue;
+
+                result.add(line);
+            }
+        }
+        return result;
     }
 
     @Override

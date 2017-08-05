@@ -1,6 +1,7 @@
 package com.hyena.coretext.blocks;
 
 import android.graphics.Canvas;
+import android.graphics.Rect;
 
 import com.hyena.coretext.TextEnv;
 
@@ -14,6 +15,7 @@ public class CYPageBlock extends CYBlock<CYLineBlock> {
 
     private int mWidth, mHeight;
     private int mMeasureWidth;
+    private Rect mRect = new Rect();
     public CYPageBlock(TextEnv textEnv) {
         super(textEnv, "");
         this.mMeasureWidth = textEnv.getSuggestedPageWidth();
@@ -31,6 +33,18 @@ public class CYPageBlock extends CYBlock<CYLineBlock> {
     @Override
     public int getContentHeight() {
         return mHeight;
+    }
+
+    @Override
+    public Rect getBlockRect() {
+        mRect.set(0, 0, getContentWidth(), getContentHeight());
+        return mRect;
+    }
+
+    @Override
+    public Rect getContentRect() {
+        mRect.set(0, 0, getContentWidth(), getContentHeight());
+        return mRect;
     }
 
     @Override
