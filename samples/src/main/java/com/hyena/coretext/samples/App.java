@@ -17,8 +17,6 @@ import com.hyena.framework.servcie.BaseServiceManager;
 import com.hyena.framework.servcie.ServiceProvider;
 import com.hyena.framework.utils.BaseApp;
 
-import maximsblog.blogspot.com.jlatexmath.core.AjLatexMath;
-
 /**
  * Created by yangzc on 17/2/6.
  */

@@ -117,26 +117,6 @@ public class CYHorizontalLayout extends CYLayout {
         int blockCount = blocks.size();
         for (int i = 0; i < blockCount; i++) {
             CYBlock itemBlock = blocks.get(i);
-//            if (itemBlock instanceof CYParagraphStartBlock) {
-//                CYStyle style = ((CYParagraphStartBlock) itemBlock).getStyle();
-//                styleStack.push(style);
-//                //wrap line
-//                wrapLine();
-//                if (line != null)
-//                    line.setIsFirstLineInParagraph(true);
-//            } else if(itemBlock instanceof CYParagraphEndBlock) {
-//                if (!styleStack.isEmpty())
-//                    styleStack.pop();
-//
-//                //auto break line
-//                if (line == null) {
-//                    line = new CYLineBlock(getTextEnv(), getStyle(styleStack));
-//                    lines.add(line);
-//                }
-//                line.setIsFinishingLineInParagraph(true);
-//                //wrap line
-//                wrapLine();
-//            } else
             if (itemBlock instanceof CYStyleStartBlock) {
                 //构造字style
                 CYStyleStartBlock block = ((CYStyleStartBlock) itemBlock);
@@ -155,16 +135,32 @@ public class CYHorizontalLayout extends CYLayout {
                 if (!styleStack.isEmpty()) {
                     style = styleStack.pop();
                 }
+                if (style != null && style.isSingleBlock()) {
+                    List<CYLineBlock> removeLines = new ArrayList<>();
+                    for (int j = lines.size() - 1; j >= 0 ; j--) {
+                        CYLineBlock line = lines.get(j);
+                        if (line.getChildren() == null || line.getChildren().isEmpty()
+                                || !line.isValid() || line.isEmpty()) {
+                            removeLines.add(line);
+                        }
+                    }
+                    lines.removeAll(removeLines);
+
+                    if (!lines.isEmpty()) {
+                        lines.get(lines.size() -1).setIsFinishingLineInParagraph(true);
+                        wrapLine();
+                    }
+                }
                 //auto break line
                 if (line == null) {
                     line = new CYLineBlock(getTextEnv(), style);
                     lines.add(line);
                 }
-                if (style != null && style.isSingleBlock()) {
-                    line.setIsFinishingLineInParagraph(true);
-                    //wrap line
-                    wrapLine();
-                }
+//                if (style != null && style.isSingleBlock()) {
+//                    line.setIsFinishingLineInParagraph(true);
+//                    //wrap line
+//                    wrapLine();
+//                }
             } else if (itemBlock instanceof CYBreakLineBlock) {
                 if (line == null) {
                     line = new CYLineBlock(getTextEnv(), getStyle(styleStack));

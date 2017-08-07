@@ -93,6 +93,7 @@ public class CYStyle {
         return mMarginBottom;
     }
 
+    //是否是段落
     public boolean isSingleBlock() {
         return mSingleBlock;
     }

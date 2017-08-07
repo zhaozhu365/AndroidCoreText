@@ -5,7 +5,9 @@ import android.text.TextUtils;
 import com.hyena.coretext.TextEnv;
 import com.hyena.coretext.blocks.CYBlock;
 import com.hyena.coretext.blocks.CYBreakLineBlock;
+import com.hyena.coretext.blocks.CYHorizontalAlign;
 import com.hyena.coretext.blocks.CYLatexBlock;
+import com.hyena.coretext.blocks.CYStyle;
 import com.hyena.coretext.blocks.CYStyleEndBlock;
 import com.hyena.coretext.blocks.CYTableBlock;
 import com.hyena.coretext.blocks.CYTextBlock;
@@ -13,6 +15,7 @@ import com.hyena.coretext.blocks.IEditFace;
 import com.hyena.coretext.blocks.latex.FillInAtom;
 import com.hyena.coretext.blocks.latex.FillInBox;
 import com.hyena.coretext.builder.IBlockMaker;
+import com.hyena.coretext.utils.Const;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -61,7 +64,7 @@ public class BlockMaker implements IBlockMaker {
         } else if("P".equals(type)) {
             return (T) new CYBreakLineBlock(textEnv, data);
         } else if ("para_begin".equals(type)) {
-            return (T) new ParagraphStartBlock(textEnv, data);
+            return (T) new BoxListParagraphBlock(textEnv, data);
         } else if ("para_end".equals(type)) {
             return (T) new CYStyleEndBlock(textEnv, data);
         } else if ("audio".equals(type)) {
@@ -116,5 +119,29 @@ public class BlockMaker implements IBlockMaker {
             return (T) new CYTableBlock(textEnv, data);
         }
         return null;
+    }
+
+    public class BoxListParagraphBlock extends ParagraphStartBlock {
+
+        public BoxListParagraphBlock(TextEnv textEnv, String content) {
+            super(textEnv, content);
+        }
+
+        @Override
+        public CYStyle getStyle() {
+            CYStyle style = super.getStyle();
+            String styleText = style.getStyle();
+            //数学
+            if ("math_text".equals(styleText)) {
+                style.setTextSize(Const.DP_1 * 16);
+                style.setTextColor(0xff333333);
+                style.setMarginBottom(Const.DP_1 *15);
+                style.setHorizontalAlign(CYHorizontalAlign.LEFT);
+            } else if ("math_picture".equals(styleText)) {
+                style.setMarginBottom(Const.DP_1 *15);
+                style.setHorizontalAlign(CYHorizontalAlign.LEFT);
+            }
+            return style;
+        }
     }
 }
