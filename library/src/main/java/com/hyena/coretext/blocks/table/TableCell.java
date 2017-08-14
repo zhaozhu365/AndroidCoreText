@@ -57,13 +57,16 @@ public class TableCell {
      * @param text
      */
     public void setCellText(String text) {
-        TextEnv textEnv = new TextEnv(tableBlock.getTextEnv().getContext())
-                .setSuggestedPageWidth(getWidth())
-                .setTextColor(0xff333333)
-                .setFontSize(Const.DP_1 * 20)
-                .setTextAlign(TextEnv.Align.CENTER)
-                .setSuggestedPageHeight(Integer.MAX_VALUE)
-                .setVerticalSpacing(Const.DP_1 * 3);
+        TextEnv textEnv = new TableTextEnv(tableBlock.getTextEnv());
+        textEnv.setSuggestedPageWidth(getWidth());
+        textEnv.setSuggestedPageHeight(Integer.MAX_VALUE);
+//        TextEnv textEnv = new TextEnv(tableBlock.getTextEnv().getContext())
+//                .setSuggestedPageWidth(getWidth())
+//                .setTextColor(0xff333333)
+//                .setFontSize(Const.DP_1 * 20)
+//                .setTextAlign(TextEnv.Align.CENTER)
+//                .setSuggestedPageHeight(Integer.MAX_VALUE)
+//                .setVerticalSpacing(Const.DP_1 * 3);
         textEnv.getEventDispatcher().addLayoutEventListener(new CYLayoutEventListener() {
             @Override
             public void doLayout(boolean force) {
@@ -79,7 +82,6 @@ public class TableCell {
                 }
             }
         });
-
         List<CYBlock> blocks = CYBlockProvider.getBlockProvider().build(textEnv, text);
         if (blocks != null && !blocks.isEmpty()) {
             CYHorizontalLayout layout = new CYHorizontalLayout(textEnv, blocks);

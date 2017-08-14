@@ -4,8 +4,6 @@
 
 package com.hyena.coretext.samples.question;
 
-import android.content.Context;
-
 import com.hyena.coretext.TextEnv;
 import com.hyena.coretext.blocks.CYImageBlock;
 import com.hyena.coretext.utils.Const;
@@ -24,10 +22,10 @@ public class ImageBlock extends CYImageBlock {
     public ImageBlock(TextEnv textEnv, String content) {
         super(textEnv, content);
         mScreenWidth = getTextEnv().getSuggestedPageWidth();
-        init(textEnv.getContext(), content);
+        init(content);
     }
 
-    private void init(Context context, String content) {
+    private void init(String content) {
         try {
             JSONObject json = new JSONObject(content);
             String url = json.optString("src");
@@ -44,16 +42,10 @@ public class ImageBlock extends CYImageBlock {
                 setWidth(Const.DP_1 * 60);
                 setHeight(Const.DP_1 * 60);
             }
-            setResUrl(url);
+            loadImage(url, getWidth(), getHeight(), 0, 0, 0);
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    @Override
-    public boolean onTouchEvent(int action, float x, float y) {
-        if (mBitmap != null)
-            return false;
-        return super.onTouchEvent(action, x, y);
-    }
 }

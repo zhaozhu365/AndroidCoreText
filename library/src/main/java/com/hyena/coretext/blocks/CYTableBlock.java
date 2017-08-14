@@ -41,7 +41,8 @@ public class CYTableBlock extends CYPlaceHolderBlock implements ICYEditableGroup
             for (int j = 0; j < columnCells.length; j++) {
                 TableCell cell = cells[i][j];
                 if (cell != null) {
-                    String cellText = "#{\"type\":\"latex\",\"content\":\"\\\\frac{7}{5}\"}#" +
+                    String cellText = "" +
+                            "#{\"type\":\"latex\",\"content\":\"\\\\frac{7}{5}\"}#" +
                             "#{\"type\": \"img\",\"id\":1,\"size\": \"big_image\",\"src\": \"http://p0.ifengimg.com/pmop/2017/0628/82D3C0505BBD97AF9A743E671769099FAD3ACCA1_size17_w600_h334.jpeg\"}#" +
                             "#{\"type\":\"blank\",\"id\": $1$,\"size\":\"express\"}#" +
                             "";

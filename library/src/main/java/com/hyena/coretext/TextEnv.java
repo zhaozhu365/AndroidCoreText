@@ -44,6 +44,24 @@ public class TextEnv {
         this.context = context;
     }
 
+//    public void set(TextEnv textEnv) {
+//        this.context = textEnv.getContext();
+//        this.fontSize = textEnv.getFontSize();
+//        this.textColor = textEnv.getTextColor();
+//        this.typeface = textEnv.getTypeface();
+//        this.verticalSpacing = textEnv.getVerticalSpacing();
+//        this.suggestedPageWidth = textEnv.getSuggestedPageWidth();
+//        this.suggestedPageHeight = textEnv.getSuggestedPageHeight();
+//        this.editable = textEnv.isEditable();
+//        this.textAlign = textEnv.getTextAlign();
+//        this.mFontScale = textEnv.getFontScale();
+//        this.mPaint = textEnv.getPaint();
+//        this.mEditableValues = textEnv.getEditableValues();
+//        this.mTag = textEnv.getTag();
+//        this.mBlockMaker = textEnv.getBlockMaker();
+//        mEventDispatcher.set(textEnv.getEventDispatcher());
+//    }
+
     public Context getContext() {
         return context;
     }

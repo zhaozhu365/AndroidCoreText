@@ -78,10 +78,10 @@ public class SampleQuestionFragment extends Fragment {
                 "#{\"type\":\"para_begin\",\"size\" : 100,\"align\": \"left\",\"color\":\"#D0D0D0\",\"margin\":8}#" +
                 "根据录音选择正确的翻译" +
                 "#{\"type\":\"para_end\"}#" +
-                "#{\"type\":\"latex\",\"content\":\"14+(0.6+2)^2+2+22+22+2\"}#" +
+                "#{\"type\":\"latex\",\"content\":\"14+(0.6+2)^2+22\"}#" +
+                "#{\"type\":\"latex\",\"content\":\"\\\\frac{7}{5}\"}#" +
+                "#{\"type\":\"table\",\"content\":\"\\\\frac{7}{5}\"}#" +
 
-
-//                "#{\"type\":\"latex\",\"content\":\"\\\\frac{7}{5}\"}#" +
 //                "#{\"type\":\"para_begin\",\"size\" : 30,\"align\": \"mid\",\"color\":\"#000000\",\"margin\":8}#" +
 //                "#{\"type\":\"audio\",\"src\":\"http://7xohdn.com2.z0.glb.qiniucdn.com/tingli/15590285.mp3\"}#" +
 //                "\r\n#{\"type\":\"blank\",\"id\": 1,\"size\":\"express\"}#\r\n#{\"type\":\"para_end\"}#" +
@@ -90,9 +90,8 @@ public class SampleQuestionFragment extends Fragment {
 //                "#{\\\"type\\\":\\\"latex\\\",\\\"content\\\":\\\"\\\\\\\\frac{7}{5}\\\"}#" +
 //
 //                "2" +
-//                "#{\"type\":\"table\",\"content\":\"\\\\frac{7}{5}\"}#" +
                 "";
-        mQtvQuestion.getBuilder(question).setDebug(true).setFontSize(38 * Const.DP_1).build();//.replaceAll("\\\\", "")
+        mQtvQuestion.getBuilder(question).setEditable(true).setDebug(true).setFontSize(38 * Const.DP_1).build();//.replaceAll("\\\\", "")
     }
 
     private View.OnClickListener mClickListener = new View.OnClickListener() {
