@@ -38,22 +38,20 @@ public class CYTextBlock extends CYBlock {
         List<Word> words = parseWords(content);
         //初始化子节点
         setChildren(new ArrayList(words.size()));
-        Paint.FontMetrics fontMetrics = paint.getFontMetrics();
         for (int i = 0; i < words.size(); i++) {
             Word word = words.get(i);
-            addChild(buildChildBlock(textEnv, paint, fontMetrics, word));
+            addChild(buildChildBlock(textEnv, paint, word));
         }
     }
 
     /*
      * 构造子节点
      */
-    protected CYTextBlock buildChildBlock(TextEnv textEnv, Paint paint, Paint.FontMetrics fontMetrics, Word word) {
+    protected CYTextBlock buildChildBlock(TextEnv textEnv, Paint paint, Word word) {
         try {
             CYTextBlock textBlock = (CYTextBlock) clone();
             textBlock.setTextEnv(textEnv);
             textBlock.paint = paint;
-            textBlock.fontMetrics = fontMetrics;
             textBlock.word = word;
             return textBlock;
         } catch (CloneNotSupportedException e) {
@@ -69,6 +67,7 @@ public class CYTextBlock extends CYBlock {
             paint.setColor(style.getTextColor());
             setTextSize(style.getTextSize());
         }
+        this.fontMetrics = paint.getFontMetrics();
         updateSize();
     }
 

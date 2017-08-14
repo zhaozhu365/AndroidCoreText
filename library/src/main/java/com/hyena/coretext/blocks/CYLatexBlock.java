@@ -7,7 +7,7 @@ import android.text.TextUtils;
 
 import com.hyena.coretext.TextEnv;
 import com.hyena.coretext.blocks.latex.FillInBox;
-import com.hyena.framework.utils.UIUtils;
+import com.hyena.coretext.utils.Const;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -111,13 +111,17 @@ public class CYLatexBlock extends CYPlaceHolderBlock implements ICYEditableGroup
             color = getParagraphStyle().getTextColor();
         }
         TeXFormula.setDPITarget(fontSize * 72);
+        mPaint.setTextSize(fontSize);
+        mPaint.setColor(color);
         mBuilder = mTexFormula.new TeXIconBuilder()
-                .setStyle(TeXConstants.STYLE_DISPLAY)
+                .setStyle(TeXConstants.STYLE_TEXT)
                 .setSize(TeXFormula.PIXELS_PER_POINT / AjLatexMath.getContext().getResources().getDisplayMetrics().scaledDensity)
                 .setFGColor(color)
                 .setWidth(TeXConstants.UNIT_PIXEL, getTextEnv().getSuggestedPageWidth(), TeXConstants.ALIGN_LEFT)
                 .setIsMaxWidth(true)//非精准宽度
-                .setInterLineSpacing(TeXConstants.UNIT_PIXEL, AjLatexMath.getLeading(mPaint, UIUtils.px2dip(fontSize)))
+                .setTrueValues(false)
+                .setType(TeXConstants.TYPE_ORDINARY)
+                .setInterLineSpacing(TeXConstants.UNIT_PIXEL, Const.DP_1 * 2)
                 .setTag(getTextEnv());
         setFormula(latex);
     }

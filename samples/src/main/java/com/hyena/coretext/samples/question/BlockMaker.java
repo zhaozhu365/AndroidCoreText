@@ -79,10 +79,10 @@ public class BlockMaker implements IBlockMaker {
                     JSONObject jsonFillIn = new JSONObject("{" + group + "}");
                     String fillInType = jsonFillIn.optString("type");
                     if (TextUtils.equals(fillInType, "blank")) {
-                        String id = jsonFillIn.optString("id");
+                        int id = jsonFillIn.optInt("id");
                         //                String size = jsonFillIn.optString("size");//永远express
                         String clazz = jsonFillIn.optString("class");
-                        String replaceStr = "\\fillin{" + id + "}{" + clazz + "}{10}";
+                        String replaceStr = "\\fillin{" + id + "}{" + clazz + "}{}";
                         latex = latex.replace("\\#{" + group + "}\\#", replaceStr);
                     }
                 } catch (JSONException e) {
