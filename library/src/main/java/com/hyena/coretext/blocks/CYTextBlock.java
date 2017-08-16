@@ -55,6 +55,8 @@ public class CYTextBlock extends CYBlock {
             textBlock.setTextEnv(textEnv);
             textBlock.paint = paint;
             textBlock.word = word;
+            textBlock.setMargin(getMarginLeft(), getMarginRight());
+            textBlock.setPadding(getPaddingLeft(), getPaddingTop(), getMarginRight(), getPaddingBottom());
             return textBlock;
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
