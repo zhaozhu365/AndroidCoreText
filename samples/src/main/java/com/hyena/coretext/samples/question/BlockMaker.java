@@ -132,8 +132,8 @@ public class BlockMaker implements IBlockMaker {
             CYStyle style = super.getStyle();
             String styleText = style.getStyle();
             //数学
-            if ("math_text".equals(styleText)) {
-                style.setTextSize(Const.DP_1 * 16);
+            if ("chinese_guide".equals(styleText)) {
+                style.setTextSize(Const.DP_1 * 40);
                 style.setTextColor(0xff333333);
                 style.setMarginBottom(Const.DP_1 *15);
                 style.setHorizontalAlign(CYHorizontalAlign.LEFT);

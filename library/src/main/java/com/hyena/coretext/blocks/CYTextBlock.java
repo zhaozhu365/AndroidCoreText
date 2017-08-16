@@ -137,8 +137,7 @@ public class CYTextBlock extends CYBlock {
     }
 
     public CYTextBlock setTextSize(int fontSize){
-        if (paint != null && fontSize > 0
-                && paint.getTextSize() != fontSize) {
+        if (paint != null) {
             paint.setTextSize(fontSize);
             this.fontSize = paint.getTextSize();
         }
