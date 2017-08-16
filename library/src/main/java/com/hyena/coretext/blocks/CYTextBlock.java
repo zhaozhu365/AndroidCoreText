@@ -19,10 +19,11 @@ import java.util.regex.Pattern;
  */
 public class CYTextBlock extends CYBlock {
 
-    private Paint paint;
+    protected Paint paint;
     private int width, height;
-    private Paint.FontMetrics fontMetrics;
-    private Word word = null;
+    protected Paint.FontMetrics fontMetrics;
+    protected Word word = null;
+    protected float fontSize = 0;
 
     /*
      * 构造方法
@@ -34,6 +35,7 @@ public class CYTextBlock extends CYBlock {
         //初始化画笔
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.set(textEnv.getPaint());
+        this.fontSize = paint.getTextSize();
         //解析成单词
         List<Word> words = parseWords(content);
         //初始化子节点
@@ -93,8 +95,10 @@ public class CYTextBlock extends CYBlock {
 
     protected void updateSize() {
         float textWidth = getTextWidth(paint, word.word);
+        paint.setTextSize(fontSize);
         float textHeight = getTextHeight(paint);
         if (!TextUtils.isEmpty(word.pinyin)) {
+            paint.setTextSize(fontSize * 0.6f);
             float pinyinWidth = getTextWidth(paint, word.pinyin);
             float pinyinHeight = getTextHeight(paint);
             if (pinyinWidth > textWidth) {
@@ -110,6 +114,7 @@ public class CYTextBlock extends CYBlock {
         if (paint != null && fontSize > 0
                 && paint.getTextSize() != fontSize) {
             paint.setTextSize(fontSize);
+            this.fontSize = paint.getTextSize();
         }
         return this;
     }
@@ -129,15 +134,20 @@ public class CYTextBlock extends CYBlock {
      */
     protected List<Word> parseWords(String content) {
         List<Word> words = new ArrayList<>();
-        Pattern pattern = Pattern.compile(".*?<.*?>");
+        Pattern pattern = Pattern.compile(".*?\\(!.*?!\\)");
         Matcher matcher = pattern.matcher(content);
         String text = content;
-        if (content.contains("<") && content.contains(">")) {
+        if (content.contains("(!") && content.contains("!)")) {
             while (matcher.find()) {
                 String value = matcher.group();
-                String word = value.replaceFirst("<.*?>", "");
-                String pinyin = value.replace(word, "").replaceAll("[<|>]", "");
-                words.add(new Word(word, pinyin));
+                String word = value.replaceFirst("\\(!.*?!\\)", "");
+                String pinyin = value.replace(word, "").replaceAll("\\(!", "").replaceAll("!\\)", "");
+                if (!TextUtils.isEmpty(word)) {
+                    for (int i = 0; i < word.length(); i++) {
+                        String wordItem = word.charAt(i) + "";
+                        words.add(new Word(wordItem, i == word.length() - 1? pinyin : ""));
+                    }
+                }
                 text = text.replace(value, "");
             }
         }
@@ -192,11 +202,13 @@ public class CYTextBlock extends CYBlock {
     }
 
     /*
-         * 绘制单词
-         */
+     * 绘制单词
+     */
     protected void drawText(Canvas canvas, String text, float x, float y, Paint paint) {
         if (!TextUtils.isEmpty(text)) {
-            canvas.drawText(text, x, y, paint);
+            paint.setTextSize(fontSize);
+            float width = getTextWidth(paint, text);
+            canvas.drawText(text, x + (getWidth() - width)/2, y, paint);
         }
     }
 
@@ -205,7 +217,9 @@ public class CYTextBlock extends CYBlock {
      */
     protected void drawPinyin(Canvas canvas, String pinyin, float x, float y, Paint paint) {
         if (!TextUtils.isEmpty(pinyin)) {
-            canvas.drawText(pinyin, x, y, paint);
+            paint.setTextSize(fontSize * 0.6f);
+            float width = getTextWidth(paint, pinyin);
+            canvas.drawText(pinyin, x + (getWidth() - width)/2, y, paint);
         }
     }
 
