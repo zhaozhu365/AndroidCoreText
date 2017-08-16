@@ -46,6 +46,30 @@ public class CYTextBlock extends CYBlock {
         }
     }
 
+    @Override
+    public void setPadding(int left, int top, int right, int bottom) {
+        super.setPadding(left, top, right, bottom);
+        List<CYBlock> children = getChildren();
+        if (children != null) {
+            for (int i = 0; i < children.size(); i++) {
+                CYBlock child = children.get(i);
+                child.setPadding(left, top, right, bottom);
+            }
+        }
+    }
+
+    @Override
+    public void setMargin(int left, int right) {
+        super.setMargin(left, right);
+        List<CYBlock> children = getChildren();
+        if (children != null) {
+            for (int i = 0; i < children.size(); i++) {
+                CYBlock child = children.get(i);
+                child.setMargin(left, right);
+            }
+        }
+    }
+
     /*
      * 构造子节点
      */

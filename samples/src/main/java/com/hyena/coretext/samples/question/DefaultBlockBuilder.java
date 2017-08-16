@@ -9,9 +9,11 @@ import android.text.TextUtils;
 import com.hyena.coretext.AttributedString;
 import com.hyena.coretext.TextEnv;
 import com.hyena.coretext.blocks.CYBlock;
+import com.hyena.coretext.blocks.CYTextBlock;
 import com.hyena.coretext.builder.CYBlockProvider;
 import com.hyena.coretext.builder.IBlockMaker;
 import com.hyena.coretext.samples.App;
+import com.hyena.coretext.utils.Const;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -46,6 +48,28 @@ public class DefaultBlockBuilder extends BlockMaker implements CYBlockProvider.C
     @Override
     public List<CYBlock> build(TextEnv textEnv, String content) {
         return analysisCommand(textEnv, content).build();
+    }
+
+    @Override
+    public CYTextBlock buildTextBlock(TextEnv textEnv, String content) {
+        CYTextBlock textBlock =  new CYTextBlock(textEnv, content) {
+            @Override
+            public int getMarginLeft() {
+                if (word != null && !TextUtils.isEmpty(word.pinyin)) {
+                    return Const.DP_1 * 5;
+                }
+                return super.getMarginLeft();
+            }
+
+            @Override
+            public int getMarginRight() {
+                if (word != null && !TextUtils.isEmpty(word.pinyin)) {
+                    return Const.DP_1 * 5;
+                }
+                return super.getMarginRight();
+            }
+        };
+        return textBlock;
     }
 
     private AttributedString analysisCommand(TextEnv textEnv, String content) {
