@@ -8,6 +8,7 @@ import android.text.TextUtils;
 
 import com.hyena.coretext.TextEnv;
 import com.hyena.coretext.utils.PaintManager;
+import com.hyena.framework.clientlog.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -173,10 +174,9 @@ public class CYTextBlock extends CYBlock {
                         words.add(new Word(wordItem, i == word.length() - 1? pinyin : ""));
                     }
                 }
-                text = text.replace(value, "");
+                text = content.substring(matcher.end());
             }
         }
-
         if (!TextUtils.isEmpty(text)) {
             char chs[] = text.toCharArray();
             for (int i = 0; i < chs.length; i++) {
