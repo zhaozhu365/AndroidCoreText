@@ -114,7 +114,7 @@ public class CYLatexBlock extends CYPlaceHolderBlock implements ICYEditableGroup
         mPaint.setTextSize(fontSize);
         mPaint.setColor(color);
         mBuilder = mTexFormula.new TeXIconBuilder()
-                .setStyle(TeXConstants.STYLE_TEXT)
+                .setStyle(TeXConstants.STYLE_DISPLAY)
                 .setSize(TeXFormula.PIXELS_PER_POINT / AjLatexMath.getContext().getResources().getDisplayMetrics().scaledDensity)
                 .setFGColor(color)
                 .setWidth(TeXConstants.UNIT_PIXEL, getTextEnv().getSuggestedPageWidth(), TeXConstants.ALIGN_LEFT)
