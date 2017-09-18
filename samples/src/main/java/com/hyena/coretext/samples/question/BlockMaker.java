@@ -6,14 +6,10 @@ import com.hyena.coretext.TextEnv;
 import com.hyena.coretext.blocks.CYBlock;
 import com.hyena.coretext.blocks.CYBreakLineBlock;
 import com.hyena.coretext.blocks.CYHorizontalAlign;
-import com.hyena.coretext.blocks.CYLatexBlock;
 import com.hyena.coretext.blocks.CYStyle;
 import com.hyena.coretext.blocks.CYStyleEndBlock;
 import com.hyena.coretext.blocks.CYTableBlock;
 import com.hyena.coretext.blocks.CYTextBlock;
-import com.hyena.coretext.blocks.IEditFace;
-import com.hyena.coretext.blocks.latex.FillInAtom;
-import com.hyena.coretext.blocks.latex.FillInBox;
 import com.hyena.coretext.builder.IBlockMaker;
 import com.hyena.coretext.utils.Const;
 
@@ -22,12 +18,6 @@ import org.json.JSONObject;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import maximsblog.blogspot.com.jlatexmath.core.Atom;
-import maximsblog.blogspot.com.jlatexmath.core.Box;
-import maximsblog.blogspot.com.jlatexmath.core.TeXEnvironment;
-import maximsblog.blogspot.com.jlatexmath.core.TeXParser;
-import maximsblog.blogspot.com.jlatexmath.core.Text;
 
 /**
  * Created by yangzc on 17/7/25.
@@ -89,32 +79,7 @@ public class BlockMaker implements IBlockMaker {
                     e.printStackTrace();
                 }
             }
-            return (T) new CYLatexBlock(textEnv, latex) {
-                @Override
-                public void registerCommand() {
-                    super.registerCommand();
-                    addCommand("fillin", 3);
-                }
-
-                @Override
-                public Atom createAtom(String command, TeXParser tp, String[] args) {
-                    if ("fillin".equals(command)) {
-                        return new FillInAtom(args[1], args[2], args[3]) {
-                            @Override
-                            public Box createFillInBox(final TeXEnvironment env, int index, String clazz, Text ch) {
-                                return new FillInBox((TextEnv) env.getTag(), index, clazz, ch) {
-                                    @Override
-                                    public IEditFace createEditFace() {
-                                        return new EditFace((TextEnv) env.getTag(), this);
-                                    }
-                                };
-                            }
-                        };
-                    }
-                    return super.createAtom(command, tp, args);
-                }
-
-            };
+            return (T) new LatexBlock(textEnv, latex);
         } else if ("table".equals(type)) {
             return (T) new CYTableBlock(textEnv, data);
         }

@@ -77,7 +77,7 @@ public class EditFace extends CYEditFace {
             return text;
         } else {
             if (TextUtils.isEmpty(text)) {
-                return "(    )";
+                return "()";
             } else {
                 return "(" + text + ")";
             }

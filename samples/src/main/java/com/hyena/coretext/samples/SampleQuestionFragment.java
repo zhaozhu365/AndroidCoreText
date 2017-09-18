@@ -4,6 +4,7 @@
 
 package com.hyena.coretext.samples;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -17,6 +18,7 @@ import com.hyena.coretext.blocks.ICYEditable;
 import com.hyena.coretext.event.CYFocusEventListener;
 import com.hyena.coretext.samples.question.QuestionTextView;
 import com.hyena.coretext.utils.Const;
+import com.hyena.coretext.utils.EditableValue;
 import com.hyena.framework.clientlog.LogUtil;
 
 import org.json.JSONObject;
@@ -90,7 +92,8 @@ public class SampleQuestionFragment extends Fragment {
 
 //                "#{\"type\":\"para_begin\",\"size\" : 30,\"align\": \"mid\",\"color\":\"#000000\",\"margin\":8}#" +
 //                "#{\"type\":\"audio\",\"src\":\"http://7xohdn.com2.z0.glb.qiniucdn.com/tingli/15590285.mp3\"}#" +
-//                "\r\n#{\"type\":\"blank\",\"id\": 1,\"size\":\"express\"}#\r\n#{\"type\":\"para_end\"}#" +
+                "\r\n#{\"type\":\"blank\",\"id\": 1,\"size\":\"express\"}#\r\n" +
+//                "#{\"type\":\"para_end\"}#" +
 //
 //                "#{\"type\":\"latex\",\"content\":\"\\\\frac{8}{3+\\#{\\\"type\\\":\\\"blank\\\",\\\"id\\\":\\\"2\\\",\\\"size\\\":\\\"express\\\",\\\"class\\\":\\\"fillin\\\"}\\#}\"}#=2" +
 //                "#{\\\"type\\\":\\\"latex\\\",\\\"content\\\":\\\"\\\\\\\\frac{7}{5}\\\"}#" +
@@ -98,7 +101,7 @@ public class SampleQuestionFragment extends Fragment {
 //                "2" +
 //                "#{\\\"type\\\":\\\"para_begin\\\",\\\"style\\\":\\\"chinese_guide\\\"}#选择性背诵题#{\\\"type\\\":\\\"para_end\\\"}#\\n#{\\\"type\\\":\\\"para_begin\\\",\\\"style\\\":\\\"chinese_guide\\\"}#20 我是什么-第4、5自然段#{\\\"type\\\":\\\"para_end\\\"}##{\\\"type\\\":\\\"para_begin\\\",\\\"style\\\":\\\"chinese_recite_pinyin\\\"}#有(!yǒu!)时(!shí!)候(!hòu!)我(!wǒ!)很(!hěn!)温(!wēn!)和(!hé!)，有(!yǒu!)时(!shí!)候(!hòu!)我(!wǒ!)很(!hěn!)暴(!bào!)躁(!zào!)。我(!wǒ!)做(!zuò!)过(!guò!)许(!xǔ!)多(!duō!)好(!hǎo!)事(!shì!)，灌(!guàn!)溉(!gài!)田(!tián!)地(!dì!)，发(!fā!)动(!dòng!)机(!jī!)器(!qì!)，帮(!bāng!)助(!zhù!)人(!rén!)们(!men!)工(!gōng!)作(!zuò!)。我(!wǒ!)也(!yě!)做(!zuò!)过(!guò!)许(!xǔ!)多(!duō!)坏(!huài!)事(!shì!)，淹(!yān!)没(!mò!)庄(!zhuāng!)稼(!jià!)，冲(!chōng!)毁(!huǐ!)房(!fáng!)屋(!wū!)，给(!gěi!)人(!rén!)们(!men!)带(!dài!)来(!lái!)灾(!zāi!)害(!hài!)。人(!rén!)们(!men!)想(!xiǎng!)出(!chū!)种(!zhǒng!)种(!zhǒng!)办(!bàn!)法(!fǎ!)管(!guǎn!)住(!zhù!)我(!wǒ!)，让(!ràng!)我(!wǒ!)光(!guāng!)做(!zuò!)好(!hǎo!)事(!shì!)，不(!bù!)做(!zuò!)坏(!huài!)事(!shì!)。\\n小(!xiǎo!)朋(!péng!)友(!yǒu!)，你(!nǐ!)们(!men!)猜(!cāi!)猜(!cāi!)我(!wǒ!)是(!shì!)什(!shén!)么(!me!)。#{\\\"type\\\":\\\"para_end\\\"}#" +
                 "";
-        mQtvQuestion.getBuilder(question).setEditable(true).setDebug(true).setFontSize(50 * Const.DP_1).build();//.replaceAll("\\\\", "")
+        mQtvQuestion.getBuilder(question).setEditable(false).setDebug(true).setEditableValue(1, new EditableValue(Color.RED, "12", true)).setFontSize(50 * Const.DP_1).build();//.replaceAll("\\\\", "")
     }
 
     private View.OnClickListener mClickListener = new View.OnClickListener() {
