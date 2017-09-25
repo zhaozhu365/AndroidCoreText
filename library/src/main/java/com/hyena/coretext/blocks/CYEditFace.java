@@ -179,13 +179,12 @@ public class CYEditFace implements IEditFace{
                 y = contentRect.bottom - mTextPaintMetrics.bottom;
             }
             canvas.drawText(text, x, y, mTextPaint);
+            canvas.restore();
 
             if (isShowUnderLine) {
                 y += mTextPaintMetrics.descent + Const.DP_1;
                 canvas.drawLine(x, y, x + textWidth, y, mBottomLinePaint);
             }
-
-            canvas.restore();
         }
     }
 
