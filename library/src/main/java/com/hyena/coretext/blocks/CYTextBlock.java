@@ -8,7 +8,6 @@ import android.text.TextUtils;
 
 import com.hyena.coretext.TextEnv;
 import com.hyena.coretext.utils.PaintManager;
-import com.hyena.framework.clientlog.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -181,8 +180,7 @@ public class CYTextBlock extends CYBlock {
             char chs[] = text.toCharArray();
             for (int i = 0; i < chs.length; i++) {
                 int wordStart = i, count = 1;
-                while ((i + 1) < chs.length && !PaintManager.isChinese(chs[i + 1])
-                        && !Character.isSpace(chs[i + 1])) {
+                while ((i + 1) < chs.length && PaintManager.isEnglish(chs[i + 1])) {
                     count ++;
                     i ++;
                 }

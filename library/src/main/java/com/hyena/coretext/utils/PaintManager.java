@@ -78,4 +78,11 @@ public class PaintManager {
         }
         return false;
     }
+
+    public static boolean isEnglish(char ch) {
+        if (('A' <= ch && ch <= 'Z') || ('a' <= ch && ch <= 'z') || ch == '-') {
+            return true;
+        }
+        return false;
+    }
 }
