@@ -1,5 +1,7 @@
 package com.hyena.coretext.samples.question;
 
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.text.TextUtils;
 
 import com.hyena.coretext.TextEnv;
@@ -76,6 +78,17 @@ public class LatexBlock extends CYLatexBlock {
         @Override
         public boolean hasBottomLine() {
             return false;
+        }
+
+        private Rect mRect = new Rect();
+
+        @Override
+        public Rect getBlockRect() {
+            RectF rectF = getVisibleRect();
+            float scale = getScale();
+            mRect.set((int)(rectF.left * scale) + getX(), (int)(rectF.top * scale) + getLineY(),
+                    (int)(rectF.right * scale) + getX(), (int)(rectF.bottom * scale) + getLineY());
+            return mRect;
         }
     }
 
