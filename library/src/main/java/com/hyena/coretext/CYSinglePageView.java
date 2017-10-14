@@ -253,6 +253,7 @@ public class CYSinglePageView extends CYPageView implements IRender {
                     mPageBlock = pages.get(0);
                     mPageBlock.setPadding(0, 0, 0, 0);
                 }
+                mEditableList = findEditableList();
             }
             if (render != null) {
                 render.setPageBlock(mPageBlock);

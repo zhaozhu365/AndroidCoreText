@@ -138,6 +138,12 @@ public class CYLatexBlock extends CYPlaceHolderBlock implements ICYEditableGroup
         mTexIcon = mBuilder.build();
     }
 
+    public float getScale() {
+        if (mTexIcon != null && mTexIcon.getSize() != 0)
+            return mTexIcon.getSize();
+        return 1;
+    }
+
     @Override
     public int getContentWidth() {
         if (mTexIcon != null)
