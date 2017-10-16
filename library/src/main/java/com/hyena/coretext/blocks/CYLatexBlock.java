@@ -45,6 +45,16 @@ public class CYLatexBlock extends CYPlaceHolderBlock implements ICYEditableGroup
         initCustomCommand();
     }
 
+    public static class LatexTag {
+        public TextEnv mTextEnv;
+        public CYLatexBlock mLatexBlock;
+
+        public LatexTag(TextEnv textEnv, CYLatexBlock latexBlock) {
+            this.mTextEnv = textEnv;
+            this.mLatexBlock = latexBlock;
+        }
+    }
+
     /**
      * 初始化Latex
      */
@@ -122,7 +132,7 @@ public class CYLatexBlock extends CYPlaceHolderBlock implements ICYEditableGroup
                 .setTrueValues(false)
                 .setType(TeXConstants.TYPE_ORDINARY)
                 .setInterLineSpacing(TeXConstants.UNIT_PIXEL, Const.DP_1 * 2)
-                .setTag(getTextEnv());
+                .setTag(new LatexTag(getTextEnv(), this));
         setFormula(latex);
     }
 

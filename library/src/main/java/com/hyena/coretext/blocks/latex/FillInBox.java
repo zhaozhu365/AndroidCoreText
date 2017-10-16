@@ -100,7 +100,7 @@ public abstract class FillInBox extends Box implements ICYEditable {
     public void draw(Canvas g2, float x, float y, Paint paint) {
         if (mEditFace == null)
             return;
-        mVisibleRect.set(x, y - getHeight(), x + getWidth(), y);
+        mVisibleRect.set(x, y - getHeight(), x + getWidth(), y + getDepth());
 
         mBlockRect.set((int)(x * mScale + 0.5), (int)((y - getHeight()) * mScale + 0.5)
                 , (int)((x + getWidth()) * mScale + 0.5), (int)((y + getDepth()) * mScale + 0.5));
