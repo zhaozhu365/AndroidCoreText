@@ -15,20 +15,17 @@ import com.hyena.coretext.blocks.ICYEditableGroup;
 import com.hyena.coretext.event.CYFocusEventListener;
 import com.hyena.coretext.event.CYLayoutEventListener;
 import com.hyena.coretext.utils.CYBlockUtils;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.hyena.coretext.utils.Const;
 
 /**
  * Created by yangzc on 16/4/8.
  */
-public class CYPageView extends View implements CYLayoutEventListener {
+public abstract class CYPageView extends View implements CYLayoutEventListener {
 
     public static int FOCUS_TAB_ID = -1;
     private CYPageBlock mPageBlock;
     private CYBlock mFocusBlock;
     private ICYEditable mFocusEditable;
-    private TextEnv mTextEnv;
 
     public CYPageView(Context context) {
         super(context);
@@ -46,7 +43,6 @@ public class CYPageView extends View implements CYLayoutEventListener {
     }
 
     private void init() {
-//        setBackgroundColor(Color.RED);
     }
 
     @Override
@@ -64,9 +60,9 @@ public class CYPageView extends View implements CYLayoutEventListener {
      * set blocks items
      * @param pageBlock page
      */
-    public void setPageBlock(TextEnv textEnv, CYPageBlock pageBlock) {
-        mTextEnv = textEnv;
+    public void setPageBlock(CYPageBlock pageBlock) {
         this.mPageBlock = pageBlock;
+        requestLayout();
     }
 
     public CYPageBlock getPageBlock() {
@@ -78,20 +74,7 @@ public class CYPageView extends View implements CYLayoutEventListener {
      * @param tabId tabId
      * @return
      */
-    public ICYEditable findEditableByTabId(int tabId) {
-        if (mPageBlock != null) {
-            return mPageBlock.findEditableByTabId(tabId);
-        }
-        return null;
-    }
-
-    public List<ICYEditable> getEditableList() {
-        List<ICYEditable> editableList = new ArrayList<ICYEditable>();
-        if (mPageBlock != null) {
-            mPageBlock.findAllEditable(editableList);
-        }
-        return editableList;
-    }
+    public abstract ICYEditable findEditableByTabId(int tabId);
 
     public void clearFocus() {
         FOCUS_TAB_ID = -1;
@@ -134,7 +117,7 @@ public class CYPageView extends View implements CYLayoutEventListener {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (mPageBlock == null || mTextEnv == null)
+        if (mPageBlock == null)
             return super.onTouchEvent(event);
 
         int action = MotionEventCompat.getActionMasked(event);
@@ -250,20 +233,30 @@ public class CYPageView extends View implements CYLayoutEventListener {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        release();
+        if (mPageBlock != null) {
+            mPageBlock.stop();
+        }
     }
 
     protected void release() {
-        if (mTextEnv != null) {
-            mTextEnv.getEventDispatcher().removeLayoutEventListener(this);
-        }
         if (mFocusEditable != null) {
             mFocusEditable.setFocus(false);
         }
         if (mPageBlock != null) {
-            mPageBlock.release();
+            mPageBlock.stop();
         }
     }
+
+//    public TextEnv buildDefaultTextEnv(Context context) {
+//        int width = getResources().getDisplayMetrics().widthPixels;
+//        return new TextEnv(context)
+//                .setSuggestedPageWidth(width)
+//                .setTextColor(0xff333333)
+//                .setFontSize(Const.DP_1 * 20)
+//                .setTextAlign(TextEnv.Align.CENTER)
+//                .setSuggestedPageHeight(Integer.MAX_VALUE)
+//                .setVerticalSpacing(Const.DP_1 * 3);
+//    }
 
     public void measure() {
         if (mPageBlock != null) {

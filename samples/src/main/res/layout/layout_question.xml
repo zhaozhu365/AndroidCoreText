@@ -148,12 +148,18 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/latex_bottom">
+        android:layout_above="@id/latex_bottom"
+        android:fillViewport="true">
 
-        <com.hyena.coretext.samples.question.QuestionTextView
-            android:id="@+id/qtv_question"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="match_parent">
+
+            <com.hyena.coretext.samples.question.QuestionTextView
+                android:id="@+id/qtv_question"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
     </ScrollView>
 
 </RelativeLayout>

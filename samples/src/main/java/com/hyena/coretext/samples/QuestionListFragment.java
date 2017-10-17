@@ -5,17 +5,14 @@
 package com.hyena.coretext.samples;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import com.hyena.coretext.blocks.ICYEditable;
 import com.hyena.coretext.samples.question.QuestionTextView;
 import com.hyena.framework.app.adapter.SingleTypeAdapter;
 
@@ -64,7 +61,6 @@ public class QuestionListFragment extends Fragment {
                 convertView.setTag(viewHolder);
 
                 viewHolder.mQtvQuestion = (QuestionTextView) convertView.findViewById(R.id.qtv_question);
-                viewHolder.mQtvQuestion.getBuilder().setEditable(false);
 
             } else {
                 viewHolder = (ViewHolder) convertView.getTag();
@@ -139,7 +135,12 @@ public class QuestionListFragment extends Fragment {
 //                    "#{\"type\":\"img\",\"id\"=1,\"size\":\"big_image\",\"src\":\"http://img1.3lian.com/2015/w8/28/d/66.jpg?aa=bb\"}#" +
                     "啊啊啊啊啊";
 
-            viewHolder.mQtvQuestion.getBuilder().setText(question).build();
+            question = "杨忠诚测试杨忠诚测试杨忠诚测试杨忠诚测试杨忠诚测试杨忠诚测试杨忠诚测试杨忠诚测试杨忠诚测试杨忠诚测试i love u.i love u.i love u.i love u.i love u.i love u.i love u.i love u.i love u.i love u." +
+                    "#{\"type\":\"para_begin\",\"style\":\"math_text\"}#\n" +
+                    "#{\"type\":\"latex\",\"content\":\"\\\\frac{8}{3+\\#{\\\"type\\\":\\\"blank\\\",\\\"id\\\":\\\"1\\\",\\\"size\\\":\\\"express\\\",\\\"class\\\":\\\"fillin\\\"}\\#\"}#=2" +
+                    "#{\"type\":\"para_end\"}#" +
+                    "#{\"type\":\"para_begin\",\"style\":\"math_text\"}#";
+//            viewHolder.mQtvQuestion.getBuilder(parent, question).setFontSize(10).setEditable(false);
 //            ICYEditable editable = viewHolder.mQtvQuestion.findEditableByTabId(1);
 //            if (editable != null) {
 //                editable.setText("第" + position + "题答案");

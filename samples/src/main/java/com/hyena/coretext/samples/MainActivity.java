@@ -1,17 +1,12 @@
 package com.hyena.coretext.samples;
 
 import android.os.Bundle;
-import android.os.Debug;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.widget.TextView;
 
-import com.hyena.coretext.samples.latex.FillInAtom;
 import com.hyena.framework.servcie.IServiceManager;
 import com.hyena.framework.servcie.ServiceProvider;
-
-import maximsblog.blogspot.com.jlatexmath.core.MacroInfo;
-import maximsblog.blogspot.com.jlatexmath.core.ParseException;
-import maximsblog.blogspot.com.jlatexmath.core.TeXParser;
 
 /**
  * Created by yangzc on 16/3/19.
@@ -21,19 +16,13 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Debug.startMethodTracing();
+//        Debug.startMethodTracing();
         setContentView(R.layout.activity_main);
-        MacroInfo.Commands.put("fillin", new MacroInfo(2) {
-            @Override
-            public Object invoke(TeXParser tp, String[] args) throws ParseException {
-                //return custom atom
-                return new FillInAtom(args[1], args[2]);
-            }
-        });
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//        transaction.replace(R.id.main_container, new QuestionListFragment());
-//        transaction.replace(R.id.main_container, new SampleQuestionFragment());
-        transaction.replace(R.id.main_container, new TestFragment());
+//        transaction.replace(R.id.main_container, new QuestionListFragment1());
+        transaction.replace(R.id.main_container, new SampleQuestionFragment());
+//        transaction.replace(R.id.main_container, new TestFragment());
+//        transaction.replace(R.id.main_container, new PreviewQuestionFragment());
         transaction.commit();
     }
 

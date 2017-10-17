@@ -34,7 +34,7 @@ public class EditFace extends CYEditFace {
 
     @Override
     protected void drawBorder(Canvas canvas, Rect blockRect, Rect contentRect) {
-        if (!getTextEnv().isEditable())
+        if (!mTextEnv.isEditable())
             return;
         if ("choose".equals(mClass)) {
             super.drawBorder(canvas, blockRect, contentRect);
@@ -44,7 +44,7 @@ public class EditFace extends CYEditFace {
     private RectF mRectF = new RectF();
     @Override
     protected void drawBackGround(Canvas canvas, Rect blockRect, Rect contentRect) {
-        if (!getTextEnv().isEditable())
+        if (!mTextEnv.isEditable())
             return;
 
         mBackGroundPaint.setColor(Color.GRAY);
@@ -60,24 +60,24 @@ public class EditFace extends CYEditFace {
     }
 
     @Override
-    protected void drawFlash(Canvas canvas, Rect contentRect) {
-        if (!getTextEnv().isEditable())
+    protected void drawFlash(Canvas canvas, Rect blockRect, Rect contentRect) {
+        if (!mTextEnv.isEditable())
             return;
 
         mFlashPaint.setColor(0xff3eabff);
         if ("fillin".equals(mClass)) {
-            super.drawFlash(canvas, contentRect);
+            super.drawFlash(canvas, blockRect, contentRect);
         }
     }
 
     @Override
     public String getText() {
         String text = super.getText();
-        if (getTextEnv().isEditable()) {
+        if (mTextEnv.isEditable()) {
             return text;
         } else {
             if (TextUtils.isEmpty(text)) {
-                return "(    )";
+                return "()";
             } else {
                 return "(" + text + ")";
             }

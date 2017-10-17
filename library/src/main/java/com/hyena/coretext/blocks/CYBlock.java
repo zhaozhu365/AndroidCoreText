@@ -7,7 +7,8 @@ import android.graphics.Rect;
 import android.util.Log;
 
 import com.hyena.coretext.TextEnv;
-import com.hyena.framework.utils.UIUtils;
+import com.hyena.coretext.utils.Const;
+import com.hyena.coretext.utils.PaintManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,11 +26,14 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable, Clonea
     //当前行高度
     private int lineHeight;
     private int paddingLeft = 0, paddingTop = 0, paddingRight = 0, paddingBottom = 0;
+    private int marginLeft = 0, marginRight = 0;
     //是否存在焦点
     private boolean mFocus = false;
     //内容范围
     private Rect mContentRect = new Rect();
     private Rect mBlockRect = new Rect();
+    //父节点
+    private CYBlock mParent;
     //所有子节点
     private List<T> mChildren = new ArrayList<T>();
     private TextEnv mTextEnv;
@@ -38,12 +42,14 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable, Clonea
     //是否在独享行中
     private boolean mIsInMonopolyRow = true;
     private boolean mFocusable = false;
-    private CYParagraphStyle mParagraphStyle;
+    private CYStyle mParagraphStyle;
 
-    private static int DP_1 = UIUtils.dip2px(1);
+    private static int DP_1 = Const.DP_1;
 
+    private String mContent;
     public CYBlock(TextEnv textEnv, String content) {
         this.mTextEnv = textEnv;
+        this.mContent = content;
         this.paddingBottom = DP_1;
         if (isDebug()) {
             mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -52,12 +58,23 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable, Clonea
         }
     }
 
+    public String getContent() {
+        return mContent;
+    }
+
     public TextEnv getTextEnv() {
         return mTextEnv;
     }
 
     public void setTextEnv(TextEnv textEnv) {
         this.mTextEnv = textEnv;
+        List<T> children = getChildren();
+        if (children != null && !children.isEmpty()) {
+            for (int i = 0; i < children.size(); i++) {
+                T block = children.get(i);
+                block.setTextEnv(textEnv);
+            }
+        }
     }
 
     /**
@@ -113,6 +130,11 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable, Clonea
         this.paddingBottom = bottom;
     }
 
+    public void setMargin(int left, int right) {
+        this.marginLeft = left;
+        this.marginRight = right;
+    }
+
     /**
      * @return padding left
      */
@@ -139,6 +161,20 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable, Clonea
      */
     public int getPaddingBottom() {
         return paddingBottom;
+    }
+
+    /**
+     * @return margin left
+     */
+    public int getMarginLeft() {
+        return marginLeft;
+    }
+
+    /**
+     * @return margin right
+     */
+    public int getMarginRight() {
+        return marginRight;
     }
 
     /**
@@ -193,6 +229,14 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable, Clonea
         if (mChildren == null)
             mChildren = new ArrayList<T>();
         mChildren.add(child);
+    }
+
+    /**
+     * set children
+     * @param children child blocks
+     */
+    public void setChildren(List<T> children) {
+        this.mChildren = children;
     }
 
     /**
@@ -320,21 +364,21 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable, Clonea
      * @param tabId tabId
      * @return
      */
-    public ICYEditable findEditableByTabId(int tabId) {
+    public ICYEditable findEditableInBlockByTabId(int tabId) {
         List<T> children = getChildren();
         if (children != null && !children.isEmpty()) {
             for (int i = 0; i < children.size(); i++) {
                 T block = children.get(i);
-                ICYEditable editable = block.findEditableByTabId(tabId);
+                ICYEditable editable = block.findEditableInBlockByTabId(tabId);
                 if (editable != null) {
                     return editable;
                 }
             }
         } else {
-            if (this instanceof CYEditBlock && ((CYEditBlock)this).getTabId() == tabId) {
+            if (this instanceof ICYEditable && ((ICYEditable)this).getTabId() == tabId) {
                 return (ICYEditable) this;
             } else if (this instanceof ICYEditableGroup) {
-                return this.findEditableByTabId(tabId);
+                return ((ICYEditableGroup)this).findEditableByTabId(tabId);
             }
         }
         return null;
@@ -348,7 +392,7 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable, Clonea
                 block.findAllEditable(editables);
             }
         } else {
-            if (this instanceof CYEditBlock) {
+            if (this instanceof ICYEditable) {
                 editables.add((ICYEditable) this);
             } else if (this instanceof ICYEditableGroup) {
                 List<ICYEditable> edits = ((ICYEditableGroup)this).findAllEditable();
@@ -358,29 +402,57 @@ public abstract class CYBlock<T extends CYBlock> implements ICYFocusable, Clonea
         }
     }
 
-    public void setParagraphStyle(CYParagraphStyle style) {
+    public void setStyle(CYStyle style) {
         this.mParagraphStyle = style;
     }
 
-    public CYParagraphStyle getParagraphStyle() {
+    public CYStyle getParagraphStyle() {
         return mParagraphStyle;
     }
 
-    public void release() {
+    public void restart() {
         List<T> children = getChildren();
         if (children != null && !children.isEmpty()) {
             for (int i = 0; i < children.size(); i++) {
                 T block = children.get(i);
-                block.release();
+                block.restart();
+            }
+        }
+    }
+
+    public void stop() {
+        List<T> children = getChildren();
+        if (children != null && !children.isEmpty()) {
+            for (int i = 0; i < children.size(); i++) {
+                T block = children.get(i);
+                block.stop();
             }
         }
     }
 
     public int getTextHeight(Paint paint) {
-        return (int) (Math.ceil(paint.descent() - paint.ascent()) + 0.5f);
+        return PaintManager.getInstance().getHeight(paint);
+    }
+
+    public int getTextWidth(Paint paint, String text) {
+        return (int) PaintManager.getInstance().getWidth(paint, text);
     }
 
     public boolean isValid() {
         return true;
     }
+
+    public boolean isEmpty() {
+        return false;
+    }
+
+    public void setParent(CYBlock parent) {
+        this.mParent = parent;
+    }
+
+    public CYBlock getParent() {
+        return mParent;
+    }
+
+    public void setTextHeightInLine(int textHeight) {}
 }

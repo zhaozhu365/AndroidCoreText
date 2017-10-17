@@ -1,11 +1,11 @@
 package com.hyena.coretext.blocks;
 
 import android.graphics.Canvas;
-import android.graphics.Paint;
 
+import com.hyena.coretext.CYPageView;
 import com.hyena.coretext.TextEnv;
+import com.hyena.coretext.utils.Const;
 import com.hyena.coretext.utils.EditableValue;
-import com.hyena.framework.utils.UIUtils;
 
 /**
  * Created by yangzc on 16/4/12.
@@ -13,7 +13,8 @@ import com.hyena.framework.utils.UIUtils;
 public class CYEditBlock extends CYPlaceHolderBlock implements ICYEditable {
 
     private int mTabId = 0;
-    private CYEditFace mEditFace;
+    private boolean mEditable = false;
+    private IEditFace mEditFace;
 
     public CYEditBlock(TextEnv textEnv, String content) {
         super(textEnv, content);
@@ -21,14 +22,10 @@ public class CYEditBlock extends CYPlaceHolderBlock implements ICYEditable {
     }
 
     private void init(){
-        Paint paint = getTextEnv().getPaint();
-        int height = (int) (Math.ceil(paint.descent() - paint.ascent()) + 0.5f);
-        setWidth(UIUtils.dip2px(80));
-        setHeight(height);
+        setWidth(Const.DP_1 * 80);
+        setHeight(getTextHeight(getTextEnv().getPaint()));
         setFocusable(true);
         mEditFace = createEditFace(getTextEnv(), this);
-        mEditFace.setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight()
-                , getPaddingBottom());
     }
 
     protected CYEditFace createEditFace(TextEnv textEnv, ICYEditable editable) {
@@ -38,10 +35,11 @@ public class CYEditBlock extends CYPlaceHolderBlock implements ICYEditable {
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
-        mEditFace.onDraw(canvas, getBlockRect(), getContentRect());
+        if (mEditFace != null)
+            mEditFace.onDraw(canvas, getBlockRect(), getContentRect());
     }
 
-    public CYEditFace getEditFace() {
+    public IEditFace getEditFace() {
         return mEditFace;
     }
 
@@ -63,8 +61,13 @@ public class CYEditBlock extends CYPlaceHolderBlock implements ICYEditable {
     @Override
     public void setText(String text) {
         getTextEnv().setEditableValue(getTabId(), text);
-        mEditFace.setText(text);
         requestLayout();
+    }
+
+    @Override
+    public boolean hasBottomLine() {
+        EditableValue value = getTextEnv().getEditableValue(getTabId());
+        return value == null ? false : value.hasBottomLine();
     }
 
     @Override
@@ -75,65 +78,65 @@ public class CYEditBlock extends CYPlaceHolderBlock implements ICYEditable {
             getTextEnv().setEditableValue(getTabId(), value);
         }
         value.setColor(color);
-        mEditFace.setTextColor(color);
         postInvalidateThis();
-    }
-
-    public void setDefaultText(String defaultText) {
-        mEditFace.setDefaultText(defaultText);
     }
 
     @Override
     public void setFocus(boolean focus) {
         super.setFocus(focus);
-        if (isFocusable()) {
-            mEditFace.setFocus(focus);
+        //当前选中的focusId
+        if (focus) {
+            CYPageView.FOCUS_TAB_ID = getTabId();
         }
-    }
-
-    @Override
-    public void setPadding(int left, int top, int right, int bottom) {
-        super.setPadding(left, top, right, bottom);
         if (mEditFace != null) {
-            mEditFace.setPadding(left, top, right, bottom);
+            mEditFace.setInEditMode(focus);
         }
+        postInvalidateThis();
     }
 
     @Override
     public boolean hasFocus() {
-        return mEditFace.hasFocus();
+        return CYPageView.FOCUS_TAB_ID == getTabId();
     }
 
     @Override
     public void setFocusable(boolean focusable) {
         super.setFocusable(focusable);
+        setEditable(focusable);
+    }
+
+    @Override
+    public boolean isFocusable() {
+        return super.isFocusable();
+    }
+
+    @Override
+    public void setEditable(boolean editable) {
+        this.mEditable = editable;
+    }
+
+    @Override
+    public boolean isEditable() {
+        return mEditable;
+    }
+
+    @Override
+    public String getDefaultText() {
+        return "";
+    }
+
+    @Override
+    public void restart() {
+        super.restart();
         if (mEditFace != null) {
-            mEditFace.setEditable(focusable);
+            mEditFace.restart();
         }
     }
 
     @Override
-    public void setParagraphStyle(CYParagraphStyle style) {
-        super.setParagraphStyle(style);
-        if (mEditFace != null) {
-            mEditFace.setParagraphStyle(style);
-        }
-    }
-
-    @Override
-    public int getContentWidth() {
-        return super.getContentWidth();
-    }
-
-    @Override
-    public int getContentHeight() {
-        return super.getContentHeight();
-    }
-
-    @Override
-    public void release() {
-        super.release();
+    public void stop() {
+        super.stop();
         if (mEditFace != null)
-            mEditFace.release();
+            mEditFace.stop();
     }
 }

@@ -9,12 +9,19 @@ package com.hyena.coretext.blocks;
  */
 public interface ICYEditable extends ICYFocusable {
 
-    public int getTabId();
+    int getTabId();
 
-    public String getText();
+    void setText(String text);
 
-    public void setText(String text);
+    String getText();
 
-    public void setTextColor(int color);
+    void setTextColor(int color);
 
+    String getDefaultText();
+
+    void setEditable(boolean editable);
+
+    boolean isEditable();
+
+    boolean hasBottomLine();
 }

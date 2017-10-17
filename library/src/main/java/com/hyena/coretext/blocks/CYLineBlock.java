@@ -1,10 +1,10 @@
 package com.hyena.coretext.blocks;
 
 import android.graphics.Canvas;
+import android.text.TextUtils;
 
 import com.hyena.coretext.TextEnv;
-import com.hyena.framework.clientlog.LogUtil;
-import com.hyena.framework.utils.UIUtils;
+import com.hyena.coretext.utils.Const;
 
 import java.util.List;
 
@@ -15,13 +15,14 @@ public class CYLineBlock extends CYBlock<CYBlock> {
 
     private int mWidth, mHeight;
     private boolean isInMonopolyRow;
-    private CYParagraphStyle mParagraphStyle;
+    private CYStyle mParagraphStyle;
     private int mMaxHeightInLine = 0;
+    private int mMaxTextHeightInLine = 0;
     private boolean isValid = false;
 
-    private static final int DP_20 = UIUtils.dip2px(20);
+    private static final int DP_20 = Const.DP_1 * 20;
 
-    public CYLineBlock(TextEnv textEnv, CYParagraphStyle style) {
+    public CYLineBlock(TextEnv textEnv, CYStyle style) {
         super(textEnv, "");
         this.mParagraphStyle = style;
     }
@@ -45,6 +46,7 @@ public class CYLineBlock extends CYBlock<CYBlock> {
 
     @Override
     public void draw(Canvas canvas) {
+        super.draw(canvas);
         List<CYBlock> children = getChildren();
         if (children != null) {
             int count = children.size();
@@ -56,6 +58,23 @@ public class CYLineBlock extends CYBlock<CYBlock> {
     }
 
     @Override
+    public boolean isEmpty() {
+        boolean isEmpty = true;
+        List<CYBlock> children = getChildren();
+        if (children != null) {
+            int count = children.size();
+            for (int i = 0; i < count; i++) {
+                CYBlock block = children.get(i);
+                if (!block.isEmpty()) {
+                    isEmpty = false;
+                    break;
+                }
+            }
+        }
+        return isEmpty;
+    }
+
+    @Override
     public boolean isValid() {
         return isValid;
     }
@@ -63,10 +82,11 @@ public class CYLineBlock extends CYBlock<CYBlock> {
     @Override
     public void addChild(CYBlock child) {
         super.addChild(child);
+        child.setParent(this);
         if (!child.isValid())
             return;
 
-        int width = child.getWidth();
+        int width = child.getWidth() + child.getMarginLeft() + child.getMarginRight();
         int height = child.getHeight();
 
         /*
@@ -84,6 +104,12 @@ public class CYLineBlock extends CYBlock<CYBlock> {
         if (child instanceof CYTextBlock || isInMonoMode) {
             if (height > mHeight) {
                 this.mHeight = height;
+            }
+        }
+        //最大的text高度
+        if (child instanceof CYTextBlock) {
+            if (height > mMaxTextHeightInLine) {
+                this.mMaxTextHeightInLine = height;
             }
         }
 
@@ -120,9 +146,9 @@ public class CYLineBlock extends CYBlock<CYBlock> {
             int appendX = 0;
             if (mParagraphStyle != null) {
                 if(mParagraphStyle.getHorizontalAlign() == CYHorizontalAlign.CENTER) {
-                    appendX = (getTextEnv().getPageWidth() - getWidth()) >> 1;
+                    appendX = (getTextEnv().getSuggestedPageWidth() - getWidth()) >> 1;
                 } else if (mParagraphStyle.getHorizontalAlign() == CYHorizontalAlign.RIGHT){
-                    appendX = getTextEnv().getPageWidth() - getWidth();
+                    appendX = getTextEnv().getSuggestedPageWidth() - getWidth();
                 }
             }
             int lineHeight = getLineHeight();
@@ -133,6 +159,7 @@ public class CYLineBlock extends CYBlock<CYBlock> {
                 child.setX(child.getX() + appendX);
                 child.setLineY(lineY);
                 child.setLineHeight(lineHeight);
+                child.setTextHeightInLine(mMaxTextHeightInLine);
             }
         }
     }

@@ -17,8 +17,6 @@ import com.hyena.framework.servcie.BaseServiceManager;
 import com.hyena.framework.servcie.ServiceProvider;
 import com.hyena.framework.utils.BaseApp;
 
-import maximsblog.blogspot.com.jlatexmath.core.AjLatexMath;
-
 /**
  * Created by yangzc on 17/2/6.
  */
@@ -38,8 +36,6 @@ public class App extends BaseApp {
         //注册应用系统服务
         ServiceProvider.getServiceProvider().registServiceManager(new ServiceManager());
         CYBlockProvider.getBlockProvider().registerBlockBuilder(new DefaultBlockBuilder());
-        //init latex
-        AjLatexMath.init(this);
     }
 
     private class ServiceManager extends BaseServiceManager {

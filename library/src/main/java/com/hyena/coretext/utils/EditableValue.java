@@ -11,6 +11,7 @@ public class EditableValue {
 
     private int color = -1;
     private String value;
+    private boolean hasBottomLine = true;
 
     public EditableValue() {
     }
@@ -18,6 +19,12 @@ public class EditableValue {
     public EditableValue(int color, String value) {
         this.color = color;
         this.value = value;
+    }
+
+    public EditableValue(int color, String value, boolean hasBottomLine) {
+        this.color = color;
+        this.value = value;
+        this.hasBottomLine = hasBottomLine;
     }
 
     public int getColor() {
@@ -34,5 +41,13 @@ public class EditableValue {
 
     public void setColor(int color) {
         this.color = color;
+    }
+
+    public void setHasBottomLine(boolean hasBottomLine) {
+        this.hasBottomLine = hasBottomLine;
+    }
+
+    public boolean hasBottomLine() {
+        return hasBottomLine;
     }
 }

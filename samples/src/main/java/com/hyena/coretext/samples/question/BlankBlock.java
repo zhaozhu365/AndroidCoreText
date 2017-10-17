@@ -8,7 +8,8 @@ import com.hyena.coretext.TextEnv;
 import com.hyena.coretext.blocks.CYEditBlock;
 import com.hyena.coretext.blocks.CYEditFace;
 import com.hyena.coretext.blocks.ICYEditable;
-import com.hyena.framework.utils.UIUtils;
+import com.hyena.coretext.utils.Const;
+import com.hyena.coretext.utils.PaintManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,9 +23,10 @@ public class BlankBlock extends CYEditBlock {
     private String mClass = "choose";
     private String size;
     private int mWidth, mHeight;
-    private static int DP_2 = UIUtils.dip2px(2);
-    private static int DP_3 = UIUtils.dip2px(3);
+    private static int DP_2 = Const.DP_1 * 2;
+    private static int DP_3 = Const.DP_1 * 5;
 
+    private String mDefaultText;
     public BlankBlock(TextEnv textEnv, String content) {
         super(textEnv, content);
         init(content);
@@ -35,14 +37,14 @@ public class BlankBlock extends CYEditBlock {
         try {
             JSONObject json = new JSONObject(content);
             setTabId(json.optInt("id"));
-            setDefaultText(json.optString("default"));
+            this.mDefaultText = json.optString("default");
             this.size = json.optString("size");
             this.mClass = json.optString("class");//choose fillin
             if (getTextEnv().isEditable()) {
                 if ("line".equals(size)) {
                     int dp20 = DP_2 * 10;
-                    getEditFace().getTextPaint().setTextSize(dp20);
-                    getEditFace().getDefaultTextPaint().setTextSize(dp20);
+                    ((EditFace)getEditFace()).getTextPaint().setTextSize(dp20);
+                    ((EditFace)getEditFace()).getDefaultTextPaint().setTextSize(dp20);
                     setAlignStyle(AlignStyle.Style_MONOPOLY);
                 }
             }
@@ -50,38 +52,43 @@ public class BlankBlock extends CYEditBlock {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        updateSize();
-        getEditFace().postInit();
+        setMargin(Const.DP_1 * 3, Const.DP_1 * 3);
+        updateSize(getText());
+    }
+
+    @Override
+    public String getDefaultText() {
+        return mDefaultText;
     }
 
     @Override
     public void setText(String text) {
-        if (getTextEnv() != null) {
-            getTextEnv().setEditableValue(getTabId(), text);
-            updateSize();
-            getTextEnv().getEventDispatcher().requestLayout();
-        }
+        updateSize(text);
+        super.setText(text);
     }
 
-    private void updateSize() {
+    private void updateSize(String text) {
+        if (text == null)
+            text = "";
         int textHeight = getTextHeight(getTextEnv().getPaint());
         if (!getTextEnv().isEditable()) {
-            int width = (int) getTextEnv().getPaint()
-                    .measureText(getEditFace().getText());
+//            int width = (int) getTextEnv().getPaint().measureText(text);
+            int width = (int) PaintManager.getInstance().getWidth(getTextEnv()
+                    .getPaint(), text + "()");
             this.mWidth = width + DP_2 * 5;
             this.mHeight = textHeight;
         } else {
             if ("letter".equals(size)) {
-                this.mWidth = UIUtils.dip2px(30);
-                this.mHeight = UIUtils.dip2px(50);
+                this.mWidth = Const.DP_1 * 30;
+                this.mHeight = Const.DP_1 * 50;
             } else if ("line".equals(size)) {
-                this.mWidth = UIUtils.dip2px(265);
-                this.mHeight = getTextHeight(getEditFace().getTextPaint());
+                this.mWidth = Const.DP_1 * 265;
+                this.mHeight = getTextHeight(((EditFace)getEditFace()).getTextPaint());
             } else if ("express".equals(size)) {
-                this.mWidth = UIUtils.dip2px(50);
+                this.mWidth = Const.DP_1 * 50;
                 this.mHeight = textHeight;
             } else {
-                this.mWidth = UIUtils.dip2px(50);
+                this.mWidth = Const.DP_1 * 50;
                 this.mHeight = textHeight;
             }
         }

@@ -1,221 +1,133 @@
 package com.hyena.coretext.samples.question;
 
-import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.graphics.RectF;
+import android.text.TextUtils;
 
 import com.hyena.coretext.TextEnv;
-import com.hyena.coretext.blocks.CYPlaceHolderBlock;
-import com.hyena.coretext.blocks.ICYEditable;
-import com.hyena.coretext.blocks.ICYEditableGroup;
-import com.hyena.coretext.samples.latex.FillInAtom;
-import com.hyena.framework.utils.UIUtils;
+import com.hyena.coretext.blocks.CYLatexBlock;
+import com.hyena.coretext.blocks.IEditFace;
+import com.hyena.coretext.blocks.latex.FillInAtom;
+import com.hyena.coretext.blocks.latex.FillInBox;
+import com.hyena.coretext.utils.Const;
+import com.hyena.coretext.utils.PaintManager;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import maximsblog.blogspot.com.jlatexmath.ExampleFormula;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import maximsblog.blogspot.com.jlatexmath.core.Atom;
 import maximsblog.blogspot.com.jlatexmath.core.Box;
-import maximsblog.blogspot.com.jlatexmath.core.Insets;
-import maximsblog.blogspot.com.jlatexmath.core.TeXConstants;
-import maximsblog.blogspot.com.jlatexmath.core.TeXFormula;
-import maximsblog.blogspot.com.jlatexmath.core.TeXIcon;
+import maximsblog.blogspot.com.jlatexmath.core.TeXEnvironment;
+import maximsblog.blogspot.com.jlatexmath.core.TeXParser;
+import maximsblog.blogspot.com.jlatexmath.core.Text;
 
 /**
- * Created by yangzc on 16/6/14.
+ * Created by yangzc on 17/7/18.
  */
-public class LatexBlock extends CYPlaceHolderBlock implements ICYEditableGroup {
-
-    private TeXFormula mTexFormula;
-    private TeXIcon mTexIcon;
-    private TeXFormula.TeXIconBuilder mBuilder;
-    private String mLatex;
+public class LatexBlock extends CYLatexBlock {
 
     public LatexBlock(TextEnv textEnv, String content) {
-        super(textEnv, content);
-        init();
-    }
-
-    private void init() {
-        setFocusable(true);
-        mTexFormula = new TeXFormula();
-        mBuilder = mTexFormula.new TeXIconBuilder()
-                .setStyle(TeXConstants.STYLE_DISPLAY)
-                .setSize(UIUtils.px2dip(getTextEnv().getPaint().getTextSize()))
-                .setWidth(TeXConstants.UNIT_PIXEL, getTextEnv().getPageWidth(), TeXConstants.ALIGN_LEFT)
-                .setIsMaxWidth(true)//非精准宽度
-//                .setInterLineSpacing(TeXConstants.UNIT_PIXEL,AjLatexMath.getLeading(UIUtils
-//                        .px2dip(getTextEnv().getPaint().getTextSize())))
-                .setTag(getTextEnv());
-
-        setFormula(ExampleFormula.mExample8);
-    }
-
-    public void setFormula(String latex){
-        this.mLatex = latex;
-        mTexFormula.setLaTeX(latex);
-        mTexIcon = mBuilder.build();
-        mTexIcon.setInsets(new Insets(5, 5, 5, 5));
-
-        requestLayout();
-    }
-
-    public String getLatex() {
-        return mLatex;
+        super(textEnv, convert2Latex(content));
     }
 
     @Override
-    public int getContentWidth() {
-        if (mTexIcon != null)
-            return (int) mTexIcon.getTrueIconWidth();
-        return super.getContentWidth();
+    public void registerCommand() {
+        super.registerCommand();
+        addCommand("fillin", 3);
     }
 
     @Override
-    public int getContentHeight() {
-        if (mTexIcon != null) {
-            return (int) mTexIcon.getTrueIconHeight();
-        }
-        return super.getContentHeight();
-    }
-
-    @Override
-    public void draw(Canvas canvas) {
-        super.draw(canvas);
-        if (mTexIcon != null) {
-            canvas.save();
-            Rect contentRect = getContentRect();
-            canvas.translate(contentRect.left, contentRect.top);
-            mTexIcon.paintIcon(canvas, 0, 0);
-            canvas.restore();
-        }
-    }
-
-    @Override
-    public ICYEditable findEditableByTabId(int tabId) {
-        if (mTexIcon == null)
-            return null;
-        return findEditableByTabId(mTexIcon.getBox(), tabId);
-    }
-
-    @Override
-    public ICYEditable getFocusEditable(){
-        return getFocusEditable(mTexIcon.getBox());
-    }
-
-    @Override
-    public ICYEditable findEditable(float x, float y) {
-        if (mTexIcon == null || mTexIcon.getSize() == 0)
-            return null;
-
-        x = x / mTexIcon.getSize();
-        y = y / mTexIcon.getSize();
-        return findEditable(mTexIcon.getBox(), x, y);
-    }
-
-    private ICYEditable findEditableByTabId(Box box, int tabId) {
-        if (box != null) {
-            if (box instanceof ICYEditable) {
-                if (((ICYEditable) box).getTabId() == tabId) {
-                    return (ICYEditable) box;
+    public Atom createAtom(String command, TeXParser tp, String[] args) {
+        if ("fillin".equals(command)) {
+            return new FillInAtom(args[1], args[2], args[3]) {
+                @Override
+                public Box createFillInBox(TeXEnvironment env, int index, String clazz, Text ch) {
+                    LatexTag tag = (LatexTag) env.getTag();
+                    return new BlankBox(tag.mLatexBlock, tag.mTextEnv, index, clazz, ch);
                 }
+            };
+        }
+        return super.createAtom(command, tp, args);
+    }
+
+    class BlankBox extends FillInBox {
+
+        private CYLatexBlock mLatexBlock;
+        public BlankBox(CYLatexBlock latexBlock, TextEnv textEnv, int tabId, String clazz, Text text) {
+            super(textEnv, tabId, clazz, text);
+            this.mLatexBlock = latexBlock;
+            int width = (int) PaintManager.getInstance().getWidth(((EditFace) getEditFace())
+                    .getTextPaint(), getText() == null? "()" : getText() + "()");
+            setWidthWithScale(width + Const.DP_1 * 10);
+            if (textEnv.isEditable()) {
+                setHeightWithScale(-((EditFace) getEditFace()).getTextPaint().ascent() + Const.DP_1 * 2);
             } else {
-                if (box.getChildren() != null && !box.getChildren().isEmpty()) {
-                    for (int i = 0; i < box.getChildren().size(); i++) {
-                        Box child = box.getChildren().get(i);
-                        ICYEditable result = findEditableByTabId(child, tabId);
-                        if (result != null) {
-                            return result;
-                        }
-                    }
+                setHeightWithScale(-((EditFace) getEditFace()).getTextPaint().ascent());
+            }
+            setDepth(getHeight()/2);
+            ((EditFace)getEditFace()).updateEnv();
+        }
+
+        @Override
+        public IEditFace createEditFace() {
+            EditFace editFace = new EditFace(getTextEnv(), this);
+            editFace.setClass("fillin");
+            return editFace;
+        }
+
+        @Override
+        public boolean hasBottomLine() {
+            return false;
+        }
+
+        private Rect mRect = new Rect();
+
+        @Override
+        public Rect getBlockRect() {
+            RectF rectF = getVisibleRect();
+            float scale = getScale();
+            int offsetX = mLatexBlock.getX();
+            int offsetY = mLatexBlock.getLineY();
+            mRect.set((int)(rectF.left * scale) + offsetX, (int)(rectF.top * scale) + offsetY,
+                    (int)(rectF.right * scale) + offsetX, (int)(rectF.bottom * scale) + offsetY);
+            return mRect;
+        }
+    }
+
+    private static String convert2Latex(String data) {
+        try {
+            JSONObject json = new JSONObject(data);
+            String type = json.optString("type");
+            String content = json.optString("content");
+            if ("latex".equals(type)) {
+                data = content;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        String latex = data/*.replaceAll("labelsharp", "#")*/;
+        Pattern pattern = Pattern.compile("\\\\#\\{(.*?)\\}\\\\#");
+        Matcher matcher = pattern.matcher(latex);
+        while (matcher.find()) {
+            String group = matcher.group(1);
+            try {
+                JSONObject jsonFillIn = new JSONObject("{" + group + "}");
+                String fillInType = jsonFillIn.optString("type");
+                if (TextUtils.equals(fillInType, "blank")) {
+                    int id = jsonFillIn.optInt("id");
+                    //                String size = jsonFillIn.optString("size");//永远express
+                    String clazz = jsonFillIn.optString("class");
+                    String replaceStr = "\\fillin{" + id + "}{" + clazz + "}{}";
+                    latex = latex.replace("\\#{" + group + "}\\#", replaceStr);
                 }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
         }
-        return null;
-    }
-
-    @Override
-    public List<ICYEditable> findAllEditable() {
-        List<ICYEditable> editables = new ArrayList<ICYEditable>();
-        findAllEditable(editables);
-        return editables;
-    }
-
-    private void findAllEditable(Box box, List<ICYEditable> editables) {
-        if (box != null) {
-            if (box instanceof ICYEditable) {
-                editables.add((ICYEditable) box);
-            } else {
-                if (box.getChildren() != null && !box.getChildren().isEmpty()) {
-                    for (int i = 0; i < box.getChildren().size(); i++) {
-                        Box child = box.getChildren().get(i);
-                        findAllEditable(child, editables);
-                    }
-                }
-            }
-        }
-    }
-
-    private ICYEditable findEditable(Box box, float x, float y) {
-        if (box != null) {
-            if (box instanceof FillInAtom.FillInBox) {
-                if (((FillInAtom.FillInBox) box).getVisibleRect().contains(x, y)) {
-                    return (ICYEditable) box;
-                }
-            } else {
-                if (box.getChildren() != null && !box.getChildren().isEmpty()) {
-                    for (int i = 0; i < box.getChildren().size(); i++) {
-                        Box child = box.getChildren().get(i);
-                        ICYEditable result = findEditable(child, x, y);
-                        if (result != null) {
-                            return result;
-                        }
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    public ICYEditable getFocusEditable(Box box) {
-        if (box != null) {
-            if (box instanceof FillInAtom.FillInBox) {
-                if (((FillInAtom.FillInBox) box).hasFocus()) {
-                    return (FillInAtom.FillInBox) box;
-                }
-            } else {
-                if (box.getChildren() != null && !box.getChildren().isEmpty()) {
-                    for (int i = 0; i < box.getChildren().size(); i++) {
-                        Box child = box.getChildren().get(i);
-                        ICYEditable result = getFocusEditable(child);
-                        if (result != null) {
-                            return result;
-                        }
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    private void releaseAll(Box box) {
-        if (box != null) {
-            if (box instanceof FillInAtom.FillInBox) {
-                ((FillInAtom.FillInBox) box).release();
-            } else {
-                if (box.getChildren() != null && !box.getChildren().isEmpty()) {
-                    for (int i = 0; i < box.getChildren().size(); i++) {
-                        Box child = box.getChildren().get(i);
-                        releaseAll(child);
-                    }
-                }
-            }
-        }
-    }
-
-    @Override
-    public void release() {
-        super.release();
-        if (mTexIcon != null)
-            releaseAll(mTexIcon.getBox());
+        return latex;
     }
 }

@@ -11,11 +11,11 @@ import java.util.List;
  */
 public interface ICYEditableGroup {
 
-    public ICYEditable findEditable(float x, float y);
+    ICYEditable findEditable(float x, float y);
 
-    public ICYEditable getFocusEditable();
+    ICYEditable getFocusEditable();
 
-    public ICYEditable findEditableByTabId(int tabId);
+    ICYEditable findEditableByTabId(int tabId);
 
-    public List<ICYEditable> findAllEditable();
+    List<ICYEditable> findAllEditable();
 }

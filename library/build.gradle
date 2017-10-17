@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply from: '../fat-aar.gradle'
 
 android {
     compileSdkVersion 23
@@ -18,7 +19,21 @@ android {
     }
 }
 
+ext {
+    IS_RELEASE = project.getGradle().startParameter.taskNames.any{it.contains('library:assembleRelease')}
+}
+
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.github.yangzc:AndroidSupport:1.0.2'
+    compile project(':jlatexmath')
 }
+
+if (IS_RELEASE) {
+    dependencies.add("embedded", project(':jlatexmath'));
+} else {
+    dependencies.add("compile", project(':jlatexmath'))
+}
+println("IS_RELEASE: " + IS_RELEASE)
+
+// ./gradlew library:assembleRelease

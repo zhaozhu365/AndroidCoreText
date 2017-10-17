@@ -15,6 +15,11 @@ public class CYEventDispatcher {
     public CYEventDispatcher() {
     }
 
+    public void set(CYEventDispatcher dispatcher) {
+        clear();
+        mLayoutListeners.addAll(dispatcher.mLayoutListeners);
+    }
+
     public void addLayoutEventListener(CYLayoutEventListener listener) {
         if (mLayoutListeners == null)
             mLayoutListeners = new ArrayList<CYLayoutEventListener>();
@@ -49,6 +54,12 @@ public class CYEventDispatcher {
         for (int i = 0; i < mLayoutListeners.size(); i++) {
             CYLayoutEventListener listener = mLayoutListeners.get(i);
             listener.onInvalidate(rect);
+        }
+    }
+
+    public void clear() {
+        if (mLayoutListeners != null) {
+            mLayoutListeners.clear();
         }
     }
 }

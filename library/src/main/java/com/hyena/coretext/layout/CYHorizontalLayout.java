@@ -7,10 +7,10 @@ import com.hyena.coretext.blocks.CYBlock;
 import com.hyena.coretext.blocks.CYBreakLineBlock;
 import com.hyena.coretext.blocks.CYLineBlock;
 import com.hyena.coretext.blocks.CYPageBlock;
-import com.hyena.coretext.blocks.CYParagraphEndBlock;
-import com.hyena.coretext.blocks.CYParagraphStartBlock;
-import com.hyena.coretext.blocks.CYParagraphStyle;
 import com.hyena.coretext.blocks.CYPlaceHolderBlock;
+import com.hyena.coretext.blocks.CYStyle;
+import com.hyena.coretext.blocks.CYStyleEndBlock;
+import com.hyena.coretext.blocks.CYStyleStartBlock;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +26,7 @@ public class CYHorizontalLayout extends CYLayout {
     private CYLineBlock line = null;
     private List<CYPlaceHolderBlock> placeHolderBlocks = new ArrayList<CYPlaceHolderBlock>();
     private List<CYPlaceHolderBlock> linePlaceHolderBlocks = new ArrayList<CYPlaceHolderBlock>();
-    private Stack<CYParagraphStyle> styleParagraphStack = new Stack<CYParagraphStyle>();
+    private Stack<CYStyle> styleStack = new Stack<CYStyle>();
     private List<CYLineBlock> lines = new ArrayList<CYLineBlock>();
 
     private List<CYBlock> mBlocks;
@@ -34,12 +34,12 @@ public class CYHorizontalLayout extends CYLayout {
 
     public CYHorizontalLayout(TextEnv textEnv, List<CYBlock> blocks) {
         super(textEnv);
-        this.leftWidth = textEnv.getPageWidth();
+        this.leftWidth = textEnv.getSuggestedPageWidth();
         this.mBlocks = blocks;
     }
 
     private void reset() {
-        this.leftWidth = getTextEnv().getPageWidth();
+        this.leftWidth = getTextEnv().getSuggestedPageWidth();
         this.y = 0;
         line = null;
         if (placeHolderBlocks == null)
@@ -50,9 +50,9 @@ public class CYHorizontalLayout extends CYLayout {
             linePlaceHolderBlocks = new ArrayList<CYPlaceHolderBlock>();
         linePlaceHolderBlocks.clear();
 
-        if (styleParagraphStack == null)
-            styleParagraphStack = new Stack<CYParagraphStyle>();
-        styleParagraphStack.clear();
+        if (styleStack == null)
+            styleStack = new Stack<CYStyle>();
+        styleStack.clear();
 
         if (lines == null)
             lines = new ArrayList<CYLineBlock>();
@@ -63,31 +63,43 @@ public class CYHorizontalLayout extends CYLayout {
     public List<CYPageBlock> parse() {
         reset();
 
-        List<CYLineBlock> lines = parseLines(mBlocks);
-
+        List<CYLineBlock> lines = trimLine(parseLines(mBlocks));
         CYPageBlock page = new CYPageBlock(getTextEnv());
         int y = 0;
         if (lines != null) {
             for (int i = 0; i < lines.size(); i++) {
                 CYLineBlock line = lines.get(i);
-                if (line.getChildren() == null || line.getChildren().isEmpty()
-                        || !line.isValid())
-                    continue;
-
                 int maxBlockHeight = line.getMaxBlockHeightInLine();
-                if (y + maxBlockHeight > getTextEnv().getPageHeight()) {
+                if (y + maxBlockHeight > getTextEnv().getSuggestedPageHeight()) {
                     page = new CYPageBlock(getTextEnv());
                     y = 0;
                 } else {
                     line.updateLineY(y);
                     y += line.getHeight() + getTextEnv().getVerticalSpacing();
                 }
-
+                if (i == lines.size() -1) {
+                    line.setPadding(0, line.getPaddingTop(), 0, 0);
+                }
                 page.addChild(line);
             }
         }
         mPageBlocks.add(page);
         return mPageBlocks;
+    }
+
+    private List<CYLineBlock> trimLine(List<CYLineBlock> lines) {
+        List<CYLineBlock> result = new ArrayList<>();
+        if (lines != null) {
+            for (int i = 0; i < lines.size(); i++) {
+                CYLineBlock line = lines.get(i);
+                if (line.getChildren() == null || line.getChildren().isEmpty()
+                        || !line.isValid() || line.isEmpty())
+                    continue;
+
+                result.add(line);
+            }
+        }
+        return result;
     }
 
     @Override
@@ -101,34 +113,57 @@ public class CYHorizontalLayout extends CYLayout {
     }
 
     private List<CYLineBlock> parseLines(List<CYBlock> blocks) {
-        int pageWidth = getTextEnv().getPageWidth();
+        int pageWidth = getTextEnv().getSuggestedPageWidth();
         int blockCount = blocks.size();
         for (int i = 0; i < blockCount; i++) {
             CYBlock itemBlock = blocks.get(i);
-            if (itemBlock != null) {
-                itemBlock.setParagraphStyle(getParagraphStyle(styleParagraphStack));
-            }
-            if (itemBlock instanceof CYParagraphStartBlock) {
-                styleParagraphStack.push(((CYParagraphStartBlock) itemBlock).getStyle());
-                //wrap line
-                wrapLine();
-                if (line != null)
-                    line.setIsFirstLineInParagraph(true);
-            } else if(itemBlock instanceof CYParagraphEndBlock) {
-                if (!styleParagraphStack.isEmpty())
-                    styleParagraphStack.pop();
+            if (itemBlock instanceof CYStyleStartBlock) {
+                //构造字style
+                CYStyleStartBlock block = ((CYStyleStartBlock) itemBlock);
+                block.setParentStyle(getStyle(styleStack));
+                CYStyle style = block.getStyle();
+                styleStack.push(style);
 
+                if (style != null && style.isSingleBlock()) {
+                    //wrap line
+                    wrapLine();
+                    if (line != null)
+                        line.setIsFirstLineInParagraph(true);
+                }
+            } else if (itemBlock instanceof CYStyleEndBlock) {
+                CYStyle style = null;
+                if (!styleStack.isEmpty()) {
+                    style = styleStack.pop();
+                }
+                if (style != null && style.isSingleBlock()) {
+                    List<CYLineBlock> removeLines = new ArrayList<>();
+                    for (int j = lines.size() - 1; j >= 0 ; j--) {
+                        CYLineBlock line = lines.get(j);
+                        if (line.getChildren() == null || line.getChildren().isEmpty()
+                                || !line.isValid() || line.isEmpty()) {
+                            removeLines.add(line);
+                        }
+                    }
+                    lines.removeAll(removeLines);
+
+                    if (!lines.isEmpty()) {
+                        lines.get(lines.size() -1).setIsFinishingLineInParagraph(true);
+                        wrapLine();
+                    }
+                }
                 //auto break line
                 if (line == null) {
-                    line = new CYLineBlock(getTextEnv(), getParagraphStyle(styleParagraphStack));
+                    line = new CYLineBlock(getTextEnv(), style);
                     lines.add(line);
                 }
-                line.setIsFinishingLineInParagraph(true);
-                //wrap line
-                wrapLine();
+//                if (style != null && style.isSingleBlock()) {
+//                    line.setIsFinishingLineInParagraph(true);
+//                    //wrap line
+//                    wrapLine();
+//                }
             } else if (itemBlock instanceof CYBreakLineBlock) {
                 if (line == null) {
-                    line = new CYLineBlock(getTextEnv(), getParagraphStyle(styleParagraphStack));
+                    line = new CYLineBlock(getTextEnv(), getStyle(styleStack));
                     lines.add(line);
                 }
                 //wrap line
@@ -136,8 +171,11 @@ public class CYHorizontalLayout extends CYLayout {
                 continue;
             } else {
                 if (line == null) {
-                    line = new CYLineBlock(getTextEnv(), getParagraphStyle(styleParagraphStack));
+                    line = new CYLineBlock(getTextEnv(), getStyle(styleStack));
                     lines.add(line);
+                }
+                if (itemBlock != null) {
+                    itemBlock.setStyle(getStyle(styleStack));
                 }
 
                 if (itemBlock instanceof CYPlaceHolderBlock) {
@@ -157,7 +195,7 @@ public class CYHorizontalLayout extends CYLayout {
                     placeHolderBlocks.add((CYPlaceHolderBlock) itemBlock);
                 }
                 CYPlaceHolderBlock hitCell;
-                int blockWidth = itemBlock.getWidth();
+                int blockWidth = itemBlock.getWidth() + itemBlock.getMarginLeft() + itemBlock.getMarginRight();
                 //修正位置
                 if (blockWidth < leftWidth) {
                     hitCell = getHitCell(linePlaceHolderBlocks, pageWidth - leftWidth, y, itemBlock);
@@ -176,7 +214,7 @@ public class CYHorizontalLayout extends CYLayout {
                         hitCell = getHitCell(linePlaceHolderBlocks, pageWidth - leftWidth, y, itemBlock);
                     }
                 }
-                itemBlock.setX(pageWidth - leftWidth);
+                itemBlock.setX(pageWidth - leftWidth + itemBlock.getMarginLeft());
                 itemBlock.setLineY(y);
                 leftWidth -= blockWidth;
                 line.addChild(itemBlock);
@@ -201,8 +239,8 @@ public class CYHorizontalLayout extends CYLayout {
         }
 
         y += lineHeight + getTextEnv().getVerticalSpacing();
-        leftWidth = getTextEnv().getPageWidth();
-        line = new CYLineBlock(getTextEnv(), getParagraphStyle(styleParagraphStack));
+        leftWidth = getTextEnv().getSuggestedPageWidth();
+        line = new CYLineBlock(getTextEnv(), getStyle(styleStack));
         lines.add(line);
         linePlaceHolderBlocks = getLinePlaceHolderBlocks(y);
 //        LogUtil.v("yangzc", "new line block cost: " + ts);
@@ -245,7 +283,7 @@ public class CYHorizontalLayout extends CYLayout {
         return null;
     }
 
-    private CYParagraphStyle getParagraphStyle(Stack<CYParagraphStyle> styleStack) {
+    private CYStyle getStyle(Stack<CYStyle> styleStack) {
         if (styleStack == null || styleStack.isEmpty())
             return null;
         return styleStack.peek();

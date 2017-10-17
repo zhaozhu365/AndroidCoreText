@@ -1,5 +1,7 @@
 package com.hyena.coretext.utils;
 
+import android.graphics.Paint;
+
 import com.hyena.coretext.blocks.CYBlock;
 import com.hyena.coretext.blocks.CYLineBlock;
 import com.hyena.coretext.blocks.CYPageBlock;
@@ -40,5 +42,4 @@ public class CYBlockUtils {
         }
         return null;
     }
-
 }

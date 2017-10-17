@@ -4,14 +4,19 @@
 
 package com.hyena.coretext.blocks;
 
+import android.graphics.Rect;
+
 /**
  * Created by yangzc on 17/2/10.
  */
 public interface ICYFocusable {
 
-    public void setFocus(boolean hasFocus);
-    public boolean hasFocus();
+    void setFocus(boolean hasFocus);
+    boolean hasFocus();
 
-    public void setFocusable(boolean focusable);
-    public boolean isFocusable();
+    void setFocusable(boolean focusable);
+    boolean isFocusable();
+
+    //获取位置
+    Rect getBlockRect();
 }

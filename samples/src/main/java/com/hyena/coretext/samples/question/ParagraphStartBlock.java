@@ -9,8 +9,9 @@ import android.text.TextUtils;
 
 import com.hyena.coretext.TextEnv;
 import com.hyena.coretext.blocks.CYHorizontalAlign;
-import com.hyena.coretext.blocks.CYParagraphStartBlock;
-import com.hyena.coretext.blocks.CYParagraphStyle;
+import com.hyena.coretext.blocks.CYStyle;
+import com.hyena.coretext.blocks.CYStyleStartBlock;
+import com.hyena.framework.utils.UIUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,26 +19,43 @@ import org.json.JSONObject;
 /**
  * Created by yangzc on 17/2/14.
  */
-public class ParagraphStartBlock extends CYParagraphStartBlock {
+public class ParagraphStartBlock extends CYStyleStartBlock {
+
+    private CYStyle style;
 
     public ParagraphStartBlock(TextEnv textEnv, String content) {
         super(textEnv, content);
-        init(content);
     }
 
-    private void init(String content) {
+    private void init(String content, CYStyle style) {
         try {
             JSONObject json = new JSONObject(content);
-            getStyle().setTextSize(json.optInt("size"));
-            getStyle().setTextColor(Color.parseColor(json.optString("color")));
-            getStyle().setMarginBottom(json.optInt("margin"));
-            String align = json.optString("align");
-            if ("left".equals(align) || TextUtils.isEmpty(align)) {
-                getStyle().setHorizontalAlign(CYHorizontalAlign.LEFT);
-            } else if("mid".equals(align)) {
-                getStyle().setHorizontalAlign(CYHorizontalAlign.CENTER);
-            } else {
-                getStyle().setHorizontalAlign(CYHorizontalAlign.RIGHT);
+
+            if (json.has("size")) {
+                style.setTextSize(UIUtils.dip2px(json.optInt("size") * getTextEnv().getFontScale() / 2));
+            }
+            if (json.has("color")) {
+                style.setTextColor(Color.parseColor(json.optString("color")));
+            }
+
+            if (json.has("margin")) {
+                style.setMarginBottom(UIUtils.dip2px(json.optInt("margin") / 2));
+            }
+
+            if (json.has("align")) {
+                String align = json.optString("align");
+                if ("left".equals(align) || TextUtils.isEmpty(align) || !getTextEnv().isEditable()) {
+                    style.setHorizontalAlign(CYHorizontalAlign.LEFT);
+                } else if("mid".equals(align)) {
+                    style.setHorizontalAlign(CYHorizontalAlign.CENTER);
+                } else {
+                    style.setHorizontalAlign(CYHorizontalAlign.RIGHT);
+                }
+            }
+
+            if (json.has("style")) {
+                String styleName = json.optString("style");
+                style.setStyle(styleName);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -45,7 +63,12 @@ public class ParagraphStartBlock extends CYParagraphStartBlock {
     }
 
     @Override
-    public CYParagraphStyle getStyle() {
-        return super.getStyle();
+    public CYStyle getStyle() {
+        if (style == null) {
+            style = new CYStyle(getTextEnv(), getParentStyle());
+            init(getContent(), style);
+            style.setSingleBlock(true);
+        }
+        return style;
     }
 }
